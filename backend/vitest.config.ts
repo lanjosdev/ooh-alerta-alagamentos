@@ -11,6 +11,10 @@ export default defineConfig({
       RATE_LIMIT_MAX: '120',
       ENABLE_SIMULATION_PARAMS: 'true',
       FORECAST_PROVIDER: 'open-meteo',
+      HTTP_TIMEOUT_MS: '8000',
+      CACHE_TTL_FORECAST_SECONDS: '900',
+      CACHE_TTL_INMET_SECONDS: '600',
+      CACHE_TTL_CGE_SECONDS: '300',
     },
   },
 })

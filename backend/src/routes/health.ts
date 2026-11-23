@@ -1,9 +1,24 @@
 import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
 import { z } from 'zod'
+import type { GetSourcesStatusController } from '../controllers/health/get-sources-status-controller.js'
 import { successResponse } from '../utils/api-response.js'
 import { successResponseSchema } from './schemas/common.js'
 
-export const healthRoutes: FastifyPluginAsyncZod = async (app) => {
+export interface HealthRoutesOptions {
+  getSourcesStatusController: GetSourcesStatusController
+}
+
+const sourceHealthSnapshotSchema = z.object({
+  provider: z.string(),
+  status: z.enum(['ok', 'degraded', 'unknown']),
+  cachedKeys: z.number().int(),
+  lastSuccessAt: z.string().nullable(),
+  lastErrorAt: z.string().nullable(),
+  lastErrorMessage: z.string().nullable(),
+  lastLatencyMs: z.number().nullable(),
+})
+
+export const healthRoutes: FastifyPluginAsyncZod<HealthRoutesOptions> = async (app, options) => {
   app.get(
     '/health',
     {
@@ -30,5 +45,24 @@ export const healthRoutes: FastifyPluginAsyncZod = async (app) => {
         }),
       )
     },
+  )
+
+  app.get(
+    '/sources/status',
+    {
+      schema: {
+        tags: ['Infra'],
+        summary: 'Estado de saúde e cache das fontes meteorológicas e hidrológicas',
+        response: {
+          200: successResponseSchema(
+            z.object({
+              checkedAt: z.string(),
+              providers: z.array(sourceHealthSnapshotSchema),
+            }),
+          ),
+        },
+      },
+    },
+    (request, reply) => options.getSourcesStatusController.handle(request, reply),
   )
 }

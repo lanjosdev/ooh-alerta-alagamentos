@@ -1,0 +1,94 @@
+{
+  "hoje": [
+    {
+      "id": 56489,
+      "codigo": "urn:oid:2.49.0.0.76.0.2026.28748.1",
+      "inicio": "2026-11-23 09:30",
+      "fim": "2026-11-23 23:59",
+      "descricao": "Chuvas Intensas",
+      "aviso_cor": "#FFFE00",
+      "severidade": "Perigo Potencial",
+      "riscos": [
+        "Chuva entre 20 e 30 mm/h ou até 50 mm/dia.  "
+      ],
+      "instrucoes": [
+        "Evite áreas sujeitas a alagamentos. "
+      ],
+      "encerrado": false,
+      "geocodes": "3550308, 3518800, 3534401",
+      "poligono": "{\"type\":\"Polygon\",\"coordinates\":[[[-46.85,-23.40],[-46.35,-23.40],[-46.35,-23.75],[-46.85,-23.75],[-46.85,-23.40]]]}"
+    },
+    {
+      "id": 56499,
+      "codigo": "urn:oid:2.49.0.0.76.0.2026.28749.1",
+      "inicio": "2026-11-23 11:00",
+      "fim": "2026-11-23 22:00",
+      "descricao": "Tempestade",
+      "aviso_cor": "#FF9900",
+      "severidade": "Perigo",
+      "riscos": ["Chuva entre 30 e 60 mm/h."],
+      "instrucoes": ["Não estacione próximo a árvores."],
+      "encerrado": false,
+      "geocodes": "",
+      "poligono": "{\"type\":\"Polygon\",\"coordinates\":[[[-47.20,-22.80],[-46.90,-22.80],[-46.90,-23.05],[-47.20,-23.05],[-47.20,-22.80]]]}"
+    },
+    {
+      "id": 56450,
+      "codigo": "urn:oid:2.49.0.0.76.0.2026.28700.1",
+      "inicio": "2026-11-22 10:00",
+      "fim": "2026-11-23 08:00",
+      "descricao": "Tempestade Encerrada",
+      "aviso_cor": "#FF0000",
+      "severidade": "Grande Perigo",
+      "riscos": ["Aviso encerrado."],
+      "instrucoes": [],
+      "encerrado": true,
+      "geocodes": "3550308",
+      "poligono": null
+    },
+    {
+      "id": 56501,
+      "codigo": "urn:oid:2.49.0.0.76.0.2026.28751.1",
+      "inicio": "2026-11-23 12:00",
+      "fim": "2026-11-23 23:00",
+      "descricao": "Vendaval Sul",
+      "aviso_cor": "#FFFE00",
+      "severidade": "Perigo Potencial",
+      "riscos": ["Ventos no Paraná."],
+      "instrucoes": [],
+      "encerrado": false,
+      "geocodes": "4106902",
+      "poligono": "{poligono-malformado"
+    }
+  ],
+  "futuro": [
+    {
+      "id": 56489,
+      "codigo": "urn:oid:2.49.0.0.76.0.2026.28748.1",
+      "inicio": "2026-11-23 09:30",
+      "fim": "2026-11-23 23:59",
+      "descricao": "Chuvas Intensas",
+      "aviso_cor": "#FFFE00",
+      "severidade": "Perigo Potencial",
+      "riscos": ["Duplicado do bucket hoje."],
+      "instrucoes": [],
+      "encerrado": false,
+      "geocodes": "3550308",
+      "poligono": null
+    },
+    {
+      "id": 56494,
+      "codigo": "urn:oid:2.49.0.0.76.0.2026.28754.2",
+      "inicio": "2026-11-24 00:00",
+      "fim": "2026-11-24 23:59",
+      "descricao": "Tempestade",
+      "aviso_cor": "#FF9900",
+      "severidade": "Perigo",
+      "riscos": ["Chuva volumosa prevista."],
+      "instrucoes": ["Redobre atenção no trânsito."],
+      "encerrado": false,
+      "geocodes": "3550308,3547809",
+      "poligono": "{poligono-malformado"
+    }
+  ]
+}

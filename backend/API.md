@@ -1,6 +1,6 @@
 # Contrato da API — OOH Alerta Alagamentos
 
-Documentação de referência dos endpoints HTTP expostos pelo `backend/`. A especificação OpenAPI 3.0 é gerada automaticamente a partir dos schemas Zod e fica disponível em tempo real em **`GET /docs`** (Swagger UI) e **`GET /docs/json`**.
+Documentação de referência dos endpoints HTTP expostos pelo `backend/`. A especificação OpenAPI 3.0 é gerada automaticamente a partir dos schemas Zod e fica disponível em **`GET /docs`** (Swagger UI) e **`GET /docs/json`**.
 
 ---
 
@@ -8,7 +8,7 @@ Documentação de referência dos endpoints HTTP expostos pelo `backend/`. A esp
 
 - **Prefixo da API:** `/v1`
 - **Envelope Padrão JSON (`ApiResponse<T>`):**
-  - **Sucesso:**
+  - **Sucesso (`200 OK`):**
     ```json
     {
       "success": true,
@@ -24,45 +24,201 @@ Documentação de referência dos endpoints HTTP expostos pelo `backend/`. A esp
       "data": null
     }
     ```
-- **Feeds XML / RSS 2.0 (planejados):** rotas terminadas em `/feed.xml` respondem `Content-Type: application/rss+xml; charset=utf-8` com XML RSS 2.0 puro para compatibilidade direta com players DOOH.
+- **Feeds XML / RSS 2.0:** rotas terminadas em `/feed.xml` entregam XML puro (`Content-Type: application/rss+xml; charset=utf-8`) com tags RSS 2.0 padrão e extensões no namespace `xmlns:ooh="https://ooh-alerta-alagamentos.local/ns/1.0"`.
 
 ---
 
-## Endpoints Ativos (Bootstrap `main`)
+## Motor de Classificação de Risco
 
-### `GET /v1/health`
-Verifica a saúde e o tempo de atividade do servidor.
+| Nível | `severityLabel` | `triggerOverride` | Critérios Determinísticos |
+| :---: | :--- | :---: | :--- |
+| **3** | `CRITICO` | `true` | ≥ 1 alagamento ativo e intransitável do CGE-SP na zona **ou** chuva atual na estação CGE ≥ `40 mm` com pico previsto ≥ `10 mm/h` nas próximas 2h |
+| **2** | `ALERTA` | `true` | ≥ 1 alagamento ativo e transitável na zona **ou** chuva na estação CGE ≥ `20 mm` **ou** (chance próximas 2h ≥ `65%` e pico ≥ `15 mm/h`) **ou** aviso INMET `severityRank >= 2` |
+| **1** | `ATENCAO` | `true` | (chance próximas 2h ≥ `60%` e pico ≥ `5 mm/h`) **ou** aviso INMET `severityRank === 1` |
+| **0** | `NORMAL` | `false` | Nenhum dos critérios acima |
 
-- **Tag:** `Infra`
-- **Resposta `200 OK`:**
+---
+
+## Endpoints Ativos (`/v1`)
+
+### Infra e Diagnóstico
+
+#### `GET /v1/health`
+Verifica a saúde e o tempo de atividade do servidor (`uptime`, `timestamp`).
+
+#### `GET /v1/sources/status`
+Retorna a saúde em tempo real, número de chaves em cache, última latência e último erro (se houver) de cada provedor registrado (`open-meteo`, `inmet`, `cge-sp`).
+
+---
+
+### Regiões Monitoradas
+
+#### `GET /v1/regions`
+Lista o catálogo inicial de 12 regiões monitoradas na Capital de São Paulo (`IBGE 3550308`).
+
+- **Query params opcionais:**
+  - `zone`: filtra por zona CGE (comparação sem acentos/case, ex.: `Zona Oeste`, `Centro`).
+  - `ibgeCode`: filtra por código IBGE exato (ex.: `3550308`).
+
+---
+
+### Alertas (JSON `ApiResponse`)
+
+#### Query Params Comuns de Simulação / Demonstração
+Disponíveis apenas quando `ENABLE_SIMULATION_PARAMS=true` no `.env` (caso contrário retornam `400 Bad Request`):
+- `cgeDate`: consulta histórico real de alagamentos do CGE-SP no formato `DD/MM/AAAA` (ex.: `15/01/2026`).
+- `simulate`: força nível de resposta (`normal` | `attention` | `alert` | `critical`) marcando `simulated: true`.
+
+#### `GET /v1/alerts/regions`
+Retorna o panorama consolidado de todas as regiões monitoradas, ordenado por `severityLevel` descendente, `riskScore` descendente e `location.id` ascendente.
+
+- **Query params opcionais:** `zone`, `ibgeCode`, `cgeDate`, `simulate`.
+
+#### `GET /v1/alerts/regions/:regionId`
+Retorna a decisão detalhada de risco para uma região específica (ex.: `zona-oeste-butanta`, `zona-leste-itaquera`). Retorna `404` se a região não existir.
+
+- **Query params opcionais:** `cgeDate`, `simulate`.
+- **Exemplo de Resposta `200 OK`:**
   ```json
   {
     "success": true,
     "message": null,
     "data": {
-      "status": "ok",
-      "uptime": 12.345,
-      "timestamp": "2026-11-23T15:00:00.000Z"
+      "evaluatedAt": "2026-11-23T19:00:00.000Z",
+      "location": {
+        "id": "zona-oeste-butanta",
+        "name": "Butantã",
+        "city": "São Paulo",
+        "state": "SP",
+        "ibgeCode": "3550308",
+        "zone": "Zona Oeste",
+        "latitude": -23.5672,
+        "longitude": -46.729,
+        "cgeStationId": "1000842",
+        "cgeStationName": "Butantã",
+        "historicalRiskWeight": 0.75
+      },
+      "triggerOverride": true,
+      "severityLevel": 1,
+      "severityLabel": "ATENCAO",
+      "riskScore": 46,
+      "simulated": false,
+      "reasons": ["Aviso oficial INMET ativo em grau Perigo Potencial"],
+      "display": {
+        "headline": "ATENÇÃO PARA CHUVA FORTE — Butantã",
+        "message": "Chuva prevista para Butantã (40% de chance nas próximas 2h). Atenção em pontos críticos.",
+        "subtext": "Butantã (Zona Oeste) • Nível ATENCAO (46/100)"
+      },
+      "forecast": {
+        "provider": "open-meteo",
+        "gridLatitude": -23.585238,
+        "gridLongitude": -46.754486,
+        "timezone": "America/Sao_Paulo",
+        "maxRainProbabilityNext2hPercent": 40,
+        "expectedRainNext2hMm": 0.8,
+        "peakRainIntensityNext2hMmPerHour": 0.5,
+        "maxRainProbabilityNext6hPercent": 55,
+        "expectedRainNext6hMm": 2.4,
+        "hourly": []
+      },
+      "officialAlerts": [],
+      "flooding": {
+        "cgeDate": null,
+        "activeInZoneCount": 0,
+        "impassableInZoneCount": 0,
+        "passableInZoneCount": 0,
+        "pointsInZone": [],
+        "stationRainfall": {
+          "stationId": "1000842",
+          "stationName": "Butantã",
+          "currentPeriodMm": 0.4,
+          "previousPeriodMm": 25.2,
+          "resetTime": "10:00:00",
+          "temperatureC": 25.6,
+          "humidityPercent": 75.1
+        }
+      },
+      "sources": {
+        "forecast": { "provider": "open-meteo", "status": "ok", "cached": false, "stale": false, "fetchedAt": "2026-11-23T19:00:00.000Z", "error": null },
+        "officialAlerts": { "provider": "inmet", "status": "ok", "cached": false, "stale": false, "fetchedAt": "2026-11-23T19:00:00.000Z", "error": null },
+        "floodingMonitor": { "provider": "cge-sp", "status": "ok", "cached": false, "stale": false, "fetchedAt": "2026-11-23T19:00:00.000Z", "error": null }
+      }
     }
   }
   ```
 
-### `GET /docs` e `GET /docs/json`
-Documentação interativa **Swagger UI** e JSON OpenAPI 3.0 gerados automaticamente pelo `@fastify/swagger`.
+#### `GET /v1/alerts/by-coordinates?lat=&lon=`
+Decisão hiperlocal para qualquer coordenada (`lat` entre `-90` e `90`, `lon` entre `-180` e `180`):
+- **Dentro da Capital SP** (raio de 12 km de uma das 28 estações do CGE-SP, ex.: Vila Leopoldina `-23.5317, -46.7294`): resolve automaticamente para a estação física e zona mais próximas (`Lapa 1000848` / `Zona Oeste`) e consulta o CGE-SP.
+- **Demais municípios** (ex.: Campinas `-22.9099, -47.0626`): opera em modo multi-município combinando Open-Meteo e INMET (interseção *point-in-polygon* GeoJSON), marcando `sources.floodingMonitor.status = "skipped"`.
 
 ---
 
-## Roadmap de Endpoints (Branch `feat/poc-flood-alerts-api`)
+### Feeds DOOH (`XML / RSS 2.0`)
 
-Os endpoints abaixo compõem a PoC de coleta e distribuição de alertas (a ser implementada na branch de feature a partir desta base):
+#### `GET /v1/alerts/feed.xml`
+Feed RSS 2.0 consolidado de todas as regiões monitoradas (aceita `zone`, `ibgeCode`, `cgeDate`, `simulate`).
 
-| Método | Rota | Formato | Descrição |
-| :---: | :--- | :---: | :--- |
-| `GET` | `/v1/sources/status` | JSON | Saúde, latência e estado do cache de cada provedor (`open-meteo`, `inmet`, `cge-sp`) |
-| `GET` | `/v1/regions` | JSON | Catálogo inicial de regiões monitoradas na Capital SP (com zona, `lat/lon`, código IBGE e posto CGE) |
-| `GET` | `/v1/alerts/regions` | JSON | Panorama consolidado de risco de todas as regiões monitoradas |
-| `GET` | `/v1/alerts/regions/:regionId` | JSON | Decisão dinâmica de alerta para um ponto/região (`triggerOverride`, `severityLevel`, `%` chuva, alagamentos, mensagem OOH) |
-| `GET` | `/v1/alerts/by-coordinates?lat=&lon=` | JSON | Decisão hiperlocal por qualquer coordenada (SP Capital com CGE-SP + demais municípios de SP via previsão e INMET) |
-| `GET` | `/v1/alerts/feed.xml` | XML / RSS 2.0 | Feed RSS consolidado com tags padrão + namespace `<ooh:*>` |
-| `GET` | `/v1/alerts/regions/:regionId/feed.xml` | XML / RSS 2.0 | Feed RSS individual para consumo por player DOOH da região |
-| `GET` | `/v1/alerts/by-coordinates/feed.xml?lat=&lon=` | XML / RSS 2.0 | Feed RSS individual por coordenada exata |
+#### `GET /v1/alerts/regions/:regionId/feed.xml`
+Feed RSS 2.0 individual para consumo direto por um player DOOH associado à região (aceita `cgeDate`, `simulate`).
+
+#### `GET /v1/alerts/by-coordinates/feed.xml?lat=&lon=`
+Feed RSS 2.0 individual por coordenada geográfica (aceita `lat`, `lon`, `cgeDate`, `simulate`).
+
+- **Exemplo de Saída `XML / RSS 2.0`:**
+  ```xml
+  <?xml version="1.0" encoding="UTF-8"?>
+  <rss version="2.0" xmlns:ooh="https://ooh-alerta-alagamentos.local/ns/1.0">
+    <channel>
+      <title>OOH Alerta Alagamentos — Butantã</title>
+      <link>http://localhost:3333/v1/alerts/regions/zona-oeste-butanta/feed.xml</link>
+      <description>Feed RSS 2.0 individual para player DOOH da região Butantã</description>
+      <language>pt-BR</language>
+      <lastBuildDate>Mon, 23 Nov 2026 19:00:00 GMT</lastBuildDate>
+      <item>
+        <title>ATENÇÃO PARA CHUVA FORTE — Butantã</title>
+        <link>http://localhost:3333/v1/alerts/regions/zona-oeste-butanta/feed.xml</link>
+        <description>Chuva prevista para Butantã (40% de chance nas próximas 2h). Atenção em pontos críticos.</description>
+        <guid isPermaLink="false">zona-oeste-butanta-ATENCAO-2026-11-23T19:00:00.000Z</guid>
+        <pubDate>Mon, 23 Nov 2026 19:00:00 GMT</pubDate>
+        <category>ATENCAO</category>
+        <ooh:regionId>zona-oeste-butanta</ooh:regionId>
+        <ooh:locationName>Butantã</ooh:locationName>
+        <ooh:zone>Zona Oeste</ooh:zone>
+        <ooh:ibgeCode>3550308</ooh:ibgeCode>
+        <ooh:latitude>-23.5672</ooh:latitude>
+        <ooh:longitude>-46.729</ooh:longitude>
+        <ooh:triggerOverride>true</ooh:triggerOverride>
+        <ooh:severityLevel>1</ooh:severityLevel>
+        <ooh:severityLabel>ATENCAO</ooh:severityLabel>
+        <ooh:riskScore>46</ooh:riskScore>
+        <ooh:simulated>false</ooh:simulated>
+        <ooh:rainProbabilityNext2hPercent>40</ooh:rainProbabilityNext2hPercent>
+        <ooh:activeFloodingsInZone>0</ooh:activeFloodingsInZone>
+        <ooh:headline>ATENÇÃO PARA CHUVA FORTE — Butantã</ooh:headline>
+        <ooh:message>Chuva prevista para Butantã (40% de chance nas próximas 2h). Atenção em pontos críticos.</ooh:message>
+        <ooh:subtext>Butantã (Zona Oeste) • Nível ATENCAO (46/100)</ooh:subtext>
+      </item>
+    </channel>
+  </rss>
+  ```
+
+---
+
+## Documentação Interativa e Validação Ao Vivo
+
+- **Swagger UI:** `GET /docs`
+- **OpenAPI JSON:** `GET /docs/json`
+- **Smoke test integrado com fontes reais (Open-Meteo, INMET e CGE-SP):**
+  ```bash
+  cd backend
+  npm run smoke:live
+  ```
+- **Validação E2E completa de todas as rotas (8 blocos do roteiro HTTP real):**
+  ```bash
+  cd backend
+  npm run validate:routes
+  # Opcional: apontar contra uma instância já rodando (ex.: npm run dev)
+  # BASE_URL=http://localhost:3333 npm run validate:routes
+  ```
+  > Em ambientes Windows com cadeia corporativa/certificados no repositório do SO, os scripts `dev`, `start`, `smoke:live` e `validate:routes` utilizam `--use-system-ca` para validação TLS nativa com `fetch`.

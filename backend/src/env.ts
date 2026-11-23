@@ -14,6 +14,10 @@ const envSchema = z.object({
     .default('false')
     .transform((value) => value === 'true'),
   FORECAST_PROVIDER: z.enum(['open-meteo', 'tomorrow-io', 'google-weather']).default('open-meteo'),
+  HTTP_TIMEOUT_MS: z.coerce.number().int().positive().default(8000),
+  CACHE_TTL_FORECAST_SECONDS: z.coerce.number().int().positive().default(900),
+  CACHE_TTL_INMET_SECONDS: z.coerce.number().int().positive().default(600),
+  CACHE_TTL_CGE_SECONDS: z.coerce.number().int().positive().default(300),
 })
 
 const parsed = envSchema.safeParse(process.env)
