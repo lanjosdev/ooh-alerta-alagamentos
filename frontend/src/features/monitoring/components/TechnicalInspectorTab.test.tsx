@@ -2,6 +2,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
+import { getValidatedEnv } from '@/env'
 import { alertsService } from '@/services/alertsService'
 import { mockRegionButanta, mockRssXml } from '@/test/fixtures/alerts'
 import { TechnicalInspectorTab } from './TechnicalInspectorTab'
@@ -52,16 +53,12 @@ describe('TechnicalInspectorTab', () => {
     expect(screen.getByText('(cge-sp)')).toBeInTheDocument()
     expect(screen.getByText('Cache')).toBeInTheDocument()
 
-    expect(
-      screen.getByText(
-        'http://localhost:3333/v1/alerts/regions/zona-oeste-butanta?cgeDate=15%2F01%2F2026',
-      ),
-    ).toBeInTheDocument()
+    const expectedUrl = `${getValidatedEnv().VITE_API_BASE_URL}/alerts/regions/zona-oeste-butanta?cgeDate=15%2F01%2F2026`
+
+    expect(screen.getByText(expectedUrl)).toBeInTheDocument()
 
     await user.click(screen.getByRole('button', { name: /Copiar URL/i }))
-    expect(writeTextMock).toHaveBeenCalledWith(
-      'http://localhost:3333/v1/alerts/regions/zona-oeste-butanta?cgeDate=15%2F01%2F2026',
-    )
+    expect(writeTextMock).toHaveBeenCalledWith(expectedUrl)
 
     await user.click(screen.getByRole('tab', { name: /XML \/ RSS 2\.0/i }))
 

@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
+import { getValidatedEnv } from '@/env'
 import { apiClient } from '@/lib/api'
 import type { CityOverviewData, OohAlertDecision } from '@/types/alerts'
 import { alertsService } from './alertsService'
@@ -183,12 +184,14 @@ describe('alertsService', () => {
   })
 
   it('builds copyable endpoint URLs for JSON and XML formats', () => {
+    const baseUrl = getValidatedEnv().VITE_API_BASE_URL
+
     expect(
       alertsService.buildAlertEndpointUrl(
         { kind: 'region', regionId: 'zona-oeste-butanta' },
         'json',
       ),
-    ).toBe('http://localhost:3333/v1/alerts/regions/zona-oeste-butanta')
+    ).toBe(`${baseUrl}/alerts/regions/zona-oeste-butanta`)
 
     expect(
       alertsService.buildAlertEndpointUrl(
@@ -196,7 +199,7 @@ describe('alertsService', () => {
         'xml',
         { cgeDate: '15/01/2026' },
       ),
-    ).toBe('http://localhost:3333/v1/alerts/regions/zona-oeste-butanta/feed.xml?cgeDate=15%2F01%2F2026')
+    ).toBe(`${baseUrl}/alerts/regions/zona-oeste-butanta/feed.xml?cgeDate=15%2F01%2F2026`)
 
     expect(
       alertsService.buildAlertEndpointUrl(
@@ -205,7 +208,7 @@ describe('alertsService', () => {
         { simulate: 'alert' },
       ),
     ).toBe(
-      'http://localhost:3333/v1/alerts/by-coordinates/feed.xml?lat=-23.5317&lon=-46.7294&simulate=alert',
+      `${baseUrl}/alerts/by-coordinates/feed.xml?lat=-23.5317&lon=-46.7294&simulate=alert`,
     )
   })
 })
