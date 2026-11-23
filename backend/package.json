@@ -4,12 +4,13 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "tsx watch src/server.ts",
+    "dev": "tsx --use-system-ca watch src/server.ts",
     "build": "tsc -p tsconfig.build.json",
-    "start": "node build/server.js",
+    "start": "node --use-system-ca build/server.js",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "smoke:live": "tsx --use-system-ca scripts/smoke-live.ts"
   },
   "dependencies": {
     "@fastify/cors": "^11.3.0",
