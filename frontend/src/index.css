@@ -1,0 +1,235 @@
+@import "tailwindcss";
+@import "leaflet/dist/leaflet.css";
+@import "@fontsource-variable/inter";
+
+:root {
+  --background: oklch(0.985 0.003 247.858);
+  --foreground: oklch(0.195 0.02 257.417);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.195 0.02 257.417);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.195 0.02 257.417);
+  --primary: oklch(0.45 0.16 254.6);
+  --primary-foreground: oklch(0.985 0.003 247.858);
+  --secondary: oklch(0.955 0.008 247.858);
+  --secondary-foreground: oklch(0.278 0.024 256.848);
+  --muted: oklch(0.955 0.008 247.858);
+  --muted-foreground: oklch(0.5 0.02 256.848);
+  --accent: oklch(0.94 0.015 247.858);
+  --accent-foreground: oklch(0.24 0.03 256.848);
+  --destructive: oklch(0.55 0.21 25.331);
+  --destructive-foreground: oklch(0.985 0.003 247.858);
+  --border: oklch(0.895 0.01 247.858);
+  --input: oklch(0.895 0.01 247.858);
+  --ring: oklch(0.55 0.16 254.6);
+
+  --severity-normal: oklch(0.55 0.16 154);
+  --severity-normal-bg: oklch(0.96 0.035 154);
+  --severity-normal-fg: oklch(0.32 0.11 154);
+  --severity-normal-border: oklch(0.82 0.08 154);
+
+  --severity-attention: oklch(0.72 0.16 84);
+  --severity-attention-bg: oklch(0.97 0.045 88);
+  --severity-attention-fg: oklch(0.42 0.12 72);
+  --severity-attention-border: oklch(0.84 0.11 84);
+
+  --severity-alert: oklch(0.64 0.18 48);
+  --severity-alert-bg: oklch(0.96 0.045 50);
+  --severity-alert-fg: oklch(0.42 0.14 44);
+  --severity-alert-border: oklch(0.82 0.12 48);
+
+  --severity-critical: oklch(0.56 0.22 26);
+  --severity-critical-bg: oklch(0.96 0.04 24);
+  --severity-critical-fg: oklch(0.4 0.18 24);
+  --severity-critical-border: oklch(0.8 0.12 25);
+
+  --status-ok: oklch(0.55 0.16 154);
+  --status-ok-bg: oklch(0.96 0.035 154);
+  --status-ok-fg: oklch(0.32 0.11 154);
+
+  --status-stale: oklch(0.72 0.16 84);
+  --status-stale-bg: oklch(0.97 0.045 88);
+  --status-stale-fg: oklch(0.42 0.12 72);
+
+  --status-error: oklch(0.56 0.22 26);
+  --status-error-bg: oklch(0.96 0.04 24);
+  --status-error-fg: oklch(0.4 0.18 24);
+
+  --status-skipped: oklch(0.55 0.02 256);
+  --status-skipped-bg: oklch(0.94 0.008 256);
+  --status-skipped-fg: oklch(0.4 0.02 256);
+
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+}
+
+@theme inline {
+  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-severity-normal: var(--severity-normal);
+  --color-severity-normal-bg: var(--severity-normal-bg);
+  --color-severity-normal-fg: var(--severity-normal-fg);
+  --color-severity-normal-border: var(--severity-normal-border);
+
+  --color-severity-attention: var(--severity-attention);
+  --color-severity-attention-bg: var(--severity-attention-bg);
+  --color-severity-attention-fg: var(--severity-attention-fg);
+  --color-severity-attention-border: var(--severity-attention-border);
+
+  --color-severity-alert: var(--severity-alert);
+  --color-severity-alert-bg: var(--severity-alert-bg);
+  --color-severity-alert-fg: var(--severity-alert-fg);
+  --color-severity-alert-border: var(--severity-alert-border);
+
+  --color-severity-critical: var(--severity-critical);
+  --color-severity-critical-bg: var(--severity-critical-bg);
+  --color-severity-critical-fg: var(--severity-critical-fg);
+  --color-severity-critical-border: var(--severity-critical-border);
+
+  --color-status-ok: var(--status-ok);
+  --color-status-ok-bg: var(--status-ok-bg);
+  --color-status-ok-fg: var(--status-ok-fg);
+
+  --color-status-stale: var(--status-stale);
+  --color-status-stale-bg: var(--status-stale-bg);
+  --color-status-stale-fg: var(--status-stale-fg);
+
+  --color-status-error: var(--status-error);
+  --color-status-error-bg: var(--status-error-bg);
+  --color-status-error-fg: var(--status-error-fg);
+
+  --color-status-skipped: var(--status-skipped);
+  --color-status-skipped-bg: var(--status-skipped-bg);
+  --color-status-skipped-fg: var(--status-skipped-fg);
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+
+  body {
+    margin: 0;
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+.leaflet-container {
+  font-family: var(--font-sans);
+  z-index: 0;
+}
+
+.ooh-leaflet-icon {
+  background: transparent;
+  border: 0;
+}
+
+.ooh-map-marker {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 9999px;
+  border: 2.5px solid var(--card);
+  color: var(--card);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  box-shadow: 0 3px 10px oklch(0.195 0.02 257.417 / 0.28);
+  transition: transform 150ms ease, box-shadow 150ms ease;
+}
+
+.ooh-map-marker:hover {
+  transform: scale(1.1);
+}
+
+.ooh-map-marker--0 {
+  background-color: var(--severity-normal);
+}
+
+.ooh-map-marker--1 {
+  background-color: var(--severity-attention);
+  color: var(--severity-attention-fg);
+}
+
+.ooh-map-marker--2 {
+  background-color: var(--severity-alert);
+}
+
+.ooh-map-marker--3 {
+  background-color: var(--severity-critical);
+}
+
+.ooh-map-marker--custom {
+  background-color: var(--primary);
+  width: 30px;
+  height: 30px;
+  border-width: 3px;
+}
+
+.ooh-map-marker--selected {
+  transform: scale(1.16);
+  box-shadow:
+    0 0 0 4px var(--ring),
+    0 4px 12px oklch(0.195 0.02 257.417 / 0.32);
+}
+
+.ooh-map-marker--selected::after {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: 9999px;
+  border: 2px solid var(--ring);
+  animation: ooh-marker-pulse 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+@keyframes ooh-marker-pulse {
+  0% {
+    transform: scale(0.9);
+    opacity: 0.85;
+  }
+  75%,
+  100% {
+    transform: scale(1.45);
+    opacity: 0;
+  }
+}
+
+.ooh-map-tooltip.leaflet-tooltip {
+  background-color: var(--popover);
+  color: var(--popover-foreground);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: 0 6px 20px oklch(0.195 0.02 257.417 / 0.14);
+  padding: 6px 10px;
+  font-size: 12px;
+}
