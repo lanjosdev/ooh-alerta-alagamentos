@@ -1,5 +1,6 @@
 import {
   AlertTriangle,
+  ChevronDown,
   Cloud,
   CloudDrizzle,
   CloudFog,
@@ -14,6 +15,7 @@ import {
   Thermometer,
   Waves,
 } from 'lucide-react'
+import { useId, useState } from 'react'
 import { EmptyState } from '@/components/patterns/EmptyState'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
@@ -32,6 +34,7 @@ import {
   getWeatherCodeMetadata,
   type WeatherIconName,
 } from '@/features/monitoring/utils/weatherCode'
+import { cn } from '@/lib/utils'
 import type { FloodingPoint, OohAlertDecision } from '@/types/alerts'
 
 export interface ClimateRiskTabProps {
@@ -88,9 +91,18 @@ function getFloodingPointBadge(point: FloodingPoint): { label: string; className
 }
 
 export function ClimateRiskTab({ decision }: ClimateRiskTabProps) {
+  const [isFloodingOpen, setIsFloodingOpen] = useState(false)
+  const [isOfficialAlertsOpen, setIsOfficialAlertsOpen] = useState(false)
+  const floodingContentId = useId()
+  const officialAlertsContentId = useId()
+
   const station = decision.flooding.stationRainfall
   const currentHour = decision.forecast?.hourly[0] ?? null
   const currentWeather = currentHour ? getWeatherCodeMetadata(currentHour.weatherCode) : null
+  const highestOfficialRank = decision.officialAlerts.reduce<1 | 2 | 3>(
+    (highest, alert) => (alert.severityRank > highest ? alert.severityRank : highest),
+    1,
+  )
 
   return (
     <div className="space-y-4">
@@ -253,149 +265,197 @@ export function ClimateRiskTab({ decision }: ClimateRiskTabProps) {
       </Card>
 
       <Card>
-        <CardHeader className="pb-3">
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <CardTitle className="flex items-center gap-1.5">
-              <Waves className="h-4 w-4 text-primary" aria-hidden="true" />
-              <span>Alagamentos na Zona (CGE-SP)</span>
-            </CardTitle>
-            {decision.flooding.cgeDate ? (
-              <Badge variant="outline">Data CGE: {decision.flooding.cgeDate}</Badge>
-            ) : null}
-          </div>
-          <div className="flex flex-wrap gap-1.5 pt-1">
-            <Badge variant="secondary">Ativos: {decision.flooding.activeInZoneCount}</Badge>
-            <Badge className={getSeverityMeta(3).badgeClassName}>
-              Intransitáveis: {decision.flooding.impassableInZoneCount}
-            </Badge>
-            <Badge className={getSeverityMeta(2).badgeClassName}>
-              Transitáveis: {decision.flooding.passableInZoneCount}
-            </Badge>
-          </div>
+        <CardHeader className={cn('p-0 sm:p-0', isFloodingOpen ? 'pb-3 sm:pb-3' : undefined)}>
+          <button
+            type="button"
+            aria-expanded={isFloodingOpen}
+            aria-controls={floodingContentId}
+            onClick={() => setIsFloodingOpen((open) => !open)}
+            className="flex w-full flex-col gap-2 rounded-xl p-4 text-left transition-colors hover:bg-accent/40 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none sm:p-5"
+          >
+            <div className="flex w-full flex-wrap items-center justify-between gap-2">
+              <CardTitle className="flex items-center gap-1.5">
+                <Waves className="h-4 w-4 text-primary" aria-hidden="true" />
+                <span>Alagamentos na Zona (CGE-SP)</span>
+              </CardTitle>
+              <div className="flex items-center gap-2">
+                {decision.flooding.cgeDate ? (
+                  <Badge variant="outline">Data CGE: {decision.flooding.cgeDate}</Badge>
+                ) : null}
+                <ChevronDown
+                  className={cn(
+                    'h-4 w-4 text-muted-foreground transition-transform duration-150',
+                    isFloodingOpen ? 'rotate-180' : undefined,
+                  )}
+                  aria-hidden="true"
+                />
+              </div>
+            </div>
+            <div className="flex flex-wrap gap-1.5">
+              <Badge variant="secondary">Ativos: {decision.flooding.activeInZoneCount}</Badge>
+              <Badge className={getSeverityMeta(3).badgeClassName}>
+                Intransitáveis: {decision.flooding.impassableInZoneCount}
+              </Badge>
+              <Badge className={getSeverityMeta(2).badgeClassName}>
+                Transitáveis: {decision.flooding.passableInZoneCount}
+              </Badge>
+            </div>
+          </button>
         </CardHeader>
-        <CardContent>
-          {decision.sources.floodingMonitor.status === 'skipped' ? (
-            <EmptyState
-              icon={<Droplets className="h-4 w-4" aria-hidden="true" />}
-              title="Sem cobertura CGE-SP para esta coordenada"
-              description="O monitoramento de vias alagadas do CGE-SP aplica-se apenas à Capital de São Paulo."
-            />
-          ) : decision.flooding.pointsInZone.length === 0 ? (
-            <EmptyState
-              icon={<Droplets className="h-4 w-4" aria-hidden="true" />}
-              title="Nenhum alagamento registrado na zona"
-              description="Não há ocorrências ativas ou no histórico consultado para esta zona."
-            />
-          ) : (
-            <ul className="space-y-2">
-              {decision.flooding.pointsInZone.map((point, index) => {
-                const statusBadge = getFloodingPointBadge(point)
-                return (
-                  <li
-                    key={`${point.street}-${point.timeWindow ?? 'na'}-${index}`}
-                    className="space-y-1 rounded-lg border border-border bg-muted/30 p-2.5 text-xs"
-                  >
-                    <div className="flex flex-wrap items-start justify-between gap-2">
-                      <div>
-                        <p className="font-semibold text-foreground">{point.street}</p>
-                        <p className="text-[11px] text-muted-foreground">
-                          {point.neighborhood} • {point.zone}
-                        </p>
+        {isFloodingOpen ? (
+          <CardContent id={floodingContentId}>
+            {decision.sources.floodingMonitor.status === 'skipped' ? (
+              <EmptyState
+                icon={<Droplets className="h-4 w-4" aria-hidden="true" />}
+                title="Sem cobertura CGE-SP para esta coordenada"
+                description="O monitoramento de vias alagadas do CGE-SP aplica-se apenas à Capital de São Paulo."
+              />
+            ) : decision.flooding.pointsInZone.length === 0 ? (
+              <EmptyState
+                icon={<Droplets className="h-4 w-4" aria-hidden="true" />}
+                title="Nenhum alagamento registrado na zona"
+                description="Não há ocorrências ativas ou no histórico consultado para esta zona."
+              />
+            ) : (
+              <ul className="space-y-2">
+                {decision.flooding.pointsInZone.map((point, index) => {
+                  const statusBadge = getFloodingPointBadge(point)
+                  return (
+                    <li
+                      key={`${point.street}-${point.timeWindow ?? 'na'}-${index}`}
+                      className="space-y-1 rounded-lg border border-border bg-muted/30 p-2.5 text-xs"
+                    >
+                      <div className="flex flex-wrap items-start justify-between gap-2">
+                        <div>
+                          <p className="font-semibold text-foreground">{point.street}</p>
+                          <p className="text-[11px] text-muted-foreground">
+                            {point.neighborhood} • {point.zone}
+                          </p>
+                        </div>
+                        <Badge className={statusBadge.className}>{statusBadge.label}</Badge>
                       </div>
-                      <Badge className={statusBadge.className}>{statusBadge.label}</Badge>
-                    </div>
-                    {point.reference ? (
-                      <p className="text-[11px] text-muted-foreground">
-                        Referência: {point.reference}
-                      </p>
-                    ) : null}
-                    {(point.direction || point.timeWindow) ? (
-                      <p className="text-[11px] text-muted-foreground">
-                        {point.direction ? `Sentido: ${point.direction}` : ''}
-                        {point.direction && point.timeWindow ? ' • ' : ''}
-                        {point.timeWindow ? `Horário: ${point.timeWindow}` : ''}
-                      </p>
-                    ) : null}
-                  </li>
-                )
-              })}
-            </ul>
-          )}
-        </CardContent>
+                      {point.reference ? (
+                        <p className="text-[11px] text-muted-foreground">
+                          Referência: {point.reference}
+                        </p>
+                      ) : null}
+                      {(point.direction || point.timeWindow) ? (
+                        <p className="text-[11px] text-muted-foreground">
+                          {point.direction ? `Sentido: ${point.direction}` : ''}
+                          {point.direction && point.timeWindow ? ' • ' : ''}
+                          {point.timeWindow ? `Horário: ${point.timeWindow}` : ''}
+                        </p>
+                      ) : null}
+                    </li>
+                  )
+                })}
+              </ul>
+            )}
+          </CardContent>
+        ) : null}
       </Card>
 
       <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="flex items-center gap-1.5">
-            <ShieldAlert className="h-4 w-4 text-primary" aria-hidden="true" />
-            <span>Avisos Oficiais (INMET)</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          {decision.officialAlerts.length === 0 ? (
-            <EmptyState
-              icon={<AlertTriangle className="h-4 w-4" aria-hidden="true" />}
-              title="Sem avisos oficiais INMET vigentes"
-              description="Nenhum alerta meteorológico oficial intercepta este local no momento."
-            />
-          ) : (
-            <div className="space-y-3">
-              {decision.officialAlerts.map((officialAlert) => {
-                const alertSeverity = getSeverityMeta(severityRankToLevel(officialAlert.severityRank))
-                return (
-                  <div
-                    key={officialAlert.id}
-                    className="space-y-2 rounded-lg border border-border bg-muted/30 p-3 text-xs"
-                  >
-                    <div className="flex flex-wrap items-start justify-between gap-2">
-                      <div>
-                        <p className="font-semibold text-foreground">{officialAlert.title}</p>
-                        <p className="text-[11px] text-muted-foreground">
-                          Vigência: {formatDateTimeBr(officialAlert.startsAt)} até{' '}
-                          {formatDateTimeBr(officialAlert.endsAt)}
-                        </p>
-                      </div>
-                      <Badge className={alertSeverity.badgeClassName}>
-                        {officialAlert.severity}
-                      </Badge>
-                    </div>
-
-                    <div className="flex flex-wrap items-center gap-1.5">
-                      <Badge variant="outline">Código: {officialAlert.code}</Badge>
-                      {officialAlert.matchedBy.map((matchType) => (
-                        <Badge key={matchType} variant="secondary">
-                          Match: {matchType === 'ibge' ? 'Código IBGE' : 'Polígono GeoJSON'}
-                        </Badge>
-                      ))}
-                    </div>
-
-                    {officialAlert.risks.length > 0 ? (
-                      <div>
-                        <p className="font-medium text-foreground">Riscos previstos:</p>
-                        <ul className="mt-1 list-disc space-y-0.5 pl-4 text-muted-foreground">
-                          {officialAlert.risks.map((risk) => (
-                            <li key={risk}>{risk}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    ) : null}
-
-                    {officialAlert.instructions.length > 0 ? (
-                      <div>
-                        <p className="font-medium text-foreground">Instruções:</p>
-                        <ul className="mt-1 list-disc space-y-0.5 pl-4 text-muted-foreground">
-                          {officialAlert.instructions.map((instruction) => (
-                            <li key={instruction}>{instruction}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    ) : null}
-                  </div>
-                )
-              })}
+        <CardHeader className={cn('p-0 sm:p-0', isOfficialAlertsOpen ? 'pb-3 sm:pb-3' : undefined)}>
+          <button
+            type="button"
+            aria-expanded={isOfficialAlertsOpen}
+            aria-controls={officialAlertsContentId}
+            onClick={() => setIsOfficialAlertsOpen((open) => !open)}
+            className="flex w-full items-center justify-between gap-2 rounded-xl p-4 text-left transition-colors hover:bg-accent/40 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none sm:p-5"
+          >
+            <CardTitle className="flex items-center gap-1.5">
+              <ShieldAlert className="h-4 w-4 text-primary" aria-hidden="true" />
+              <span>Avisos Oficiais (INMET)</span>
+            </CardTitle>
+            <div className="flex items-center gap-2">
+              {decision.officialAlerts.length === 0 ? (
+                <Badge variant="secondary">0 vigentes</Badge>
+              ) : (
+                <Badge className={getSeverityMeta(severityRankToLevel(highestOfficialRank)).badgeClassName}>
+                  {decision.officialAlerts.length}{' '}
+                  {decision.officialAlerts.length === 1 ? 'vigente' : 'vigentes'}
+                </Badge>
+              )}
+              <ChevronDown
+                className={cn(
+                  'h-4 w-4 text-muted-foreground transition-transform duration-150',
+                  isOfficialAlertsOpen ? 'rotate-180' : undefined,
+                )}
+                aria-hidden="true"
+              />
             </div>
-          )}
-        </CardContent>
+          </button>
+        </CardHeader>
+        {isOfficialAlertsOpen ? (
+          <CardContent id={officialAlertsContentId}>
+            {decision.officialAlerts.length === 0 ? (
+              <EmptyState
+                icon={<AlertTriangle className="h-4 w-4" aria-hidden="true" />}
+                title="Sem avisos oficiais INMET vigentes"
+                description="Nenhum alerta meteorológico oficial intercepta este local no momento."
+              />
+            ) : (
+              <div className="space-y-3">
+                {decision.officialAlerts.map((officialAlert) => {
+                  const alertSeverity = getSeverityMeta(
+                    severityRankToLevel(officialAlert.severityRank),
+                  )
+                  return (
+                    <div
+                      key={officialAlert.id}
+                      className="space-y-2 rounded-lg border border-border bg-muted/30 p-3 text-xs"
+                    >
+                      <div className="flex flex-wrap items-start justify-between gap-2">
+                        <div>
+                          <p className="font-semibold text-foreground">{officialAlert.title}</p>
+                          <p className="text-[11px] text-muted-foreground">
+                            Vigência: {formatDateTimeBr(officialAlert.startsAt)} até{' '}
+                            {formatDateTimeBr(officialAlert.endsAt)}
+                          </p>
+                        </div>
+                        <Badge className={alertSeverity.badgeClassName}>
+                          {officialAlert.severity}
+                        </Badge>
+                      </div>
+
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        <Badge variant="outline">Código: {officialAlert.code}</Badge>
+                        {officialAlert.matchedBy.map((matchType) => (
+                          <Badge key={matchType} variant="secondary">
+                            Match: {matchType === 'ibge' ? 'Código IBGE' : 'Polígono GeoJSON'}
+                          </Badge>
+                        ))}
+                      </div>
+
+                      {officialAlert.risks.length > 0 ? (
+                        <div>
+                          <p className="font-medium text-foreground">Riscos previstos:</p>
+                          <ul className="mt-1 list-disc space-y-0.5 pl-4 text-muted-foreground">
+                            {officialAlert.risks.map((risk) => (
+                              <li key={risk}>{risk}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      ) : null}
+
+                      {officialAlert.instructions.length > 0 ? (
+                        <div>
+                          <p className="font-medium text-foreground">Instruções:</p>
+                          <ul className="mt-1 list-disc space-y-0.5 pl-4 text-muted-foreground">
+                            {officialAlert.instructions.map((instruction) => (
+                              <li key={instruction}>{instruction}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      ) : null}
+                    </div>
+                  )
+                })}
+              </div>
+            )}
+          </CardContent>
+        ) : null}
       </Card>
     </div>
   )
