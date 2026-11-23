@@ -54,6 +54,27 @@ function buildCustomPointMarkerIcon(): L.DivIcon {
   })
 }
 
+function focusMapOnRegion(map: L.Map, lat: number, lon: number) {
+  if (map.getZoom() < DEFAULT_MAP_ZOOM) {
+    map.setView([lat, lon], DEFAULT_MAP_ZOOM, { animate: true })
+    return
+  }
+
+  map.panTo([lat, lon], { animate: true })
+}
+
+function serializeTargetKey(target: AlertTarget | null): string | null {
+  if (!target) {
+    return null
+  }
+
+  if (target.kind === 'region') {
+    return `region:${target.regionId}`
+  }
+
+  return `coordinates:${target.lat}:${target.lon}`
+}
+
 export function SpMonitoringMap({
   regions,
   selectedTarget,
@@ -65,14 +86,17 @@ export function SpMonitoringMap({
   const containerRef = useRef<HTMLDivElement | null>(null)
   const mapRef = useRef<L.Map | null>(null)
   const layerGroupRef = useRef<L.LayerGroup | null>(null)
+  const regionsRef = useRef<OohAlertDecision[]>(regions)
+  const lastFocusedTargetKeyRef = useRef<string | null>(null)
 
   const onSelectRegionRef = useRef(onSelectRegion)
   const onSelectCoordinatesRef = useRef(onSelectCoordinates)
 
   useEffect(() => {
+    regionsRef.current = regions
     onSelectRegionRef.current = onSelectRegion
     onSelectCoordinatesRef.current = onSelectCoordinates
-  }, [onSelectRegion, onSelectCoordinates])
+  }, [regions, onSelectRegion, onSelectCoordinates])
 
   useEffect(() => {
     const container = containerRef.current
@@ -148,6 +172,11 @@ export function SpMonitoringMap({
 
       marker.on('click', (event: L.LeafletMouseEvent) => {
         L.DomEvent.stopPropagation(event)
+        lastFocusedTargetKeyRef.current = serializeTargetKey({
+          kind: 'region',
+          regionId: region.location.id,
+        })
+        focusMapOnRegion(map, region.location.latitude, region.location.longitude)
         onSelectRegionRef.current(region.location.id)
       })
 
@@ -177,9 +206,51 @@ export function SpMonitoringMap({
       )
 
       customMarker.addTo(layerGroup)
-      map.panTo([selectedTarget.lat, selectedTarget.lon], { animate: true })
     }
   }, [regions, selectedTarget, customDecision])
+
+  const targetKey = serializeTargetKey(selectedTarget)
+
+  useEffect(() => {
+    const map = mapRef.current
+    if (!map || !selectedTarget || !targetKey) {
+      return
+    }
+
+    if (lastFocusedTargetKeyRef.current === null) {
+      lastFocusedTargetKeyRef.current = targetKey
+      return
+    }
+
+    if (lastFocusedTargetKeyRef.current === targetKey) {
+      return
+    }
+
+    lastFocusedTargetKeyRef.current = targetKey
+
+    if (selectedTarget.kind === 'coordinates') {
+      map.panTo([selectedTarget.lat, selectedTarget.lon], { animate: true })
+      return
+    }
+
+    const targetRegion = regionsRef.current.find(
+      (region) => region.location.id === selectedTarget.regionId,
+    )
+    if (targetRegion) {
+      focusMapOnRegion(map, targetRegion.location.latitude, targetRegion.location.longitude)
+    }
+  }, [targetKey, selectedTarget])
+
+  const handleSelectRegionFromList = (region: OohAlertDecision) => {
+    lastFocusedTargetKeyRef.current = serializeTargetKey({
+      kind: 'region',
+      regionId: region.location.id,
+    })
+    if (mapRef.current) {
+      focusMapOnRegion(mapRef.current, region.location.latitude, region.location.longitude)
+    }
+    onSelectRegion(region.location.id)
+  }
 
   const handleRecenterMap = () => {
     mapRef.current?.setView(SAO_PAULO_CENTER, DEFAULT_MAP_ZOOM, { animate: true })
@@ -295,7 +366,7 @@ export function SpMonitoringMap({
                     key={region.location.id}
                     type="button"
                     aria-pressed={isSelected}
-                    onClick={() => onSelectRegion(region.location.id)}
+                    onClick={() => handleSelectRegionFromList(region)}
                     className={cn(
                       'flex flex-col items-start gap-1.5 rounded-lg border p-2.5 text-left transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none',
                       isSelected

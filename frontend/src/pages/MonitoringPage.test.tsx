@@ -16,6 +16,9 @@ import { MonitoringPage } from './MonitoringPage'
 
 const leafletMockState = vi.hoisted(() => ({
   clickHandler: null as ((event: { latlng: { lat: number; lng: number } }) => void) | null,
+  panTo: vi.fn(),
+  setView: vi.fn(),
+  getZoom: vi.fn(() => 11),
 }))
 
 vi.mock('leaflet', () => {
@@ -28,8 +31,9 @@ vi.mock('leaflet', () => {
     }),
     off: vi.fn(),
     remove: vi.fn(),
-    setView: vi.fn(),
-    panTo: vi.fn(),
+    setView: leafletMockState.setView,
+    panTo: leafletMockState.panTo,
+    getZoom: leafletMockState.getZoom,
   }
 
   const layerGroupInstance = {
@@ -124,9 +128,12 @@ describe('MonitoringPage integration flow', () => {
     expect(screen.getByText('Gatilho OOH ativo: 1/2')).toBeInTheDocument()
     expect(screen.getByText('Open-Meteo')).toBeInTheDocument()
     expect(screen.getByText('ALERTA CRÍTICO DE ALAGAMENTO — Butantã')).toBeInTheDocument()
+    expect(leafletMockState.panTo).not.toHaveBeenCalled()
+    expect(leafletMockState.setView).not.toHaveBeenCalled()
 
     await user.click(screen.getByRole('button', { name: /Itaquera/i }))
     expect(screen.getByText('CONDIÇÕES NORMAIS — Itaquera')).toBeInTheDocument()
+    expect(leafletMockState.panTo).toHaveBeenCalledWith([-23.5419, -46.4563], { animate: true })
 
     await user.click(screen.getByRole('button', { name: /Dia Chuvoso Real \(CGE 15\/01\/2026\)/i }))
     await waitFor(() => {
@@ -154,6 +161,7 @@ describe('MonitoringPage integration flow', () => {
     await waitFor(() => {
       expect(coordsMock).toHaveBeenCalledWith(-22.9099, -47.0626, { simulate: 'critical' })
     })
+    expect(leafletMockState.panTo).toHaveBeenCalledWith([-22.9099, -47.0626], { animate: true })
     expect(await screen.findByText('Ponto (-22.9099, -47.0626)')).toBeInTheDocument()
   })
 
