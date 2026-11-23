@@ -10,6 +10,16 @@ export interface RssFeedInput {
   generatedAt?: Date
 }
 
+export function buildFeedSelfLink(request: {
+  protocol: string
+  hostname: string
+  url: string
+  headers: { host?: string }
+}): string {
+  const host = request.headers.host ?? request.hostname
+  return `${request.protocol}://${host}${request.url}`
+}
+
 export function escapeXml(value: string): string {
   return value
     .replaceAll('&', '&amp;')
