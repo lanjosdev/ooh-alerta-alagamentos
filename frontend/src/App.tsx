@@ -1,10 +1,20 @@
+import { QueryClientProvider } from '@tanstack/react-query'
+import { Toaster } from 'sonner'
+import { EnvErrorView } from '@/components/patterns/EnvErrorView'
+import { envValidation } from '@/env'
+import { queryClient } from '@/lib/query-client'
+import { MonitoringPage } from '@/pages/MonitoringPage'
+
 export function App() {
+  if (!envValidation.success) {
+    return <EnvErrorView issues={envValidation.issues} />
+  }
+
   return (
-    <main className="min-h-screen bg-background text-foreground">
-      <div className="mx-auto max-w-6xl p-6">
-        <h1 className="text-xl font-semibold">OOH Alerta Alagamentos</h1>
-      </div>
-    </main>
+    <QueryClientProvider client={queryClient}>
+      <MonitoringPage />
+      <Toaster richColors position="top-right" />
+    </QueryClientProvider>
   )
 }
 
