@@ -125,8 +125,12 @@ export function PointDetailsPanel({
             <Badge variant="outline">Fora da cobertura CGE-SP</Badge>
           )}
 
-          <Badge variant="outline" className="font-semibold">
-            Score: {decision.riskScore} / 100
+          <Badge
+            variant="outline"
+            className="cursor-help font-semibold"
+            title="Índice de risco de alagamento: 0–29 Normal • 30–59 Atenção • 60–84 Alerta • 85–100 Crítico"
+          >
+            Risco: {decision.riskScore} / 100
           </Badge>
 
           <Badge
