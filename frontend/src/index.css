@@ -156,14 +156,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
+  width: 22px;
+  height: 22px;
   border-radius: 9999px;
   border: 2.5px solid var(--card);
-  color: var(--card);
-  font-size: 11px;
-  font-weight: 700;
-  line-height: 1;
   box-shadow: 0 3px 10px oklch(0.195 0.02 257.417 / 0.28);
   transition: transform 150ms ease, box-shadow 150ms ease;
 }
@@ -178,7 +174,6 @@
 
 .ooh-map-marker--1 {
   background-color: var(--severity-attention);
-  color: var(--severity-attention-fg);
 }
 
 .ooh-map-marker--2 {
@@ -191,9 +186,17 @@
 
 .ooh-map-marker--custom {
   background-color: var(--primary);
-  width: 30px;
-  height: 30px;
+  width: 24px;
+  height: 24px;
   border-width: 3px;
+}
+
+.ooh-map-marker--custom::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background-color: var(--card);
 }
 
 .ooh-map-marker--selected {

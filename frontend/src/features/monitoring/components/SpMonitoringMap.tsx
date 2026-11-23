@@ -39,18 +39,18 @@ function buildRegionMarkerIcon(decision: OohAlertDecision, isSelected: boolean):
 
   return L.divIcon({
     className: 'ooh-leaflet-icon',
-    iconSize: [28, 28],
-    iconAnchor: [14, 14],
-    html: `<div class="ooh-map-marker ${meta.markerClassName} ${selectedClass}">${decision.severityLevel}</div>`,
+    iconSize: [22, 22],
+    iconAnchor: [11, 11],
+    html: `<div class="ooh-map-marker ${meta.markerClassName} ${selectedClass}"></div>`,
   })
 }
 
 function buildCustomPointMarkerIcon(): L.DivIcon {
   return L.divIcon({
     className: 'ooh-leaflet-icon',
-    iconSize: [30, 30],
-    iconAnchor: [15, 15],
-    html: '<div class="ooh-map-marker ooh-map-marker--custom ooh-map-marker--selected">★</div>',
+    iconSize: [24, 24],
+    iconAnchor: [12, 12],
+    html: '<div class="ooh-map-marker ooh-map-marker--custom ooh-map-marker--selected"></div>',
   })
 }
 
