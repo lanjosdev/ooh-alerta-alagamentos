@@ -81,7 +81,8 @@ cd backend
 npm run typecheck   # Verificação estrita TypeScript (tsc --noEmit)
 npm run test        # Suíte offline e determinística (Vitest)
 npm run build       # Compilação de produção para backend/build/
-npm run smoke:live  # Validação integrada ao vivo contra Open-Meteo, INMET e CGE-SP
+npm run smoke:live       # Smoke test ao vivo contra Open-Meteo, INMET e CGE-SP
+npm run validate:routes  # Validação E2E HTTP real de todos os 8 blocos do roteiro (aceita BASE_URL opcional)
 ```
 
 ---

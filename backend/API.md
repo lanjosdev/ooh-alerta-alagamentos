@@ -214,4 +214,11 @@ Feed RSS 2.0 individual por coordenada geográfica (aceita `lat`, `lon`, `cgeDat
   cd backend
   npm run smoke:live
   ```
-  > Em ambientes Windows com cadeia corporativa/certificados no repositório do SO, os scripts `dev`, `start` e `smoke:live` utilizam `--use-system-ca` para validação TLS nativa com `fetch`.
+- **Validação E2E completa de todas as rotas (8 blocos do roteiro HTTP real):**
+  ```bash
+  cd backend
+  npm run validate:routes
+  # Opcional: apontar contra uma instância já rodando (ex.: npm run dev)
+  # BASE_URL=http://localhost:3333 npm run validate:routes
+  ```
+  > Em ambientes Windows com cadeia corporativa/certificados no repositório do SO, os scripts `dev`, `start`, `smoke:live` e `validate:routes` utilizam `--use-system-ca` para validação TLS nativa com `fetch`.

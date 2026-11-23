@@ -10,7 +10,8 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "smoke:live": "tsx --use-system-ca scripts/smoke-live.ts"
+    "smoke:live": "tsx --use-system-ca scripts/smoke-live.ts",
+    "validate:routes": "tsx --use-system-ca scripts/validate-routes.ts"
   },
   "dependencies": {
     "@fastify/cors": "^11.3.0",
