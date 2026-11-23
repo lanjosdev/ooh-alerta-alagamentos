@@ -1,0 +1,32 @@
+{
+  "latitude": -23.585238,
+  "longitude": -46.754486,
+  "generationtime_ms": 0.14,
+  "utc_offset_seconds": -10800,
+  "timezone": "America/Sao_Paulo",
+  "timezone_abbreviation": "GMT-3",
+  "elevation": 748,
+  "hourly_units": {
+    "time": "iso8601",
+    "precipitation_probability": "%",
+    "precipitation": "mm",
+    "weather_code": "wmo code"
+  },
+  "hourly": {
+    "time": [
+      "2026-11-23T12:00",
+      "2026-11-23T13:00",
+      "2026-11-23T14:00",
+      "2026-11-23T15:00",
+      "2026-11-23T16:00",
+      "2026-11-23T17:00",
+      "2026-11-23T18:00",
+      "2026-11-23T19:00",
+      "2026-11-23T20:00",
+      "2026-11-23T21:00"
+    ],
+    "precipitation_probability": [20, 35, 80, 90, 75, 50, 40, 25, 15, 10],
+    "precipitation": [0, 0.2, 6.4, 18.2, 4.1, 1.3, 0.8, 0.2, 0, 0],
+    "weather_code": [3, 61, 80, 95, 63, 61, 51, 3, 2, 1]
+  }
+}
