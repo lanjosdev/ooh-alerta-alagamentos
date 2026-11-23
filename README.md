@@ -15,12 +15,16 @@ Plataforma tecnológica para transformar telas digitais de mídia OOH (como rel�
 ooh-alerta-alagamentos/
 ├── AGENTS.md                  # Diretrizes globais de governança e código
 ├── README.md                  # Visão geral do repositório
-└── backend/                   # API Fastify v5 + TypeScript + Zod + Swagger + Vitest
-    ├── AGENTS.md              # Diretrizes arquiteturais do backend
-    ├── API.md                 # Contrato dos endpoints REST e RSS 2.0
-    ├── docs/architecture.md   # Blueprint técnico, fluxos e roadmap de provedores
-    ├── scripts/smoke-live.ts  # Verificação integrada ao vivo (Open-Meteo, INMET, CGE-SP)
-    └── src/                   # Código-fonte da aplicação
+├── backend/                   # API Fastify v5 + TypeScript + Zod + Swagger + Vitest
+│   ├── AGENTS.md              # Diretrizes arquiteturais do backend
+│   ├── API.md                 # Contrato dos endpoints REST e RSS 2.0
+│   ├── docs/architecture.md   # Blueprint técnico, fluxos e roadmap de provedores
+│   ├── scripts/smoke-live.ts  # Verificação integrada ao vivo (Open-Meteo, INMET, CGE-SP)
+│   └── src/                   # Código-fonte da aplicação
+└── frontend/                  # SPA React 19 + Vite + Tailwind v4 + TanStack Query + Leaflet
+    ├── AGENTS.md              # Diretrizes arquiteturais e gates do frontend
+    ├── README.md              # Guia de execução e testes do frontend
+    └── src/                   # Páginas, componentes, hooks, services e utilitários
 ```
 
 ---
@@ -32,9 +36,11 @@ ooh-alerta-alagamentos/
 
 ---
 
-## Configuração e Execução do Backend
+## Configuração e Execução (Backend + Frontend)
 
-Execute todos os comandos dentro da pasta `backend/`:
+Execute os comandos de cada aplicação dentro de seu respectivo diretório (`backend/` ou `frontend/`).
+
+### 1. Backend (`backend/`)
 
 ```bash
 cd backend
@@ -42,6 +48,17 @@ npm install
 cp .env.example .env
 npm run dev
 ```
+
+### 2. Frontend (`frontend/`)
+
+```bash
+cd frontend
+npm install
+cp .env.example .env
+npm run dev
+```
+
+> Consulte [`frontend/README.md`](./frontend/README.md) para detalhes das variáveis `VITE_API_BASE_URL` / `VITE_API_TIMEOUT_MS`, cenários de demonstração (`ENABLE_SIMULATION_PARAMS=true` no backend) e gates de qualidade do frontend.
 
 ### Variáveis de Ambiente (`backend/.env`)
 
@@ -90,6 +107,8 @@ npm run validate:routes  # Validação E2E HTTP real de todos os 8 blocos do rot
 ## Documentação Adicional
 
 - [Diretrizes do Backend (`backend/AGENTS.md`)](./backend/AGENTS.md)
+- [Diretrizes do Frontend (`frontend/AGENTS.md`)](./frontend/AGENTS.md)
+- [Guia do Frontend (`frontend/README.md`)](./frontend/README.md)
 - [Contrato da API (`backend/API.md`)](./backend/API.md)
 - [Arquitetura da Plataforma (`backend/docs/architecture.md`)](./backend/docs/architecture.md)
 
