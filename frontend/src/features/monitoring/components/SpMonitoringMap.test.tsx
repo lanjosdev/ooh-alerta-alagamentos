@@ -105,4 +105,38 @@ describe('SpMonitoringMap camera centering', () => {
       animate: true,
     })
   })
+
+  it('shows and hides interactive legend tooltips on hover for severities and custom point', async () => {
+    const user = userEvent.setup()
+
+    render(
+      <SpMonitoringMap
+        regions={[mockRegionButanta, mockRegionItaquera]}
+        selectedTarget={{ kind: 'region', regionId: 'zona-oeste-butanta' }}
+        customDecision={null}
+        onSelectRegion={vi.fn()}
+        onSelectCoordinates={vi.fn()}
+      />,
+    )
+
+    expect(screen.queryByRole('tooltip')).not.toBeInTheDocument()
+
+    const criticalLegendButton = screen.getByRole('button', { name: 'Crítico' })
+    await user.hover(criticalLegendButton)
+
+    const criticalTooltip = screen.getByRole('tooltip')
+    expect(criticalTooltip).toHaveTextContent(
+      'Alagamento ativo intransitável na zona ou chuva CGE ≥ 40 mm com pico ≥ 10 mm/h.',
+    )
+
+    const customPointLegendButton = screen.getByRole('button', { name: 'Ponto consultado' })
+    await user.hover(customPointLegendButton)
+
+    expect(screen.getByRole('tooltip')).toHaveTextContent(
+      'Coordenada clicada livremente no mapa (CGE-SP na Capital ou Open-Meteo + INMET fora de SP).',
+    )
+
+    await user.unhover(customPointLegendButton)
+    expect(screen.queryByRole('tooltip')).not.toBeInTheDocument()
+  })
 })

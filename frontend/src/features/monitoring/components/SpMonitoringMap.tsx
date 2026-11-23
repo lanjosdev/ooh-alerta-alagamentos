@@ -1,6 +1,6 @@
 import L from 'leaflet'
 import { Crosshair, MapPin, Navigation } from 'lucide-react'
-import { useEffect, useRef } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 import { EmptyState } from '@/components/patterns/EmptyState'
 import { SeverityBadge } from '@/components/patterns/SeverityBadge'
 import { Badge } from '@/components/ui/badge'
@@ -14,6 +14,32 @@ import type { AlertTarget, OohAlertDecision, SeverityLevel } from '@/types/alert
 const SAO_PAULO_CENTER: [number, number] = [-23.5505, -46.6333]
 const DEFAULT_MAP_ZOOM = 11
 const LEGEND_LEVELS: readonly SeverityLevel[] = [0, 1, 2, 3]
+
+interface LegendItem {
+  id: string
+  label: string
+  dotClassName: string
+  description: string
+}
+
+const LEGEND_ITEMS: readonly LegendItem[] = [
+  ...LEGEND_LEVELS.map((level) => {
+    const meta = getSeverityMeta(level)
+    return {
+      id: `severity-${level}`,
+      label: meta.label,
+      dotClassName: meta.dotClassName,
+      description: meta.description,
+    }
+  }),
+  {
+    id: 'custom-point',
+    label: 'Ponto consultado',
+    dotClassName: 'bg-primary',
+    description:
+      'Coordenada clicada livremente no mapa (CGE-SP na Capital ou Open-Meteo + INMET fora de SP).',
+  },
+]
 
 export interface SpMonitoringMapProps {
   regions: OohAlertDecision[]
@@ -88,6 +114,9 @@ export function SpMonitoringMap({
   const layerGroupRef = useRef<L.LayerGroup | null>(null)
   const regionsRef = useRef<OohAlertDecision[]>(regions)
   const lastFocusedTargetKeyRef = useRef<string | null>(null)
+  const [activeLegendId, setActiveLegendId] = useState<string | null>(null)
+  const legendTooltipId = useId()
+  const activeLegendItem = LEGEND_ITEMS.find((item) => item.id === activeLegendId) ?? null
 
   const onSelectRegionRef = useRef(onSelectRegion)
   const onSelectCoordinatesRef = useRef(onSelectCoordinates)
@@ -316,23 +345,65 @@ export function SpMonitoringMap({
             </Button>
           </div>
 
-          <div className="pointer-events-none absolute bottom-3 left-3 z-10 flex flex-wrap items-center gap-2 rounded-md border border-border bg-card/95 px-2.5 py-1.5 text-[11px] shadow-xs backdrop-blur-xs">
-            {LEGEND_LEVELS.map((level) => {
-              const meta = getSeverityMeta(level)
-              return (
-                <span key={level} className="inline-flex items-center gap-1 text-foreground">
+          <div
+            className="pointer-events-auto absolute bottom-3 left-3 z-10 max-w-[calc(100%-1.5rem)]"
+            onClick={(event) => event.stopPropagation()}
+            onMouseDown={(event) => event.stopPropagation()}
+            onMouseLeave={() => setActiveLegendId(null)}
+          >
+            {activeLegendItem ? (
+              <div
+                id={legendTooltipId}
+                role="tooltip"
+                className="mb-2 w-72 max-w-full rounded-md border border-border bg-popover p-2.5 text-[11px] text-popover-foreground shadow-md"
+              >
+                <div className="flex items-center gap-1.5 font-semibold">
                   <span
-                    className={cn('h-2.5 w-2.5 rounded-full', meta.dotClassName)}
+                    className={cn('h-2.5 w-2.5 shrink-0 rounded-full', activeLegendItem.dotClassName)}
                     aria-hidden="true"
                   />
-                  <span>{meta.label}</span>
-                </span>
-              )
-            })}
-            <span className="inline-flex items-center gap-1 text-foreground">
-              <span className="h-2.5 w-2.5 rounded-full bg-primary" aria-hidden="true" />
-              <span>Ponto consultado</span>
-            </span>
+                  <span>{activeLegendItem.label}</span>
+                </div>
+                <p className="mt-1 leading-relaxed text-muted-foreground">
+                  {activeLegendItem.description}
+                </p>
+              </div>
+            ) : null}
+
+            <div
+              role="group"
+              aria-label="Legenda de severidade do mapa"
+              className="flex flex-wrap items-center gap-2 rounded-md border border-border bg-card/95 px-2.5 py-1.5 text-[11px] shadow-xs backdrop-blur-xs"
+            >
+              {LEGEND_ITEMS.map((item) => {
+                const isActive = activeLegendId === item.id
+                return (
+                  <button
+                    key={item.id}
+                    type="button"
+                    aria-describedby={isActive ? legendTooltipId : undefined}
+                    onMouseEnter={() => setActiveLegendId(item.id)}
+                    onMouseLeave={() =>
+                      setActiveLegendId((current) => (current === item.id ? null : current))
+                    }
+                    onFocus={() => setActiveLegendId(item.id)}
+                    onBlur={() =>
+                      setActiveLegendId((current) => (current === item.id ? null : current))
+                    }
+                    onClick={() =>
+                      setActiveLegendId((current) => (current === item.id ? null : item.id))
+                    }
+                    className="inline-flex cursor-help items-center gap-1 rounded px-0.5 text-foreground decoration-dotted underline-offset-2 hover:underline focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+                  >
+                    <span
+                      className={cn('h-2.5 w-2.5 rounded-full', item.dotClassName)}
+                      aria-hidden="true"
+                    />
+                    <span>{item.label}</span>
+                  </button>
+                )
+              })}
+            </div>
           </div>
         </div>
 

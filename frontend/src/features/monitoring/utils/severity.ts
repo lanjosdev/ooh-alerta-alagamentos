@@ -23,7 +23,7 @@ const SEVERITY_META_BY_LEVEL: Readonly<Record<SeverityLevel, SeverityMeta>> = {
     apiLabel: 'NORMAL',
     label: 'Normal',
     shortLabel: 'NOR',
-    description: 'Sem gatilhos críticos ativos para operação OOH.',
+    description: 'Sem gatilho OOH ativo — exibe campanha publicitária padrão.',
     badgeClassName: 'bg-severity-normal-bg text-severity-normal-fg border-severity-normal-border',
     surfaceClassName:
       'bg-severity-normal-bg/70 text-severity-normal-fg border-severity-normal-border',
@@ -35,7 +35,7 @@ const SEVERITY_META_BY_LEVEL: Readonly<Record<SeverityLevel, SeverityMeta>> = {
     apiLabel: 'ATENCAO',
     label: 'Atenção',
     shortLabel: 'ATE',
-    description: 'Chuva prevista ou aviso potencial exigindo atenção preventiva.',
+    description: 'Chuva prevista (≥ 60% e ≥ 5 mm/h em 2h) ou aviso INMET nível 1.',
     badgeClassName:
       'bg-severity-attention-bg text-severity-attention-fg border-severity-attention-border',
     surfaceClassName:
@@ -48,7 +48,8 @@ const SEVERITY_META_BY_LEVEL: Readonly<Record<SeverityLevel, SeverityMeta>> = {
     apiLabel: 'ALERTA',
     label: 'Alerta',
     shortLabel: 'ALE',
-    description: 'Chuva forte, aviso severo ou alagamento transitável na zona.',
+    description:
+      'Alagamento ativo transitável na zona, chuva CGE ≥ 20 mm, chuva forte prevista ou INMET nível ≥ 2.',
     badgeClassName: 'bg-severity-alert-bg text-severity-alert-fg border-severity-alert-border',
     surfaceClassName:
       'bg-severity-alert-bg/75 text-severity-alert-fg border-severity-alert-border',
@@ -60,7 +61,8 @@ const SEVERITY_META_BY_LEVEL: Readonly<Record<SeverityLevel, SeverityMeta>> = {
     apiLabel: 'CRITICO',
     label: 'Crítico',
     shortLabel: 'CRI',
-    description: 'Alagamento intransitável ou chuva extrema; override OOH recomendado.',
+    description:
+      'Alagamento ativo intransitável na zona ou chuva CGE ≥ 40 mm com pico ≥ 10 mm/h.',
     badgeClassName:
       'bg-severity-critical-bg text-severity-critical-fg border-severity-critical-border',
     surfaceClassName:
