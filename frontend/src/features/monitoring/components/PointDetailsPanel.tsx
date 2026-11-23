@@ -153,7 +153,7 @@ export function PointDetailsPanel({
         </div>
       </CardHeader>
 
-      <CardContent className="pt-4">
+      <CardContent className="pt-4 sm:pt-5">
         <Tabs
           value={activeTab}
           onValueChange={(nextValue) => onTabChange(nextValue as PointDetailsTabId)}

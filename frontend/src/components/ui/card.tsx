@@ -31,7 +31,7 @@ export function CardDescription({ className, ...props }: HTMLAttributes<HTMLPara
 }
 
 export function CardContent({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
-  return <div className={cn('p-4 pt-0 sm:p-5 sm:pt-0', className)} {...props} />
+  return <div className={cn('px-4 pt-0 pb-4 sm:px-5 sm:pb-5', className)} {...props} />
 }
 
 export function CardFooter({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
