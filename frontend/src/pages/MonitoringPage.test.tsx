@@ -20,6 +20,8 @@ const leafletMockState = vi.hoisted(() => ({
   setView: vi.fn(),
   getZoom: vi.fn(() => 11),
   popupIsOpen: false,
+  popupSetContent: vi.fn(),
+  popupOpenOn: vi.fn(),
 }))
 
 vi.mock('leaflet', () => {
@@ -50,9 +52,13 @@ vi.mock('leaflet', () => {
 
   const popupInstance = {
     setLatLng: vi.fn(() => popupInstance),
-    setContent: vi.fn(() => popupInstance),
-    openOn: vi.fn(() => {
+    setContent: vi.fn((html: string) => {
+      leafletMockState.popupSetContent(html)
+      return popupInstance
+    }),
+    openOn: vi.fn((map: unknown) => {
       leafletMockState.popupIsOpen = true
+      leafletMockState.popupOpenOn(map)
       return popupInstance
     }),
     close: vi.fn(() => {
@@ -117,6 +123,7 @@ function renderMonitoringPage() {
 
 describe('MonitoringPage integration flow', () => {
   beforeEach(() => {
+    vi.clearAllMocks()
     leafletMockState.clickHandler = null
     leafletMockState.popupIsOpen = false
   })
@@ -148,10 +155,15 @@ describe('MonitoringPage integration flow', () => {
     expect(screen.getByText('ALERTA CRÍTICO DE ALAGAMENTO — Butantã')).toBeInTheDocument()
     expect(leafletMockState.panTo).not.toHaveBeenCalled()
     expect(leafletMockState.setView).not.toHaveBeenCalled()
+    expect(leafletMockState.popupOpenOn).not.toHaveBeenCalled()
 
     await user.click(screen.getByRole('button', { name: /Itaquera/i }))
     expect(screen.getByText('CONDIÇÕES NORMAIS — Itaquera')).toBeInTheDocument()
     expect(leafletMockState.panTo).toHaveBeenCalledWith([-23.5419, -46.4563], { animate: true })
+    expect(leafletMockState.popupOpenOn).toHaveBeenCalled()
+    expect(String(leafletMockState.popupSetContent.mock.calls.at(-1)?.[0] ?? '')).toContain(
+      'Sem chuva no momento',
+    )
 
     await user.click(screen.getByRole('button', { name: /Dia Chuvoso Real \(CGE 15\/01\/2026\)/i }))
     await waitFor(() => {
@@ -181,6 +193,11 @@ describe('MonitoringPage integration flow', () => {
     })
     expect(leafletMockState.panTo).toHaveBeenCalledWith([-22.9099, -47.0626], { animate: true })
     expect(await screen.findByText('Ponto (-22.9099, -47.0626)')).toBeInTheDocument()
+    await waitFor(() => {
+      const latestHtml = String(leafletMockState.popupSetContent.mock.calls.at(-1)?.[0] ?? '')
+      expect(latestHtml).toContain('Fora da cobertura CGE-SP')
+      expect(latestHtml).toContain('Chovendo agora')
+    })
   })
 
   it('shows friendly QueryErrorAlert with recovery action when simulation params are disabled on backend', async () => {
