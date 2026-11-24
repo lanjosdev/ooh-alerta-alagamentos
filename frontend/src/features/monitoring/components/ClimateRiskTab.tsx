@@ -20,6 +20,7 @@ import { EmptyState } from '@/components/patterns/EmptyState'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { resolveCurrentWeatherSummary } from '@/features/monitoring/utils/currentWeather'
 import {
   formatCoordinates,
   formatDateTimeBr,
@@ -97,8 +98,15 @@ export function ClimateRiskTab({ decision }: ClimateRiskTabProps) {
   const officialAlertsContentId = useId()
 
   const station = decision.flooding.stationRainfall
+  const currentGrid = decision.forecast?.current ?? null
   const currentHour = decision.forecast?.hourly[0] ?? null
-  const currentWeather = currentHour ? getWeatherCodeMetadata(currentHour.weatherCode) : null
+  const summary = resolveCurrentWeatherSummary(decision)
+  const rainStatusBadgeClassName =
+    summary.isRaining === true
+      ? 'bg-severity-attention-bg text-severity-attention-fg border-severity-attention-border'
+      : summary.isRaining === false
+        ? 'bg-status-ok-bg text-status-ok-fg border-transparent'
+        : 'bg-status-skipped-bg text-status-skipped-fg border-transparent'
   const highestOfficialRank = decision.officialAlerts.reduce<1 | 2 | 3>(
     (highest, alert) => (alert.severityRank > highest ? alert.severityRank : highest),
     1,
@@ -149,27 +157,65 @@ export function ClimateRiskTab({ decision }: ClimateRiskTabProps) {
               </div>
             </div>
           ) : (
-            <Alert variant="info">
-              <Info className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
-              <div>
-                <AlertTitle className="text-xs">Modo multi-município ativo</AlertTitle>
-                <AlertDescription>
-                  Fora da área de cobertura do CGE-SP — usando previsão por grade e avisos do INMET.
-                </AlertDescription>
-              </div>
-            </Alert>
+            <div className="space-y-3">
+              <Alert variant="info">
+                <Info className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
+                <div>
+                  <AlertTitle className="text-xs">Modo multi-município ativo</AlertTitle>
+                  <AlertDescription>
+                    Fora da área de cobertura do CGE-SP — usando previsão por grade e avisos do INMET.
+                  </AlertDescription>
+                </div>
+              </Alert>
+
+              {currentGrid ? (
+                <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
+                  <div className="rounded-lg border border-border bg-muted/40 p-2.5">
+                    <p className="text-[11px] text-muted-foreground">Temperatura</p>
+                    <p className="mt-0.5 text-base font-semibold text-foreground">
+                      {formatTemperatureC(summary.temperatureC)}
+                    </p>
+                  </div>
+                  <div className="rounded-lg border border-border bg-muted/40 p-2.5">
+                    <p className="text-[11px] text-muted-foreground">Umidade relativa</p>
+                    <p className="mt-0.5 text-base font-semibold text-foreground">
+                      {formatPercent(summary.humidityPercent)}
+                    </p>
+                  </div>
+                  <div className="col-span-2 rounded-lg border border-border bg-muted/40 p-2.5 sm:col-span-1">
+                    <p className="text-[11px] text-muted-foreground">Chuva atual</p>
+                    <p className="mt-0.5 text-base font-semibold text-foreground">
+                      {formatRainMm(summary.currentRainMm)}
+                    </p>
+                  </div>
+                </div>
+              ) : null}
+            </div>
           )}
 
-          {currentHour && currentWeather ? (
+          {summary.sourceKind !== 'unavailable' ? (
             <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-border bg-secondary/50 px-3 py-2 text-xs">
-              <div className="flex items-center gap-2 font-medium text-foreground">
-                <WeatherConditionIcon icon={currentWeather.icon} className="h-4 w-4 text-primary" />
-                <span>Condição na grade ({formatHourBr(currentHour.time)}):</span>
-                <span>{currentWeather.label}</span>
+              <div className="flex flex-wrap items-center gap-2 font-medium text-foreground">
+                <Badge className={rainStatusBadgeClassName}>{summary.rainStatusLabel}</Badge>
+                <div className="flex items-center gap-1.5">
+                  <WeatherConditionIcon icon={summary.icon} className="h-4 w-4 text-primary" />
+                  <span>
+                    {currentGrid ? 'Condição atual' : 'Condição na grade'}
+                    {summary.observedAt ? ` (${formatHourBr(summary.observedAt)})` : ''}:
+                  </span>
+                  <span>{summary.conditionLabel}</span>
+                </div>
               </div>
               <span className="text-muted-foreground">
-                {formatPercent(currentHour.precipitationProbabilityPercent)} •{' '}
-                {formatRainMm(currentHour.precipitationMm)}
+                {currentGrid
+                  ? station
+                    ? `Grade agora: ${formatRainMm(summary.currentRainMm)}`
+                    : currentHour
+                      ? `Chance na hora: ${formatPercent(currentHour.precipitationProbabilityPercent)}`
+                      : null
+                  : currentHour
+                    ? `${formatPercent(currentHour.precipitationProbabilityPercent)} • ${formatRainMm(currentHour.precipitationMm)}`
+                    : null}
               </span>
             </div>
           ) : null}
