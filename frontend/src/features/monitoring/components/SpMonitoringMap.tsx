@@ -157,8 +157,8 @@ export function SpMonitoringMap({
     const layerGroup = L.layerGroup().addTo(map)
     const popup = L.popup({
       className: 'ooh-map-popup',
-      maxWidth: 280,
-      minWidth: 248,
+      maxWidth: 304,
+      minWidth: 276,
       offset: [0, -10],
       autoPan: true,
       autoPanPaddingTopLeft: L.point(16, 56),

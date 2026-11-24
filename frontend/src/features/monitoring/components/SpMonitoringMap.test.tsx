@@ -205,9 +205,11 @@ describe('SpMonitoringMap camera centering and interactive popup', () => {
     expect(leafletMockState.popupSetLatLng).toHaveBeenCalledWith([-23.5419, -46.4563])
     const openedHtml = String(leafletMockState.popupSetContent.mock.calls.at(-1)?.[0] ?? '')
     expect(openedHtml).toContain('Itaquera')
-    expect(openedHtml).toContain('Campanha Padrão')
+    expect(openedHtml).toContain('Risco: Normal • 12/100')
+    expect(openedHtml).toContain('Alerta no OOH: Inativo')
+    expect(openedHtml).toContain('Campanha normal')
     expect(openedHtml).toContain('Sem chuva no momento')
-    expect(openedHtml).toContain('15% • 0,0 mm')
+    expect(openedHtml).toContain('15% de chance nas próx. 2h')
   })
 
   it('updates popup content in-place on 60s refresh without reopening and handles marker click & popupclose', () => {
@@ -249,7 +251,7 @@ describe('SpMonitoringMap camera centering and interactive popup', () => {
 
     expect(leafletMockState.popupOpenOn).toHaveBeenCalledTimes(1)
     const refreshedHtml = String(leafletMockState.popupSetContent.mock.calls.at(-1)?.[0] ?? '')
-    expect(refreshedHtml).toContain('Risco: 98/100')
+    expect(refreshedHtml).toContain('Risco: Crítico • 98/100')
 
     act(() => {
       leafletMockState.popupIsOpen = false
@@ -304,7 +306,9 @@ describe('SpMonitoringMap camera centering and interactive popup', () => {
 
     expect(leafletMockState.popupOpenOn).toHaveBeenCalledTimes(1)
     const campinasHtml = String(leafletMockState.popupSetContent.mock.calls.at(-1)?.[0] ?? '')
-    expect(campinasHtml).toContain('Chovendo agora • Chuva moderada • 22,8 °C')
+    expect(campinasHtml).toContain('Chovendo agora')
+    expect(campinasHtml).toContain('Chuva moderada')
+    expect(campinasHtml).toContain('22,8 °C')
     expect(campinasHtml).toContain('Fora da cobertura CGE-SP')
 
     rerender(
