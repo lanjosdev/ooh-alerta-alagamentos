@@ -165,13 +165,6 @@ export function MonitoringPage() {
             onSelectCoordinates={(coords) =>
               setSelectedTarget({ kind: 'coordinates', lat: coords.lat, lon: coords.lon })
             }
-            onClearCoordinates={() =>
-              setSelectedTarget(
-                fallbackRegion
-                  ? { kind: 'region', regionId: fallbackRegion.location.id }
-                  : null,
-              )
-            }
             onFocusDetails={handleFocusDetails}
             onToggleDetails={() => setIsDetailsOpen((open) => !open)}
           />

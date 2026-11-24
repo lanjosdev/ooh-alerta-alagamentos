@@ -1,5 +1,5 @@
 import L from 'leaflet'
-import { Crosshair, MapPin, Navigation, PanelRightClose, PanelRightOpen } from 'lucide-react'
+import { MapPin, Navigation, PanelRightClose, PanelRightOpen } from 'lucide-react'
 import { useEffect, useId, useRef, useState } from 'react'
 import { EmptyState } from '@/components/patterns/EmptyState'
 import { SeverityBadge } from '@/components/patterns/SeverityBadge'
@@ -58,7 +58,6 @@ export interface SpMonitoringMapProps {
   activePointName?: string | null
   onSelectRegion: (regionId: string) => void
   onSelectCoordinates: (coordinates: { lat: number; lon: number }) => void
-  onClearCoordinates?: () => void
   onFocusDetails?: () => void
   onToggleDetails?: () => void
 }
@@ -115,7 +114,6 @@ export function SpMonitoringMap({
   activePointName = null,
   onSelectRegion,
   onSelectCoordinates,
-  onClearCoordinates,
   onFocusDetails,
   onToggleDetails,
 }: SpMonitoringMapProps) {
@@ -433,20 +431,6 @@ export function SpMonitoringMap({
     onSelectRegion(region.location.id)
   }
 
-  const handleClearCustomCoordinates = () => {
-    if (popupRef.current?.isOpen()) {
-      isSyncingPopupRef.current = true
-      try {
-        popupRef.current.close()
-      } finally {
-        isSyncingPopupRef.current = false
-      }
-    }
-    openPopupTargetKeyRef.current = null
-    setIsPopupOpen(false)
-    onClearCoordinates?.()
-  }
-
   const handleRecenterMap = () => {
     mapRef.current?.setView(SAO_PAULO_CENTER, DEFAULT_MAP_ZOOM, { animate: true })
   }
@@ -502,25 +486,6 @@ export function SpMonitoringMap({
       </CardHeader>
 
       <CardContent className="space-y-4 p-4 sm:p-5">
-        {selectedTarget?.kind === 'coordinates' ? (
-          <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-border bg-secondary/70 px-3 py-2 text-xs">
-            <div className="flex items-center gap-2">
-              <Crosshair className="h-3.5 w-3.5 text-primary" aria-hidden="true" />
-              <span>
-                Consultando ponto avulso:{' '}
-                <strong className="font-mono">
-                  {formatCoordinates(selectedTarget.lat, selectedTarget.lon)}
-                </strong>
-              </span>
-            </div>
-            {onClearCoordinates ? (
-              <Button type="button" size="sm" variant="outline" onClick={handleClearCustomCoordinates}>
-                Voltar às regiões
-              </Button>
-            ) : null}
-          </div>
-        ) : null}
-
         <div className="relative overflow-hidden rounded-lg border border-border">
           <div
             ref={containerRef}
