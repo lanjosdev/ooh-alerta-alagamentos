@@ -8,6 +8,7 @@ const sampleForecast: RegionForecast = {
   gridLatitude: -23.56,
   gridLongitude: -46.72,
   timezone: 'America/Sao_Paulo',
+  current: null,
   maxRainProbabilityNext2hPercent: 85,
   expectedRainNext2hMm: 18,
   peakRainIntensityNext2hMmPerHour: 12,

@@ -78,6 +78,7 @@ describe('CGE-SP parser e provider', () => {
       stationName: 'Butantã',
       currentPeriodMm: 0.4,
       previousPeriodMm: 25.2,
+      recentDeltaMm: null,
       resetTime: '10:00:00',
       temperatureC: 25.6,
       humidityPercent: 75.1,
@@ -120,6 +121,38 @@ describe('CGE-SP parser e provider', () => {
     expect(points).toHaveLength(4)
     expect(points[2].neighborhood).toBe('Butantã')
     expect(station?.currentPeriodMm).toBe(0.4)
+  })
+
+  it('calcula recentDeltaMm na janela de 15 minutos e reinicia baseline após zeramento', async () => {
+    const baseHtml = readFixture('cge-estacao-butanta.html')
+    const readings = ['0.4 mm', '0.8 mm', '0.8 mm', '0.0 mm']
+    const timestamps = [0, 5 * 60_000, 10 * 60_000, 12 * 60_000]
+    let callIndex = 0
+
+    const provider = new CgeSpFloodingProvider({
+      nowFn: () => timestamps[Math.min(callIndex, timestamps.length - 1)],
+      fetchFn: vi.fn(async () => {
+        const value = readings[callIndex] ?? '0.0 mm'
+        const html = baseHtml.replace('0.4 mm', value)
+        return new Response(html, {
+          status: 200,
+          headers: { 'content-type': 'text/html;charset=UTF-8' },
+        })
+      }),
+    })
+
+    const first = await provider.getStationRainfall('1000842')
+    callIndex += 1
+    const second = await provider.getStationRainfall('1000842')
+    callIndex += 1
+    const third = await provider.getStationRainfall('1000842')
+    callIndex += 1
+    const afterReset = await provider.getStationRainfall('1000842')
+
+    expect(first?.recentDeltaMm).toBeNull()
+    expect(second?.recentDeltaMm).toBe(0.4)
+    expect(third?.recentDeltaMm).toBe(0.4)
+    expect(afterReset?.recentDeltaMm).toBeNull()
   })
 
   it('lança erro quando CGE-SP retorna erro HTTP', async () => {

@@ -1,5 +1,5 @@
 import L from 'leaflet'
-import { Crosshair, MapPin, Navigation } from 'lucide-react'
+import { MapPin, Navigation, PanelRightClose, PanelRightOpen } from 'lucide-react'
 import { useEffect, useId, useRef, useState } from 'react'
 import { EmptyState } from '@/components/patterns/EmptyState'
 import { SeverityBadge } from '@/components/patterns/SeverityBadge'
@@ -7,7 +7,14 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { formatCoordinates, formatPercent } from '@/features/monitoring/utils/formatters'
+import {
+  buildDecisionPopupHtml,
+  buildErrorPopupHtml,
+  buildLoadingPopupHtml,
+  escapeHtml,
+} from '@/features/monitoring/utils/mapPopupContent'
 import { getSeverityMeta } from '@/features/monitoring/utils/severity'
+import { getApiErrorMessage } from '@/lib/api-error'
 import { cn } from '@/lib/utils'
 import type { AlertTarget, OohAlertDecision, SeverityLevel } from '@/types/alerts'
 
@@ -45,18 +52,14 @@ export interface SpMonitoringMapProps {
   regions: OohAlertDecision[]
   selectedTarget: AlertTarget | null
   customDecision: OohAlertDecision | null
+  isCustomLoading?: boolean
+  customError?: unknown
+  isDetailsOpen?: boolean
+  activePointName?: string | null
   onSelectRegion: (regionId: string) => void
   onSelectCoordinates: (coordinates: { lat: number; lon: number }) => void
-  onClearCoordinates?: () => void
-}
-
-function escapeHtml(text: string): string {
-  return text
-    .replaceAll('&', '&amp;')
-    .replaceAll('<', '&lt;')
-    .replaceAll('>', '&gt;')
-    .replaceAll('"', '&quot;')
-    .replaceAll("'", '&#39;')
+  onFocusDetails?: () => void
+  onToggleDetails?: () => void
 }
 
 function buildRegionMarkerIcon(decision: OohAlertDecision, isSelected: boolean): L.DivIcon {
@@ -105,27 +108,38 @@ export function SpMonitoringMap({
   regions,
   selectedTarget,
   customDecision,
+  isCustomLoading = false,
+  customError = null,
+  isDetailsOpen = false,
+  activePointName = null,
   onSelectRegion,
   onSelectCoordinates,
-  onClearCoordinates,
+  onFocusDetails,
+  onToggleDetails,
 }: SpMonitoringMapProps) {
   const containerRef = useRef<HTMLDivElement | null>(null)
   const mapRef = useRef<L.Map | null>(null)
   const layerGroupRef = useRef<L.LayerGroup | null>(null)
+  const popupRef = useRef<L.Popup | null>(null)
+  const openPopupTargetKeyRef = useRef<string | null>(null)
+  const isSyncingPopupRef = useRef(false)
   const regionsRef = useRef<OohAlertDecision[]>(regions)
   const lastFocusedTargetKeyRef = useRef<string | null>(null)
+  const [isPopupOpen, setIsPopupOpen] = useState(false)
   const [activeLegendId, setActiveLegendId] = useState<string | null>(null)
   const legendTooltipId = useId()
   const activeLegendItem = LEGEND_ITEMS.find((item) => item.id === activeLegendId) ?? null
 
   const onSelectRegionRef = useRef(onSelectRegion)
   const onSelectCoordinatesRef = useRef(onSelectCoordinates)
+  const onFocusDetailsRef = useRef(onFocusDetails)
 
   useEffect(() => {
     regionsRef.current = regions
     onSelectRegionRef.current = onSelectRegion
     onSelectCoordinatesRef.current = onSelectCoordinates
-  }, [regions, onSelectRegion, onSelectCoordinates])
+    onFocusDetailsRef.current = onFocusDetails
+  }, [regions, onSelectRegion, onSelectCoordinates, onFocusDetails])
 
   useEffect(() => {
     const container = containerRef.current
@@ -145,25 +159,87 @@ export function SpMonitoringMap({
     }).addTo(map)
 
     const layerGroup = L.layerGroup().addTo(map)
+    const popup = L.popup({
+      className: 'ooh-map-popup',
+      maxWidth: 304,
+      minWidth: 276,
+      offset: [0, -10],
+      autoPan: true,
+      autoPanPaddingTopLeft: L.point(16, 56),
+      autoPanPaddingBottomRight: L.point(16, 68),
+      closeButton: true,
+      closeOnClick: false,
+    })
 
     const handleMapClick = (event: L.LeafletMouseEvent) => {
       const lat = Number(event.latlng.lat.toFixed(6))
       const lon = Number(event.latlng.lng.toFixed(6))
+      setIsPopupOpen(true)
       onSelectCoordinatesRef.current({ lat, lon })
     }
 
+    const handlePopupClose = (event: L.PopupEvent) => {
+      if (isSyncingPopupRef.current) {
+        return
+      }
+      if (!event.popup || event.popup === popup) {
+        openPopupTargetKeyRef.current = null
+        setIsPopupOpen(false)
+      }
+    }
+
+    const handleContainerClick = (event: MouseEvent) => {
+      const target = event.target
+      if (!(target instanceof Element)) {
+        return
+      }
+      const actionElement = target.closest('[data-ooh-action="focus-details"]')
+      if (!actionElement) {
+        return
+      }
+      event.preventDefault()
+      event.stopPropagation()
+      onFocusDetailsRef.current?.()
+    }
+
     map.on('click', handleMapClick)
+    map.on('popupclose', handlePopupClose)
+    container.addEventListener('click', handleContainerClick, true)
+
+    const resizeObserver =
+      typeof ResizeObserver !== 'undefined'
+        ? new ResizeObserver(() => {
+            map.invalidateSize({ animate: false })
+          })
+        : null
+    resizeObserver?.observe(container)
 
     mapRef.current = map
     layerGroupRef.current = layerGroup
+    popupRef.current = popup
 
     return () => {
+      resizeObserver?.disconnect()
+      container.removeEventListener('click', handleContainerClick, true)
       map.off('click', handleMapClick)
+      map.off('popupclose', handlePopupClose)
       map.remove()
       mapRef.current = null
       layerGroupRef.current = null
+      popupRef.current = null
+      openPopupTargetKeyRef.current = null
     }
   }, [])
+
+  useEffect(() => {
+    const frameId = requestAnimationFrame(() => {
+      mapRef.current?.invalidateSize({ animate: false })
+    })
+
+    return () => {
+      cancelAnimationFrame(frameId)
+    }
+  }, [isDetailsOpen])
 
   useEffect(() => {
     const layerGroup = layerGroupRef.current
@@ -187,17 +263,19 @@ export function SpMonitoringMap({
         title: region.location.name,
       })
 
-      marker.bindTooltip(
-        `<div class="space-y-0.5">
-          <div class="font-semibold">${escapeHtml(region.location.name)}</div>
-          <div>${escapeHtml(meta.label)} • Chuva 2h: ${escapeHtml(rain2h)}</div>
-        </div>`,
-        {
-          direction: 'top',
-          offset: [0, -10],
-          className: 'ooh-map-tooltip',
-        },
-      )
+      if (!(isPopupOpen && isSelected)) {
+        marker.bindTooltip(
+          `<div class="space-y-0.5">
+            <div class="font-semibold">${escapeHtml(region.location.name)}</div>
+            <div>${escapeHtml(meta.label)} • Chuva 2h: ${escapeHtml(rain2h)}</div>
+          </div>`,
+          {
+            direction: 'top',
+            offset: [0, -10],
+            className: 'ooh-map-tooltip',
+          },
+        )
+      }
 
       marker.on('click', (event: L.LeafletMouseEvent) => {
         L.DomEvent.stopPropagation(event)
@@ -205,6 +283,7 @@ export function SpMonitoringMap({
           kind: 'region',
           regionId: region.location.id,
         })
+        setIsPopupOpen(true)
         focusMapOnRegion(map, region.location.latitude, region.location.longitude)
         onSelectRegionRef.current(region.location.id)
       })
@@ -222,23 +301,93 @@ export function SpMonitoringMap({
         ? `${customDecision.location.name} (${getSeverityMeta(customDecision.severityLevel).label})`
         : formatCoordinates(selectedTarget.lat, selectedTarget.lon)
 
-      customMarker.bindTooltip(
-        `<div class="space-y-0.5">
-          <div class="font-semibold">Ponto avulso consultado</div>
-          <div>${escapeHtml(customLabel)}</div>
-        </div>`,
-        {
-          direction: 'top',
-          offset: [0, -12],
-          className: 'ooh-map-tooltip',
-        },
-      )
+      if (!isPopupOpen) {
+        customMarker.bindTooltip(
+          `<div class="space-y-0.5">
+            <div class="font-semibold">Ponto avulso consultado</div>
+            <div>${escapeHtml(customLabel)}</div>
+          </div>`,
+          {
+            direction: 'top',
+            offset: [0, -12],
+            className: 'ooh-map-tooltip',
+          },
+        )
+      }
+
+      customMarker.on('click', (event: L.LeafletMouseEvent) => {
+        L.DomEvent.stopPropagation(event)
+        setIsPopupOpen(true)
+      })
 
       customMarker.addTo(layerGroup)
     }
-  }, [regions, selectedTarget, customDecision])
+  }, [regions, selectedTarget, customDecision, isPopupOpen])
 
   const targetKey = serializeTargetKey(selectedTarget)
+
+  useEffect(() => {
+    const map = mapRef.current
+    const popup = popupRef.current
+    if (!map || !popup) {
+      return
+    }
+
+    const closePopupSafely = () => {
+      if (popup.isOpen()) {
+        isSyncingPopupRef.current = true
+        try {
+          popup.close()
+        } finally {
+          isSyncingPopupRef.current = false
+        }
+      }
+      openPopupTargetKeyRef.current = null
+    }
+
+    if (!isPopupOpen || !selectedTarget || !targetKey) {
+      closePopupSafely()
+      return
+    }
+
+    let latLng: [number, number]
+    let html: string
+
+    if (selectedTarget.kind === 'region') {
+      const region = regions.find((item) => item.location.id === selectedTarget.regionId)
+      if (!region) {
+        closePopupSafely()
+        return
+      }
+
+      latLng = [region.location.latitude, region.location.longitude]
+      html = buildDecisionPopupHtml(region)
+    } else {
+      latLng = [selectedTarget.lat, selectedTarget.lon]
+      if (isCustomLoading) {
+        html = buildLoadingPopupHtml(selectedTarget.lat, selectedTarget.lon)
+      } else if (customError) {
+        html = buildErrorPopupHtml(getApiErrorMessage(customError))
+      } else if (customDecision) {
+        html = buildDecisionPopupHtml(customDecision)
+      } else {
+        html = buildLoadingPopupHtml(selectedTarget.lat, selectedTarget.lon)
+      }
+    }
+
+    if (openPopupTargetKeyRef.current === targetKey && popup.isOpen()) {
+      popup.setContent(html)
+      return
+    }
+
+    openPopupTargetKeyRef.current = targetKey
+    isSyncingPopupRef.current = true
+    try {
+      popup.setLatLng(latLng).setContent(html).openOn(map)
+    } finally {
+      isSyncingPopupRef.current = false
+    }
+  }, [isPopupOpen, targetKey, selectedTarget, regions, customDecision, isCustomLoading, customError])
 
   useEffect(() => {
     const map = mapRef.current
@@ -275,6 +424,7 @@ export function SpMonitoringMap({
       kind: 'region',
       regionId: region.location.id,
     })
+    setIsPopupOpen(true)
     if (mapRef.current) {
       focusMapOnRegion(mapRef.current, region.location.latitude, region.location.longitude)
     }
@@ -299,37 +449,53 @@ export function SpMonitoringMap({
               Leopoldina, Morumbi ou Campinas) para consulta hiperlocal via coordenadas.
             </CardDescription>
           </div>
-          <Badge variant="outline" className="shrink-0">
-            {regions.length} {regions.length === 1 ? 'região exibida' : 'regiões exibidas'}
-          </Badge>
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge variant="outline" className="shrink-0">
+              {regions.length} {regions.length === 1 ? 'região exibida' : 'regiões exibidas'}
+            </Badge>
+            {onToggleDetails ? (
+              <Button
+                type="button"
+                size="sm"
+                variant={isDetailsOpen ? 'secondary' : 'outline'}
+                aria-expanded={isDetailsOpen}
+                onClick={onToggleDetails}
+                title={
+                  isDetailsOpen
+                    ? 'Recolher painel lateral de detalhamentos'
+                    : activePointName
+                      ? `Exibir detalhes de ${activePointName}`
+                      : 'Exibir painel de detalhamentos'
+                }
+              >
+                {isDetailsOpen ? (
+                  <>
+                    <PanelRightClose className="h-3.5 w-3.5" aria-hidden="true" />
+                    <span>Recolher detalhes</span>
+                  </>
+                ) : (
+                  <>
+                    <PanelRightOpen className="h-3.5 w-3.5" aria-hidden="true" />
+                    <span>Exibir detalhes</span>
+                  </>
+                )}
+              </Button>
+            ) : null}
+          </div>
         </div>
       </CardHeader>
 
       <CardContent className="space-y-4 p-4 sm:p-5">
-        {selectedTarget?.kind === 'coordinates' ? (
-          <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-border bg-secondary/70 px-3 py-2 text-xs">
-            <div className="flex items-center gap-2">
-              <Crosshair className="h-3.5 w-3.5 text-primary" aria-hidden="true" />
-              <span>
-                Consultando ponto avulso:{' '}
-                <strong className="font-mono">
-                  {formatCoordinates(selectedTarget.lat, selectedTarget.lon)}
-                </strong>
-              </span>
-            </div>
-            {onClearCoordinates ? (
-              <Button type="button" size="sm" variant="outline" onClick={onClearCoordinates}>
-                Voltar às regiões
-              </Button>
-            ) : null}
-          </div>
-        ) : null}
-
         <div className="relative overflow-hidden rounded-lg border border-border">
           <div
             ref={containerRef}
             data-testid="sp-monitoring-map-canvas"
-            className="h-[360px] w-full bg-muted sm:h-[430px]"
+            className={cn(
+              'w-full bg-muted transition-[height] duration-200',
+              isDetailsOpen
+                ? 'h-[380px] sm:h-[460px] lg:h-[500px]'
+                : 'h-[400px] sm:h-[500px] lg:h-[580px]',
+            )}
           />
 
           <div className="pointer-events-none absolute top-3 right-3 z-10 flex flex-col gap-2">
@@ -423,7 +589,12 @@ export function SpMonitoringMap({
               description="Ajuste os filtros de Zona ou Severidade na barra superior para visualizar as regiões no mapa."
             />
           ) : (
-            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-3">
+            <div
+              className={cn(
+                'grid grid-cols-1 gap-2 sm:grid-cols-2',
+                isDetailsOpen ? 'xl:grid-cols-3' : 'lg:grid-cols-3 xl:grid-cols-4',
+              )}
+            >
               {regions.map((region) => {
                 const isSelected =
                   selectedTarget?.kind === 'region' &&

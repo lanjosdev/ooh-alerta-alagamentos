@@ -40,6 +40,17 @@ export const coordinatesAlertQuerySchema = z.object({
 const severityLevelSchema = z.union([z.literal(0), z.literal(1), z.literal(2), z.literal(3)])
 const severityLabelSchema = z.enum(['NORMAL', 'ATENCAO', 'ALERTA', 'CRITICO'])
 
+const currentWeatherSchema = z.object({
+  observedAt: z.string(),
+  temperatureC: z.number().nullable(),
+  humidityPercent: z.number().nullable(),
+  precipitationMm: z.number(),
+  rainMm: z.number(),
+  weatherCode: z.number(),
+  isDay: z.boolean(),
+  isRaining: z.boolean(),
+})
+
 const hourlyRainPointSchema = z.object({
   time: z.string(),
   precipitationProbabilityPercent: z.number(),
@@ -52,6 +63,7 @@ const regionForecastSchema = z.object({
   gridLatitude: z.number(),
   gridLongitude: z.number(),
   timezone: z.string(),
+  current: currentWeatherSchema.nullable(),
   maxRainProbabilityNext2hPercent: z.number(),
   expectedRainNext2hMm: z.number(),
   peakRainIntensityNext2hMmPerHour: z.number(),
@@ -96,6 +108,7 @@ const stationRainfallSchema = z.object({
   stationName: z.string().nullable(),
   currentPeriodMm: z.number().nullable(),
   previousPeriodMm: z.number().nullable(),
+  recentDeltaMm: z.number().nullable(),
   resetTime: z.string().nullable(),
   temperatureC: z.number().nullable(),
   humidityPercent: z.number().nullable(),

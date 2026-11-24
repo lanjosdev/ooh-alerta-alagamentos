@@ -16,6 +16,17 @@ export type AlertTarget =
   | { kind: 'region'; regionId: string }
   | { kind: 'coordinates'; lat: number; lon: number }
 
+export interface CurrentWeather {
+  observedAt: string
+  temperatureC: number | null
+  humidityPercent: number | null
+  precipitationMm: number
+  rainMm: number
+  weatherCode: number
+  isDay: boolean
+  isRaining: boolean
+}
+
 export interface HourlyRainPoint {
   time: string
   precipitationProbabilityPercent: number
@@ -28,6 +39,7 @@ export interface RegionForecast {
   gridLatitude: number
   gridLongitude: number
   timezone: string
+  current: CurrentWeather | null
   maxRainProbabilityNext2hPercent: number
   expectedRainNext2hMm: number
   peakRainIntensityNext2hMmPerHour: number
@@ -71,6 +83,7 @@ export interface StationRainfall {
   stationName: string | null
   currentPeriodMm: number | null
   previousPeriodMm: number | null
+  recentDeltaMm: number | null
   resetTime: string | null
   temperatureC: number | null
   humidityPercent: number | null

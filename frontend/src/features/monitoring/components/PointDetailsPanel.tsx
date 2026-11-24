@@ -1,8 +1,9 @@
-import { Code2, MapPin, Radio, ThermometerSun, Tv } from 'lucide-react'
+import { Code2, MapPin, PanelRightClose, Radio, ThermometerSun, Tv } from 'lucide-react'
 import { EmptyState } from '@/components/patterns/EmptyState'
 import { QueryErrorAlert } from '@/components/patterns/QueryErrorAlert'
 import { SeverityBadge } from '@/components/patterns/SeverityBadge'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -22,6 +23,7 @@ export interface PointDetailsPanelProps {
   isLoading: boolean
   error: unknown
   onRetry?: () => void
+  onClose?: () => void
   activeTab: PointDetailsTabId
   onTabChange: (tab: PointDetailsTabId) => void
 }
@@ -33,14 +35,32 @@ export function PointDetailsPanel({
   isLoading,
   error,
   onRetry,
+  onClose,
   activeTab,
   onTabChange,
 }: PointDetailsPanelProps) {
+  const collapseButton = onClose ? (
+    <Button
+      type="button"
+      size="sm"
+      variant="ghost"
+      onClick={onClose}
+      aria-label="Recolher painel de detalhes"
+      className="h-7 shrink-0 gap-1 px-2 text-xs text-muted-foreground hover:text-foreground"
+    >
+      <PanelRightClose className="h-3.5 w-3.5" aria-hidden="true" />
+      <span>Recolher</span>
+    </Button>
+  ) : null
+
   if (isLoading) {
     return (
       <Card aria-label="Carregando detalhes do ponto">
         <CardHeader className="space-y-3">
-          <Skeleton className="h-6 w-2/3" />
+          <div className="flex items-start justify-between gap-2">
+            <Skeleton className="h-6 w-2/3" />
+            {collapseButton}
+          </div>
           <Skeleton className="h-4 w-1/2" />
           <div className="flex gap-2">
             <Skeleton className="h-6 w-24 rounded-full" />
@@ -59,6 +79,9 @@ export function PointDetailsPanel({
   if (error) {
     return (
       <Card>
+        {collapseButton ? (
+          <CardHeader className="flex flex-row items-center justify-end pb-0">{collapseButton}</CardHeader>
+        ) : null}
         <CardContent className="p-5">
           <QueryErrorAlert
             error={error}
@@ -73,6 +96,9 @@ export function PointDetailsPanel({
   if (!decision || !target) {
     return (
       <Card>
+        {collapseButton ? (
+          <CardHeader className="flex flex-row items-center justify-end pb-0">{collapseButton}</CardHeader>
+        ) : null}
         <CardContent className="p-5">
           <EmptyState
             title="Nenhum ponto selecionado"
@@ -105,7 +131,10 @@ export function PointDetailsPanel({
               {locationSubtitleParts.join(' • ') || 'Localidade consultada por coordenada'}
             </CardDescription>
           </div>
-          <SeverityBadge level={decision.severityLevel} showApiCode />
+          <div className="flex items-center gap-1.5">
+            <SeverityBadge level={decision.severityLevel} showApiCode />
+            {collapseButton}
+          </div>
         </div>
 
         <div className="flex flex-wrap items-center gap-1.5">
@@ -142,7 +171,11 @@ export function PointDetailsPanel({
             )}
           >
             <Tv className="h-3 w-3" aria-hidden="true" />
-            <span>{decision.triggerOverride ? 'Gatilho OOH: ATIVO' : 'Campanha Padrão'}</span>
+            <span>
+              {decision.triggerOverride
+                ? 'Alerta no OOH: Ativo'
+                : 'Alerta no OOH: Inativo (Campanha normal)'}
+            </span>
           </Badge>
 
           {decision.simulated ? <Badge variant="outline">Simulado</Badge> : null}

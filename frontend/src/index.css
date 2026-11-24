@@ -236,3 +236,394 @@
   padding: 6px 10px;
   font-size: 12px;
 }
+
+.ooh-map-popup .leaflet-popup-content-wrapper {
+  overflow: hidden;
+  background-color: var(--popover);
+  color: var(--popover-foreground);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 12px 28px oklch(0.195 0.02 257.417 / 0.18);
+  padding: 0;
+}
+
+.ooh-map-popup .leaflet-popup-content {
+  margin: 0;
+  width: 292px !important;
+  font-family: var(--font-sans);
+  line-height: 1.35;
+}
+
+.ooh-map-popup .leaflet-popup-tip {
+  background-color: var(--popover);
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.ooh-map-popup a.leaflet-popup-close-button {
+  top: 10px;
+  right: 8px;
+  width: 22px;
+  height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  color: var(--muted-foreground);
+  font-size: 16px;
+  line-height: 1;
+  transition: background-color 150ms ease, color 150ms ease;
+}
+
+.ooh-map-popup a.leaflet-popup-close-button:hover {
+  background-color: var(--muted);
+  color: var(--foreground);
+}
+
+.ooh-popup-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border-top: 3px solid transparent;
+  padding: 11px 12px 12px;
+  font-size: 12px;
+  color: var(--popover-foreground);
+}
+
+.ooh-popup-card--severity-0 {
+  border-top-color: var(--severity-normal);
+}
+
+.ooh-popup-card--severity-1 {
+  border-top-color: var(--severity-attention);
+}
+
+.ooh-popup-card--severity-2 {
+  border-top-color: var(--severity-alert);
+}
+
+.ooh-popup-card--severity-3 {
+  border-top-color: var(--severity-critical);
+}
+
+.ooh-popup-card--compact {
+  border-top-width: 0;
+  gap: 4px;
+  padding: 12px 28px 12px 12px;
+}
+
+.ooh-popup-header {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding-right: 20px;
+}
+
+.ooh-popup-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ooh-popup-title {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--foreground);
+}
+
+.ooh-popup-subtitle {
+  font-size: 11px;
+  color: var(--muted-foreground);
+}
+
+.ooh-popup-coords-inline {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-variant-numeric: tabular-nums;
+}
+
+.ooh-popup-badges {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5px;
+}
+
+.ooh-popup-severity-badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 9999px;
+  border: 1px solid transparent;
+  padding: 2px 9px;
+  font-size: 11px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.ooh-popup-severity-badge--0 {
+  background-color: var(--severity-normal-bg);
+  color: var(--severity-normal-fg);
+  border-color: var(--severity-normal-border);
+}
+
+.ooh-popup-severity-badge--1 {
+  background-color: var(--severity-attention-bg);
+  color: var(--severity-attention-fg);
+  border-color: var(--severity-attention-border);
+}
+
+.ooh-popup-severity-badge--2 {
+  background-color: var(--severity-alert-bg);
+  color: var(--severity-alert-fg);
+  border-color: var(--severity-alert-border);
+}
+
+.ooh-popup-severity-badge--3 {
+  background-color: var(--severity-critical-bg);
+  color: var(--severity-critical-fg);
+  border-color: var(--severity-critical-border);
+}
+
+.ooh-popup-ooh-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.ooh-popup-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border-radius: var(--radius-sm);
+  padding: 2px 7px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.ooh-popup-trigger--active {
+  background-color: var(--severity-critical-bg);
+  color: var(--severity-critical-fg);
+  border: 1px solid var(--severity-critical-border);
+}
+
+.ooh-popup-trigger--normal {
+  background-color: var(--status-ok-bg);
+  color: var(--status-ok-fg);
+}
+
+.ooh-popup-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  flex-shrink: 0;
+}
+
+.ooh-popup-dot--active {
+  background-color: var(--severity-critical);
+}
+
+.ooh-popup-dot--normal {
+  background-color: var(--status-ok);
+}
+
+.ooh-popup-ooh-note {
+  font-size: 11px;
+  color: var(--muted-foreground);
+}
+
+.ooh-popup-weather-hero {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background-color: var(--muted);
+  padding: 9px 10px;
+}
+
+.ooh-popup-weather-main {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.ooh-popup-temp-block {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.ooh-popup-temp {
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+  color: var(--foreground);
+}
+
+.ooh-popup-condition {
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--foreground);
+}
+
+.ooh-popup-rain-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+  text-align: right;
+}
+
+.ooh-popup-rain-pill {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 9999px;
+  border: 1px solid transparent;
+  padding: 2px 8px;
+  font-size: 10.5px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.ooh-popup-rain-pill--raining {
+  background-color: var(--severity-alert-bg);
+  color: var(--severity-alert-fg);
+  border-color: var(--severity-alert-border);
+}
+
+.ooh-popup-rain-pill--possible-drizzle {
+  background-color: var(--severity-attention-bg);
+  color: var(--severity-attention-fg);
+  border-color: var(--severity-attention-border);
+}
+
+.ooh-popup-rain-pill--dry {
+  background-color: var(--status-ok-bg);
+  color: var(--status-ok-fg);
+}
+
+.ooh-popup-rain-pill--unavailable {
+  background-color: var(--status-skipped-bg);
+  color: var(--status-skipped-fg);
+}
+
+.ooh-popup-rain-meta {
+  font-size: 10.5px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted-foreground);
+}
+
+.ooh-popup-weather-source {
+  border-top: 1px solid var(--border);
+  padding-top: 5px;
+  font-size: 10.5px;
+  color: var(--muted-foreground);
+}
+
+.ooh-popup-section-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+.ooh-popup-forecast {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ooh-popup-forecast-main {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--foreground);
+}
+
+.ooh-popup-forecast-sub {
+  font-size: 11px;
+  color: var(--muted-foreground);
+}
+
+.ooh-popup-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  border-top: 1px solid var(--border);
+  padding-top: 8px;
+}
+
+.ooh-popup-metric-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ooh-popup-metric-value {
+  font-size: 11.5px;
+  line-height: 1.3;
+}
+
+.ooh-popup-metric-value--critical {
+  font-weight: 600;
+  color: var(--severity-critical-fg);
+}
+
+.ooh-popup-metric-value--alert {
+  font-weight: 600;
+  color: var(--severity-alert-fg);
+}
+
+.ooh-popup-metric-value--attention {
+  font-weight: 600;
+  color: var(--severity-attention-fg);
+}
+
+.ooh-popup-metric-value--muted {
+  color: var(--muted-foreground);
+}
+
+.ooh-popup-action {
+  width: 100%;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background-color: var(--secondary);
+  color: var(--secondary-foreground);
+  padding: 6px 10px;
+  font-size: 11.5px;
+  font-weight: 600;
+  text-align: center;
+  transition: background-color 150ms ease, border-color 150ms ease;
+}
+
+.ooh-popup-action:hover {
+  background-color: var(--accent);
+}
+
+.ooh-popup-action:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.ooh-popup-coords {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--muted-foreground);
+}
+
+.ooh-popup-error-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--status-error-fg);
+}
+
+.ooh-popup-error-text {
+  font-size: 11.5px;
+  color: var(--muted-foreground);
+}

@@ -21,6 +21,7 @@ export interface StationRainfall {
   stationName: string | null
   currentPeriodMm: number | null
   previousPeriodMm: number | null
+  recentDeltaMm: number | null
   resetTime: string | null
   temperatureC: number | null
   humidityPercent: number | null
