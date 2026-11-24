@@ -108,6 +108,7 @@ const stationRainfallSchema = z.object({
   stationName: z.string().nullable(),
   currentPeriodMm: z.number().nullable(),
   previousPeriodMm: z.number().nullable(),
+  recentDeltaMm: z.number().nullable(),
   resetTime: z.string().nullable(),
   temperatureC: z.number().nullable(),
   humidityPercent: z.number().nullable(),

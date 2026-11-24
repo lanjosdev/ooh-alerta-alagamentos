@@ -94,6 +94,7 @@ function createDeterministicProviders() {
         stationName: 'Estação Teste',
         currentPeriodMm: 12.4,
         previousPeriodMm: 3.1,
+        recentDeltaMm: null,
         resetTime: '10:00:00',
         temperatureC: 24.5,
         humidityPercent: 82,

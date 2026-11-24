@@ -130,7 +130,7 @@ describe('rss-formatter', () => {
     expect(xml.match(/<item>/g)).toHaveLength(2)
   })
 
-  it('serializa ooh:isRainingNow como false quando seco e vazio quando forecast.current é null', () => {
+  it('serializa ooh:isRainingNow como false quando seco, vazio quando current é null e true com delta CGE >= 0.2', () => {
     const dryDecision = makeDecision('zona-leste-itaquera', 'Itaquera', {
       observedAt: '2026-11-23T18:00',
       temperatureC: 22.1,
@@ -142,6 +142,27 @@ describe('rss-formatter', () => {
       isRaining: false,
     })
     const unavailableDecision = makeDecision('zona-sul-santo-amaro', 'Santo Amaro', null)
+    const cgeConfirmedDecision: OohAlertDecision = {
+      ...dryDecision,
+      location: {
+        ...dryDecision.location,
+        id: 'zona-oeste-lapa',
+        name: 'Lapa',
+      },
+      flooding: {
+        ...dryDecision.flooding,
+        stationRainfall: {
+          stationId: '1000848',
+          stationName: 'Lapa',
+          currentPeriodMm: 1.2,
+          previousPeriodMm: 0,
+          recentDeltaMm: 0.4,
+          resetTime: '10:00:00',
+          temperatureC: 21.5,
+          humidityPercent: 88,
+        },
+      },
+    }
 
     const xml = formatAlertsAsRss({
       title: 'Feed OOH',
@@ -153,5 +174,15 @@ describe('rss-formatter', () => {
 
     expect(xml).toContain('<ooh:isRainingNow>false</ooh:isRainingNow>')
     expect(xml).toContain('<ooh:isRainingNow></ooh:isRainingNow>')
+
+    const cgeXml = formatAlertsAsRss({
+      title: 'Feed OOH CGE',
+      link: 'http://localhost:3333/v1/alerts/feed.xml',
+      description: 'Alertas OOH',
+      decisions: [cgeConfirmedDecision],
+      generatedAt: new Date('2026-11-23T18:00:00.000Z'),
+    })
+
+    expect(cgeXml).toContain('<ooh:isRainingNow>true</ooh:isRainingNow>')
   })
 })

@@ -8,6 +8,7 @@ import type {
 } from '../forecast-provider.js'
 
 const DEFAULT_OPEN_METEO_BASE_URL = 'https://api.open-meteo.com/v1/forecast'
+const MIN_EFFECTIVE_RAIN_MM = 0.3
 
 const openMeteoResponseSchema = z.object({
   latitude: z.number(),
@@ -42,10 +43,6 @@ function roundToTwoDecimals(value: number): number {
   return Math.round(value * 100) / 100
 }
 
-function isRainWeatherCode(code: number): boolean {
-  return (code >= 51 && code <= 67) || (code >= 80 && code <= 82) || (code >= 95 && code <= 99)
-}
-
 function normalizeCurrentWeather(
   rawCurrent: z.infer<typeof openMeteoResponseSchema>['current'],
 ): CurrentWeather | null {
@@ -73,7 +70,7 @@ function normalizeCurrentWeather(
     rainMm,
     weatherCode,
     isDay: rawCurrent.is_day === 1,
-    isRaining: rainMm >= 0.1 || precipitationMm >= 0.1 || isRainWeatherCode(weatherCode),
+    isRaining: rainMm >= MIN_EFFECTIVE_RAIN_MM || precipitationMm >= MIN_EFFECTIVE_RAIN_MM,
   }
 }
 

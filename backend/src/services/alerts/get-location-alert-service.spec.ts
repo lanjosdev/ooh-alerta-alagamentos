@@ -75,6 +75,7 @@ function createStubProviders() {
     stationName: 'Butantã',
     currentPeriodMm: 14.2,
     previousPeriodMm: 4.0,
+    recentDeltaMm: null,
     resetTime: '10:00:00',
     temperatureC: 23.4,
     humidityPercent: 88,

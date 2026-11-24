@@ -164,8 +164,68 @@ describe('OpenMeteoForecastProvider', () => {
       rainMm: 0,
       weatherCode: 51,
       isDay: true,
-      isRaining: true,
+      isRaining: false,
     })
+
+    const lightTracePayload = {
+      ...openMeteoSample,
+      current: {
+        time: '2026-11-23T14:45',
+        temperature_2m: 21.5,
+        relative_humidity_2m: 78,
+        precipitation: 0.2,
+        rain: 0.2,
+        weather_code: 51,
+        is_day: 1,
+      },
+    }
+
+    const lightTraceProvider = new OpenMeteoForecastProvider({
+      fetchFn: vi.fn(
+        async () =>
+          new Response(JSON.stringify(lightTracePayload), {
+            status: 200,
+            headers: { 'content-type': 'application/json' },
+          }),
+      ),
+    })
+
+    const lightTraceForecast = await lightTraceProvider.getHourlyForecast(
+      -23.5672,
+      -46.729,
+      new Date('2026-11-23T17:25:00.000Z'),
+    )
+    expect(lightTraceForecast.current?.isRaining).toBe(false)
+
+    const effectiveRainPayload = {
+      ...openMeteoSample,
+      current: {
+        time: '2026-11-23T15:00',
+        temperature_2m: 21.1,
+        relative_humidity_2m: 86,
+        precipitation: 0.3,
+        rain: 0.3,
+        weather_code: 61,
+        is_day: 1,
+      },
+    }
+
+    const effectiveRainProvider = new OpenMeteoForecastProvider({
+      fetchFn: vi.fn(
+        async () =>
+          new Response(JSON.stringify(effectiveRainPayload), {
+            status: 200,
+            headers: { 'content-type': 'application/json' },
+          }),
+      ),
+    })
+
+    const effectiveRainForecast = await effectiveRainProvider.getHourlyForecast(
+      -23.5672,
+      -46.729,
+      new Date('2026-11-23T17:25:00.000Z'),
+    )
+    expect(effectiveRainForecast.current?.isRaining).toBe(true)
   })
 
   it('degrada graciosamente com current=null quando Open-Meteo omite o bloco current', async () => {

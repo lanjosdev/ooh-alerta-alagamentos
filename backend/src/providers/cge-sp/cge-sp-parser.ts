@@ -214,6 +214,7 @@ export function parseCgeStationHtml(
     stationName: stationName ?? findCgeStationById(stationId)?.name ?? null,
     currentPeriodMm,
     previousPeriodMm,
+    recentDeltaMm: null,
     resetTime,
     temperatureC,
     humidityPercent,

@@ -143,6 +143,7 @@ Retorna a decisão detalhada de risco para uma região específica (ex.: `zona-o
           "stationName": "Butantã",
           "currentPeriodMm": 0.4,
           "previousPeriodMm": 25.2,
+          "recentDeltaMm": 0.2,
           "resetTime": "10:00:00",
           "temperatureC": 25.6,
           "humidityPercent": 75.1

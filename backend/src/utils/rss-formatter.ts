@@ -34,10 +34,13 @@ function renderItem(decision: OohAlertDecision, baseLink: string): string {
   const guid = `${decision.location.id}-${decision.severityLabel}-${decision.evaluatedAt}`
   const rainProb =
     decision.forecast !== null ? String(decision.forecast.maxRainProbabilityNext2hPercent) : ''
+  const cgeDelta = decision.flooding.stationRainfall?.recentDeltaMm ?? null
   const isRainingNow =
-    decision.forecast?.current !== null && decision.forecast?.current !== undefined
-      ? String(decision.forecast.current.isRaining)
-      : ''
+    cgeDelta !== null && cgeDelta >= 0.2
+      ? 'true'
+      : decision.forecast?.current !== null && decision.forecast?.current !== undefined
+        ? String(decision.forecast.current.isRaining)
+        : ''
 
   return [
     '    <item>',
