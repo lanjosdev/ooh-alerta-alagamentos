@@ -1,0 +1,386 @@
+import type { CityOverviewData, OohAlertDecision, SourcesStatusData } from '@/types/alerts'
+
+export const mockRegionButanta: OohAlertDecision = {
+  evaluatedAt: '2026-11-23T18:00:00',
+  location: {
+    id: 'zona-oeste-butanta',
+    name: 'Butantã',
+    city: 'São Paulo',
+    state: 'SP',
+    ibgeCode: '3550308',
+    zone: 'Zona Oeste',
+    latitude: -23.5672,
+    longitude: -46.729,
+    cgeStationId: '1000842',
+    cgeStationName: 'Butantã',
+    historicalRiskWeight: 0.75,
+  },
+  triggerOverride: true,
+  severityLevel: 3,
+  severityLabel: 'CRITICO',
+  riskScore: 92,
+  simulated: false,
+  reasons: [
+    '1 ponto de alagamento ativo e intransitável na Zona Oeste (CGE-SP)',
+    'Aviso oficial INMET ativo em grau Perigo',
+  ],
+  display: {
+    headline: 'ALERTA CRÍTICO DE ALAGAMENTO — Butantã',
+    message: 'Vias intransitáveis na Zona Oeste. Evite deslocamentos e busque rotas alternativas.',
+    subtext: 'Butantã (Zona Oeste) • Nível CRITICO (92/100)',
+  },
+  forecast: {
+    provider: 'open-meteo',
+    gridLatitude: -23.5852,
+    gridLongitude: -46.7544,
+    timezone: 'America/Sao_Paulo',
+    maxRainProbabilityNext2hPercent: 80,
+    expectedRainNext2hMm: 18.4,
+    peakRainIntensityNext2hMmPerHour: 14,
+    maxRainProbabilityNext6hPercent: 85,
+    expectedRainNext6hMm: 31.2,
+    hourly: [
+      {
+        time: '2026-11-23T18:00:00',
+        precipitationProbabilityPercent: 80,
+        precipitationMm: 14,
+        weatherCode: 95,
+      },
+      {
+        time: '2026-11-23T19:00:00',
+        precipitationProbabilityPercent: 70,
+        precipitationMm: 4.4,
+        weatherCode: 65,
+      },
+    ],
+  },
+  officialAlerts: [
+    {
+      id: 'inmet-30991',
+      code: '2026-CHUVA-INTENSA-SP',
+      title: 'Chuvas Intensas — Grau Perigo',
+      severity: 'Perigo',
+      severityRank: 2,
+      colorHex: '#FF9900',
+      startsAt: '2026-11-23T15:00:00',
+      endsAt: '2026-11-23T23:59:00',
+      risks: ['Corte de energia elétrica', 'Alagamentos pontuais'],
+      instructions: ['Não enfrente áreas alagadas', 'Evite abrigar-se sob árvores'],
+      matchedBy: ['ibge', 'polygon'],
+    },
+  ],
+  flooding: {
+    cgeDate: '15/01/2026',
+    activeInZoneCount: 1,
+    impassableInZoneCount: 1,
+    passableInZoneCount: 0,
+    pointsInZone: [
+      {
+        zone: 'Zona Oeste',
+        neighborhood: 'Vila Leopoldina',
+        street: 'Av. Marginal Tietê',
+        direction: 'Castelo Branco / Ayrton Senna',
+        reference: 'Ponte dos Remédios',
+        timeWindow: '17:10 às 18:45',
+        status: 'ativo-intransitavel',
+        active: true,
+        passable: false,
+      },
+    ],
+    stationRainfall: {
+      stationId: '1000842',
+      stationName: 'Butantã',
+      currentPeriodMm: 12.4,
+      previousPeriodMm: 25.2,
+      resetTime: '10:00:00',
+      temperatureC: 25.6,
+      humidityPercent: 75,
+    },
+  },
+  sources: {
+    forecast: {
+      provider: 'open-meteo',
+      status: 'ok',
+      cached: false,
+      stale: false,
+      fetchedAt: '2026-11-23T18:00:00',
+      error: null,
+    },
+    officialAlerts: {
+      provider: 'inmet',
+      status: 'ok',
+      cached: true,
+      stale: false,
+      fetchedAt: '2026-11-23T17:55:00',
+      error: null,
+    },
+    floodingMonitor: {
+      provider: 'cge-sp',
+      status: 'ok',
+      cached: false,
+      stale: false,
+      fetchedAt: '2026-11-23T18:00:00',
+      error: null,
+    },
+  },
+}
+
+export const mockRegionItaquera: OohAlertDecision = {
+  evaluatedAt: '2026-11-23T18:00:00',
+  location: {
+    id: 'zona-leste-itaquera',
+    name: 'Itaquera',
+    city: 'São Paulo',
+    state: 'SP',
+    ibgeCode: '3550308',
+    zone: 'Zona Leste',
+    latitude: -23.5419,
+    longitude: -46.4563,
+    cgeStationId: '1000845',
+    cgeStationName: 'Itaquera',
+    historicalRiskWeight: 0.65,
+  },
+  triggerOverride: false,
+  severityLevel: 0,
+  severityLabel: 'NORMAL',
+  riskScore: 12,
+  simulated: false,
+  reasons: ['Condições climáticas estáveis e sem alagamentos na Zona Leste'],
+  display: {
+    headline: 'CONDIÇÕES NORMAIS — Itaquera',
+    message: 'Operação padrão de mídia OOH em Itaquera.',
+    subtext: 'Itaquera (Zona Leste) • Nível NORMAL (12/100)',
+  },
+  forecast: {
+    provider: 'open-meteo',
+    gridLatitude: -23.54,
+    gridLongitude: -46.45,
+    timezone: 'America/Sao_Paulo',
+    maxRainProbabilityNext2hPercent: 15,
+    expectedRainNext2hMm: 0,
+    peakRainIntensityNext2hMmPerHour: 0,
+    maxRainProbabilityNext6hPercent: 20,
+    expectedRainNext6hMm: 0.2,
+    hourly: [
+      {
+        time: '2026-11-23T18:00:00',
+        precipitationProbabilityPercent: 15,
+        precipitationMm: 0,
+        weatherCode: 2,
+      },
+    ],
+  },
+  officialAlerts: [],
+  flooding: {
+    cgeDate: null,
+    activeInZoneCount: 0,
+    impassableInZoneCount: 0,
+    passableInZoneCount: 0,
+    pointsInZone: [],
+    stationRainfall: {
+      stationId: '1000845',
+      stationName: 'Itaquera',
+      currentPeriodMm: 0,
+      previousPeriodMm: 1.2,
+      resetTime: '10:00:00',
+      temperatureC: 24.1,
+      humidityPercent: 62,
+    },
+  },
+  sources: {
+    forecast: {
+      provider: 'open-meteo',
+      status: 'ok',
+      cached: false,
+      stale: false,
+      fetchedAt: '2026-11-23T18:00:00',
+      error: null,
+    },
+    officialAlerts: {
+      provider: 'inmet',
+      status: 'ok',
+      cached: false,
+      stale: false,
+      fetchedAt: '2026-11-23T18:00:00',
+      error: null,
+    },
+    floodingMonitor: {
+      provider: 'cge-sp',
+      status: 'ok',
+      cached: false,
+      stale: false,
+      fetchedAt: '2026-11-23T18:00:00',
+      error: null,
+    },
+  },
+}
+
+export const mockCampinasDecision: OohAlertDecision = {
+  evaluatedAt: '2026-11-23T18:00:00',
+  location: {
+    id: 'coord--22.9099--47.0626',
+    name: 'Ponto (-22.9099, -47.0626)',
+    city: null,
+    state: null,
+    ibgeCode: null,
+    zone: null,
+    latitude: -22.9099,
+    longitude: -47.0626,
+    cgeStationId: null,
+    cgeStationName: null,
+    historicalRiskWeight: 0,
+  },
+  triggerOverride: true,
+  severityLevel: 1,
+  severityLabel: 'ATENCAO',
+  riskScore: 44,
+  simulated: false,
+  reasons: ['Previsão de chuva moderada nas próximas 2h para a coordenada'],
+  display: {
+    headline: 'ATENÇÃO PARA CHUVA — Coordenada (-22.9099, -47.0626)',
+    message: 'Chuva moderada prevista nas próximas horas.',
+    subtext: 'Consulta multi-município • Nível ATENCAO (44/100)',
+  },
+  forecast: {
+    provider: 'open-meteo',
+    gridLatitude: -22.91,
+    gridLongitude: -47.06,
+    timezone: 'America/Sao_Paulo',
+    maxRainProbabilityNext2hPercent: 65,
+    expectedRainNext2hMm: 5.5,
+    peakRainIntensityNext2hMmPerHour: 5.5,
+    maxRainProbabilityNext6hPercent: 70,
+    expectedRainNext6hMm: 9.2,
+    hourly: [
+      {
+        time: '2026-11-23T18:00:00',
+        precipitationProbabilityPercent: 65,
+        precipitationMm: 5.5,
+        weatherCode: 63,
+      },
+    ],
+  },
+  officialAlerts: [],
+  flooding: {
+    cgeDate: null,
+    activeInZoneCount: 0,
+    impassableInZoneCount: 0,
+    passableInZoneCount: 0,
+    pointsInZone: [],
+    stationRainfall: null,
+  },
+  sources: {
+    forecast: {
+      provider: 'open-meteo',
+      status: 'ok',
+      cached: false,
+      stale: false,
+      fetchedAt: '2026-11-23T18:00:00',
+      error: null,
+    },
+    officialAlerts: {
+      provider: 'inmet',
+      status: 'ok',
+      cached: false,
+      stale: false,
+      fetchedAt: '2026-11-23T18:00:00',
+      error: null,
+    },
+    floodingMonitor: {
+      provider: 'cge-sp',
+      status: 'skipped',
+      cached: false,
+      stale: false,
+      fetchedAt: null,
+      error: null,
+    },
+  },
+}
+
+export const mockCityOverview: CityOverviewData = {
+  generatedAt: '2026-11-23T18:00:00',
+  summary: {
+    totalRegions: 2,
+    overrideActiveCount: 1,
+    highestSeverityLevel: 3,
+    highestSeverityLabel: 'CRITICO',
+    countsBySeverity: {
+      NORMAL: 1,
+      ATENCAO: 0,
+      ALERTA: 0,
+      CRITICO: 1,
+    },
+  },
+  regions: [mockRegionButanta, mockRegionItaquera],
+}
+
+export const mockSimulatedCriticalOverview: CityOverviewData = {
+  generatedAt: '2026-11-23T18:05:00',
+  summary: {
+    totalRegions: 2,
+    overrideActiveCount: 2,
+    highestSeverityLevel: 3,
+    highestSeverityLabel: 'CRITICO',
+    countsBySeverity: {
+      NORMAL: 0,
+      ATENCAO: 0,
+      ALERTA: 0,
+      CRITICO: 2,
+    },
+  },
+  regions: [
+    { ...mockRegionButanta, simulated: true },
+    {
+      ...mockRegionItaquera,
+      severityLevel: 3,
+      severityLabel: 'CRITICO',
+      triggerOverride: true,
+      riskScore: 95,
+      simulated: true,
+    },
+  ],
+}
+
+export const mockSourcesStatus: SourcesStatusData = {
+  checkedAt: '2026-11-23T18:00:00',
+  providers: [
+    {
+      provider: 'open-meteo',
+      status: 'ok',
+      cachedKeys: 12,
+      lastSuccessAt: '2026-11-23T18:00:00',
+      lastErrorAt: null,
+      lastErrorMessage: null,
+      lastLatencyMs: 112,
+    },
+    {
+      provider: 'inmet',
+      status: 'ok',
+      cachedKeys: 1,
+      lastSuccessAt: '2026-11-23T17:58:00',
+      lastErrorAt: null,
+      lastErrorMessage: null,
+      lastLatencyMs: 245,
+    },
+    {
+      provider: 'cge-sp',
+      status: 'ok',
+      cachedKeys: 1,
+      lastSuccessAt: '2026-11-23T18:00:00',
+      lastErrorAt: null,
+      lastErrorMessage: null,
+      lastLatencyMs: 180,
+    },
+  ],
+}
+
+export const mockRssXml = `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:ooh="https://ooh-alerta-alagamentos.local/ns/1.0">
+  <channel>
+    <title>OOH Alerta Alagamentos — Butantã</title>
+    <item>
+      <title>ALERTA CRÍTICO DE ALAGAMENTO — Butantã</title>
+      <ooh:severityLabel>CRITICO</ooh:severityLabel>
+    </item>
+  </channel>
+</rss>`
