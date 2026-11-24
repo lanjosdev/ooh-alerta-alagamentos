@@ -7,7 +7,14 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { formatCoordinates, formatPercent } from '@/features/monitoring/utils/formatters'
+import {
+  buildDecisionPopupHtml,
+  buildErrorPopupHtml,
+  buildLoadingPopupHtml,
+  escapeHtml,
+} from '@/features/monitoring/utils/mapPopupContent'
 import { getSeverityMeta } from '@/features/monitoring/utils/severity'
+import { getApiErrorMessage } from '@/lib/api-error'
 import { cn } from '@/lib/utils'
 import type { AlertTarget, OohAlertDecision, SeverityLevel } from '@/types/alerts'
 
@@ -45,18 +52,12 @@ export interface SpMonitoringMapProps {
   regions: OohAlertDecision[]
   selectedTarget: AlertTarget | null
   customDecision: OohAlertDecision | null
+  isCustomLoading?: boolean
+  customError?: unknown
   onSelectRegion: (regionId: string) => void
   onSelectCoordinates: (coordinates: { lat: number; lon: number }) => void
   onClearCoordinates?: () => void
-}
-
-function escapeHtml(text: string): string {
-  return text
-    .replaceAll('&', '&amp;')
-    .replaceAll('<', '&lt;')
-    .replaceAll('>', '&gt;')
-    .replaceAll('"', '&quot;')
-    .replaceAll("'", '&#39;')
+  onFocusDetails?: () => void
 }
 
 function buildRegionMarkerIcon(decision: OohAlertDecision, isSelected: boolean): L.DivIcon {
@@ -105,27 +106,36 @@ export function SpMonitoringMap({
   regions,
   selectedTarget,
   customDecision,
+  isCustomLoading = false,
+  customError = null,
   onSelectRegion,
   onSelectCoordinates,
   onClearCoordinates,
+  onFocusDetails,
 }: SpMonitoringMapProps) {
   const containerRef = useRef<HTMLDivElement | null>(null)
   const mapRef = useRef<L.Map | null>(null)
   const layerGroupRef = useRef<L.LayerGroup | null>(null)
+  const popupRef = useRef<L.Popup | null>(null)
+  const openPopupTargetKeyRef = useRef<string | null>(null)
+  const isSyncingPopupRef = useRef(false)
   const regionsRef = useRef<OohAlertDecision[]>(regions)
   const lastFocusedTargetKeyRef = useRef<string | null>(null)
+  const [isPopupOpen, setIsPopupOpen] = useState(false)
   const [activeLegendId, setActiveLegendId] = useState<string | null>(null)
   const legendTooltipId = useId()
   const activeLegendItem = LEGEND_ITEMS.find((item) => item.id === activeLegendId) ?? null
 
   const onSelectRegionRef = useRef(onSelectRegion)
   const onSelectCoordinatesRef = useRef(onSelectCoordinates)
+  const onFocusDetailsRef = useRef(onFocusDetails)
 
   useEffect(() => {
     regionsRef.current = regions
     onSelectRegionRef.current = onSelectRegion
     onSelectCoordinatesRef.current = onSelectCoordinates
-  }, [regions, onSelectRegion, onSelectCoordinates])
+    onFocusDetailsRef.current = onFocusDetails
+  }, [regions, onSelectRegion, onSelectCoordinates, onFocusDetails])
 
   useEffect(() => {
     const container = containerRef.current
@@ -145,23 +155,66 @@ export function SpMonitoringMap({
     }).addTo(map)
 
     const layerGroup = L.layerGroup().addTo(map)
+    const popup = L.popup({
+      className: 'ooh-map-popup',
+      maxWidth: 280,
+      minWidth: 248,
+      offset: [0, -10],
+      autoPan: true,
+      autoPanPaddingTopLeft: L.point(16, 56),
+      autoPanPaddingBottomRight: L.point(16, 68),
+      closeButton: true,
+      closeOnClick: false,
+    })
 
     const handleMapClick = (event: L.LeafletMouseEvent) => {
       const lat = Number(event.latlng.lat.toFixed(6))
       const lon = Number(event.latlng.lng.toFixed(6))
+      setIsPopupOpen(true)
       onSelectCoordinatesRef.current({ lat, lon })
     }
 
+    const handlePopupClose = (event: L.PopupEvent) => {
+      if (isSyncingPopupRef.current) {
+        return
+      }
+      if (!event.popup || event.popup === popup) {
+        openPopupTargetKeyRef.current = null
+        setIsPopupOpen(false)
+      }
+    }
+
+    const handleContainerClick = (event: MouseEvent) => {
+      const target = event.target
+      if (!(target instanceof Element)) {
+        return
+      }
+      const actionElement = target.closest('[data-ooh-action="focus-details"]')
+      if (!actionElement) {
+        return
+      }
+      event.preventDefault()
+      event.stopPropagation()
+      onFocusDetailsRef.current?.()
+    }
+
     map.on('click', handleMapClick)
+    map.on('popupclose', handlePopupClose)
+    container.addEventListener('click', handleContainerClick, true)
 
     mapRef.current = map
     layerGroupRef.current = layerGroup
+    popupRef.current = popup
 
     return () => {
+      container.removeEventListener('click', handleContainerClick, true)
       map.off('click', handleMapClick)
+      map.off('popupclose', handlePopupClose)
       map.remove()
       mapRef.current = null
       layerGroupRef.current = null
+      popupRef.current = null
+      openPopupTargetKeyRef.current = null
     }
   }, [])
 
@@ -187,17 +240,19 @@ export function SpMonitoringMap({
         title: region.location.name,
       })
 
-      marker.bindTooltip(
-        `<div class="space-y-0.5">
-          <div class="font-semibold">${escapeHtml(region.location.name)}</div>
-          <div>${escapeHtml(meta.label)} • Chuva 2h: ${escapeHtml(rain2h)}</div>
-        </div>`,
-        {
-          direction: 'top',
-          offset: [0, -10],
-          className: 'ooh-map-tooltip',
-        },
-      )
+      if (!(isPopupOpen && isSelected)) {
+        marker.bindTooltip(
+          `<div class="space-y-0.5">
+            <div class="font-semibold">${escapeHtml(region.location.name)}</div>
+            <div>${escapeHtml(meta.label)} • Chuva 2h: ${escapeHtml(rain2h)}</div>
+          </div>`,
+          {
+            direction: 'top',
+            offset: [0, -10],
+            className: 'ooh-map-tooltip',
+          },
+        )
+      }
 
       marker.on('click', (event: L.LeafletMouseEvent) => {
         L.DomEvent.stopPropagation(event)
@@ -205,6 +260,7 @@ export function SpMonitoringMap({
           kind: 'region',
           regionId: region.location.id,
         })
+        setIsPopupOpen(true)
         focusMapOnRegion(map, region.location.latitude, region.location.longitude)
         onSelectRegionRef.current(region.location.id)
       })
@@ -222,23 +278,93 @@ export function SpMonitoringMap({
         ? `${customDecision.location.name} (${getSeverityMeta(customDecision.severityLevel).label})`
         : formatCoordinates(selectedTarget.lat, selectedTarget.lon)
 
-      customMarker.bindTooltip(
-        `<div class="space-y-0.5">
-          <div class="font-semibold">Ponto avulso consultado</div>
-          <div>${escapeHtml(customLabel)}</div>
-        </div>`,
-        {
-          direction: 'top',
-          offset: [0, -12],
-          className: 'ooh-map-tooltip',
-        },
-      )
+      if (!isPopupOpen) {
+        customMarker.bindTooltip(
+          `<div class="space-y-0.5">
+            <div class="font-semibold">Ponto avulso consultado</div>
+            <div>${escapeHtml(customLabel)}</div>
+          </div>`,
+          {
+            direction: 'top',
+            offset: [0, -12],
+            className: 'ooh-map-tooltip',
+          },
+        )
+      }
+
+      customMarker.on('click', (event: L.LeafletMouseEvent) => {
+        L.DomEvent.stopPropagation(event)
+        setIsPopupOpen(true)
+      })
 
       customMarker.addTo(layerGroup)
     }
-  }, [regions, selectedTarget, customDecision])
+  }, [regions, selectedTarget, customDecision, isPopupOpen])
 
   const targetKey = serializeTargetKey(selectedTarget)
+
+  useEffect(() => {
+    const map = mapRef.current
+    const popup = popupRef.current
+    if (!map || !popup) {
+      return
+    }
+
+    const closePopupSafely = () => {
+      if (popup.isOpen()) {
+        isSyncingPopupRef.current = true
+        try {
+          popup.close()
+        } finally {
+          isSyncingPopupRef.current = false
+        }
+      }
+      openPopupTargetKeyRef.current = null
+    }
+
+    if (!isPopupOpen || !selectedTarget || !targetKey) {
+      closePopupSafely()
+      return
+    }
+
+    let latLng: [number, number]
+    let html: string
+
+    if (selectedTarget.kind === 'region') {
+      const region = regions.find((item) => item.location.id === selectedTarget.regionId)
+      if (!region) {
+        closePopupSafely()
+        return
+      }
+
+      latLng = [region.location.latitude, region.location.longitude]
+      html = buildDecisionPopupHtml(region)
+    } else {
+      latLng = [selectedTarget.lat, selectedTarget.lon]
+      if (isCustomLoading) {
+        html = buildLoadingPopupHtml(selectedTarget.lat, selectedTarget.lon)
+      } else if (customError) {
+        html = buildErrorPopupHtml(getApiErrorMessage(customError))
+      } else if (customDecision) {
+        html = buildDecisionPopupHtml(customDecision)
+      } else {
+        html = buildLoadingPopupHtml(selectedTarget.lat, selectedTarget.lon)
+      }
+    }
+
+    if (openPopupTargetKeyRef.current === targetKey && popup.isOpen()) {
+      popup.setContent(html)
+      return
+    }
+
+    openPopupTargetKeyRef.current = targetKey
+    isSyncingPopupRef.current = true
+    try {
+      popup.setLatLng(latLng).setContent(html).openOn(map)
+    } finally {
+      isSyncingPopupRef.current = false
+    }
+  }, [isPopupOpen, targetKey, selectedTarget, regions, customDecision, isCustomLoading, customError])
 
   useEffect(() => {
     const map = mapRef.current
@@ -275,10 +401,25 @@ export function SpMonitoringMap({
       kind: 'region',
       regionId: region.location.id,
     })
+    setIsPopupOpen(true)
     if (mapRef.current) {
       focusMapOnRegion(mapRef.current, region.location.latitude, region.location.longitude)
     }
     onSelectRegion(region.location.id)
+  }
+
+  const handleClearCustomCoordinates = () => {
+    if (popupRef.current?.isOpen()) {
+      isSyncingPopupRef.current = true
+      try {
+        popupRef.current.close()
+      } finally {
+        isSyncingPopupRef.current = false
+      }
+    }
+    openPopupTargetKeyRef.current = null
+    setIsPopupOpen(false)
+    onClearCoordinates?.()
   }
 
   const handleRecenterMap = () => {
@@ -318,7 +459,7 @@ export function SpMonitoringMap({
               </span>
             </div>
             {onClearCoordinates ? (
-              <Button type="button" size="sm" variant="outline" onClick={onClearCoordinates}>
+              <Button type="button" size="sm" variant="outline" onClick={handleClearCustomCoordinates}>
                 Voltar às regiões
               </Button>
             ) : null}

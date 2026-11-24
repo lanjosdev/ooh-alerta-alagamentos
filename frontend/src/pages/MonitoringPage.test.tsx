@@ -19,6 +19,7 @@ const leafletMockState = vi.hoisted(() => ({
   panTo: vi.fn(),
   setView: vi.fn(),
   getZoom: vi.fn(() => 11),
+  popupIsOpen: false,
 }))
 
 vi.mock('leaflet', () => {
@@ -47,6 +48,20 @@ vi.mock('leaflet', () => {
     addTo: vi.fn(() => markerInstance),
   }
 
+  const popupInstance = {
+    setLatLng: vi.fn(() => popupInstance),
+    setContent: vi.fn(() => popupInstance),
+    openOn: vi.fn(() => {
+      leafletMockState.popupIsOpen = true
+      return popupInstance
+    }),
+    close: vi.fn(() => {
+      leafletMockState.popupIsOpen = false
+      return popupInstance
+    }),
+    isOpen: vi.fn(() => leafletMockState.popupIsOpen),
+  }
+
   return {
     default: {
       map: vi.fn(() => mapInstance),
@@ -54,6 +69,8 @@ vi.mock('leaflet', () => {
       layerGroup: vi.fn(() => layerGroupInstance),
       divIcon: vi.fn(() => ({})),
       marker: vi.fn(() => markerInstance),
+      point: vi.fn((x: number, y: number) => ({ x, y })),
+      popup: vi.fn(() => popupInstance),
       DomEvent: {
         stopPropagation: vi.fn(),
       },
@@ -101,6 +118,7 @@ function renderMonitoringPage() {
 describe('MonitoringPage integration flow', () => {
   beforeEach(() => {
     leafletMockState.clickHandler = null
+    leafletMockState.popupIsOpen = false
   })
 
   it('loads overview, switches scenarios, selects regions, queries free coordinates and inspects RSS', async () => {

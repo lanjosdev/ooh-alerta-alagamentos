@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { EmptyState } from '@/components/patterns/EmptyState'
 import { QueryErrorAlert } from '@/components/patterns/QueryErrorAlert'
 import { Card, CardContent } from '@/components/ui/card'
@@ -21,6 +21,7 @@ import {
 import type { AlertTarget } from '@/types/alerts'
 
 export function MonitoringPage() {
+  const detailsRef = useRef<HTMLDivElement | null>(null)
   const [presetId, setPresetId] = useState<ScenarioPresetId>('realtime')
   const [zoneFilter, setZoneFilter] = useState<ZoneFilter>('Todas')
   const [severityFilter, setSeverityFilter] = useState<SeverityFilter>('all')
@@ -135,6 +136,12 @@ export function MonitoringPage() {
             customDecision={
               effectiveTarget?.kind === 'coordinates' ? (coordinatesQuery.data ?? null) : null
             }
+            isCustomLoading={
+              effectiveTarget?.kind === 'coordinates' && coordinatesQuery.isPending
+            }
+            customError={
+              effectiveTarget?.kind === 'coordinates' ? coordinatesQuery.error : null
+            }
             onSelectRegion={(regionId) => setSelectedTarget({ kind: 'region', regionId })}
             onSelectCoordinates={(coords) =>
               setSelectedTarget({ kind: 'coordinates', lat: coords.lat, lon: coords.lon })
@@ -146,10 +153,13 @@ export function MonitoringPage() {
                   : null,
               )
             }
+            onFocusDetails={() =>
+              detailsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+            }
           />
         </div>
 
-        <div className="lg:col-span-5">
+        <div ref={detailsRef} className="lg:col-span-5">
           <PointDetailsPanel
             target={effectiveTarget}
             decision={activeDecision}
