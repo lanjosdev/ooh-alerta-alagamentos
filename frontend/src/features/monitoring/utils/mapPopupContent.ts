@@ -66,7 +66,10 @@ function buildForecastSummaryText(decision: OohAlertDecision): string {
   return text
 }
 
-function buildClimateNowSummaryText(decision: OohAlertDecision): string {
+function buildClimateNowSummary(decision: OohAlertDecision): {
+  text: string
+  sourceLabel: string
+} {
   const summary = resolveCurrentWeatherSummary(decision)
   const parts = [
     summary.rainStatusLabel,
@@ -78,7 +81,10 @@ function buildClimateNowSummaryText(decision: OohAlertDecision): string {
     parts.push(`Acum. CGE: ${formatRainMm(summary.cgeAccumulatedMm)}`)
   }
 
-  return parts.join(' • ')
+  return {
+    text: parts.join(' • '),
+    sourceLabel: summary.sourceLabel,
+  }
 }
 
 export function buildDecisionPopupHtml(decision: OohAlertDecision): string {
@@ -93,7 +99,7 @@ export function buildDecisionPopupHtml(decision: OohAlertDecision): string {
     ? 'Gatilho OOH: ATIVO'
     : 'Campanha Padrão'
 
-  const climateNowText = buildClimateNowSummaryText(decision)
+  const climateNow = buildClimateNowSummary(decision)
   const forecastText = buildForecastSummaryText(decision)
   const floodingText = buildFloodingSummaryText(decision)
   const officialAlertsText = buildOfficialAlertsSummaryText(decision)
@@ -113,7 +119,7 @@ export function buildDecisionPopupHtml(decision: OohAlertDecision): string {
   <dl class="ooh-popup-rows">
     <div class="ooh-popup-row">
       <dt>Clima agora:</dt>
-      <dd>${escapeHtml(climateNowText)}</dd>
+      <dd>${escapeHtml(climateNow.text)}<span class="ooh-popup-source">${escapeHtml(climateNow.sourceLabel)}</span></dd>
     </div>
     <div class="ooh-popup-row">
       <dt>Previsão (2h):</dt>

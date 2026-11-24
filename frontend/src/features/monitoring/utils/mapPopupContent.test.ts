@@ -52,6 +52,7 @@ describe('mapPopupContent', () => {
     expect(html).toContain('Risco: 92/100')
     expect(html).toContain('Gatilho OOH: ATIVO')
     expect(html).toContain('Chovendo agora • Tempestade com raios • 25,6 °C • Acum. CGE: 12,4 mm')
+    expect(html).toContain('Confirmado na estação CGE-SP')
     expect(html).toContain('80% • 18,4 mm • 6h: 85%')
     expect(html).toContain('1 ativo (1 intransitável)')
     expect(html).toContain('1 aviso vigente (Perigo)')
@@ -67,6 +68,7 @@ describe('mapPopupContent', () => {
     expect(html).toContain('Risco: 12/100')
     expect(html).toContain('Campanha Padrão')
     expect(html).toContain('Sem chuva no momento • Parcialmente nublado • 24,1 °C')
+    expect(html).toContain('Estimado na grade (Open-Meteo)')
     expect(html).not.toContain('Acum. CGE')
     expect(html).toContain('Sem alagamentos ativos')
     expect(html).toContain('Sem avisos vigentes')
@@ -79,8 +81,32 @@ describe('mapPopupContent', () => {
     expect(html).toContain('Atenção')
     expect(html).toContain('Gatilho OOH: ATIVO')
     expect(html).toContain('Chovendo agora • Chuva moderada • 22,8 °C')
+    expect(html).toContain('Estimado na grade (Open-Meteo)')
     expect(html).toContain('Fora da cobertura CGE-SP')
     expect(html).toContain('Sem avisos vigentes')
+  })
+
+  it('exibe Possível garoa na região para sinal fraco da grade', () => {
+    const drizzleDecision: OohAlertDecision = {
+      ...mockCampinasDecision,
+      forecast: {
+        ...mockCampinasDecision.forecast!,
+        current: {
+          observedAt: '2026-11-23T18:15',
+          temperatureC: 21.5,
+          humidityPercent: 79,
+          precipitationMm: 0.1,
+          rainMm: 0.1,
+          weatherCode: 51,
+          isDay: false,
+          isRaining: false,
+        },
+      },
+    }
+
+    const html = buildDecisionPopupHtml(drizzleDecision)
+    expect(html).toContain('Possível garoa na região • Garoa leve • 21,5 °C')
+    expect(html).toContain('Estimado na grade (Open-Meteo)')
   })
 
   it('gera markup compacto para estados de loading e erro', () => {

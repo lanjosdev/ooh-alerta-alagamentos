@@ -19,7 +19,7 @@ describe('ClimateRiskTab', () => {
     expect(screen.getByText('75%')).toBeInTheDocument()
     expect(screen.getByText('12,4 mm')).toBeInTheDocument()
     expect(screen.getByText('25,2 mm')).toBeInTheDocument()
-    expect(screen.getByText('Grade agora: 3,2 mm')).toBeInTheDocument()
+    expect(screen.getByText('Confirmado na estação CGE-SP (+1,8 mm / 15 min)')).toBeInTheDocument()
 
     expect(screen.getByText('18:00')).toBeInTheDocument()
     expect(screen.getByText('19:00')).toBeInTheDocument()
@@ -60,6 +60,7 @@ describe('ClimateRiskTab', () => {
     expect(screen.getByText('22,8 °C')).toBeInTheDocument()
     expect(screen.getByText('81%')).toBeInTheDocument()
     expect(screen.getByText('1,4 mm')).toBeInTheDocument()
+    expect(screen.getByText(/Estimado na grade \(Open-Meteo\)/i)).toBeInTheDocument()
     expect(screen.getAllByText('Chuva moderada').length).toBeGreaterThanOrEqual(1)
     expect(screen.getByText('0 vigentes')).toBeInTheDocument()
 
@@ -77,7 +78,35 @@ describe('ClimateRiskTab', () => {
     render(<ClimateRiskTab decision={mockRegionItaquera} />)
 
     expect(screen.getByText('Sem chuva no momento')).toBeInTheDocument()
+    expect(screen.getByText('Estimado na grade (Open-Meteo) • 0,0 mm')).toBeInTheDocument()
     expect(screen.getByText('24,1 °C')).toBeInTheDocument()
     expect(screen.getByText('62%')).toBeInTheDocument()
+  })
+
+  it('displays Possível garoa na região for weak grid signals', () => {
+    render(
+      <ClimateRiskTab
+        decision={{
+          ...mockRegionItaquera,
+          forecast: {
+            ...mockRegionItaquera.forecast!,
+            current: {
+              observedAt: '2026-11-23T18:15',
+              temperatureC: 23.0,
+              humidityPercent: 78,
+              precipitationMm: 0.1,
+              rainMm: 0.1,
+              weatherCode: 51,
+              isDay: false,
+              isRaining: false,
+            },
+          },
+        }}
+      />,
+    )
+
+    expect(screen.getByText('Possível garoa na região')).toBeInTheDocument()
+    expect(screen.getByText('Garoa leve')).toBeInTheDocument()
+    expect(screen.getByText('Estimado na grade (Open-Meteo) • 0,1 mm')).toBeInTheDocument()
   })
 })

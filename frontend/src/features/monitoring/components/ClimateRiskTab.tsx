@@ -102,11 +102,13 @@ export function ClimateRiskTab({ decision }: ClimateRiskTabProps) {
   const currentHour = decision.forecast?.hourly[0] ?? null
   const summary = resolveCurrentWeatherSummary(decision)
   const rainStatusBadgeClassName =
-    summary.isRaining === true
-      ? 'bg-severity-attention-bg text-severity-attention-fg border-severity-attention-border'
-      : summary.isRaining === false
-        ? 'bg-status-ok-bg text-status-ok-fg border-transparent'
-        : 'bg-status-skipped-bg text-status-skipped-fg border-transparent'
+    summary.rainStatus === 'raining'
+      ? 'bg-severity-alert-bg text-severity-alert-fg border-severity-alert-border'
+      : summary.rainStatus === 'possible-drizzle'
+        ? 'bg-severity-attention-bg text-severity-attention-fg border-severity-attention-border'
+        : summary.rainStatus === 'dry'
+          ? 'bg-status-ok-bg text-status-ok-fg border-transparent'
+          : 'bg-status-skipped-bg text-status-skipped-fg border-transparent'
   const highestOfficialRank = decision.officialAlerts.reduce<1 | 2 | 3>(
     (highest, alert) => (alert.severityRank > highest ? alert.severityRank : highest),
     1,
@@ -200,22 +202,24 @@ export function ClimateRiskTab({ decision }: ClimateRiskTabProps) {
                 <div className="flex items-center gap-1.5">
                   <WeatherConditionIcon icon={summary.icon} className="h-4 w-4 text-primary" />
                   <span>
-                    {currentGrid ? 'Condição atual' : 'Condição na grade'}
+                    Condição estimada na grade
                     {summary.observedAt ? ` (${formatHourBr(summary.observedAt)})` : ''}:
                   </span>
                   <span>{summary.conditionLabel}</span>
                 </div>
               </div>
               <span className="text-muted-foreground">
-                {currentGrid
-                  ? station
-                    ? `Grade agora: ${formatRainMm(summary.currentRainMm)}`
+                {summary.confirmedByCgeDelta
+                  ? `Confirmado na estação CGE-SP (+${formatRainMm(summary.cgeRecentDeltaMm)} / 15 min)`
+                  : currentGrid
+                    ? station
+                      ? `Estimado na grade (Open-Meteo) • ${formatRainMm(summary.currentRainMm)}`
+                      : currentHour
+                        ? `Estimado na grade (Open-Meteo) • Chance na hora: ${formatPercent(currentHour.precipitationProbabilityPercent)}`
+                        : 'Estimado na grade (Open-Meteo)'
                     : currentHour
-                      ? `Chance na hora: ${formatPercent(currentHour.precipitationProbabilityPercent)}`
-                      : null
-                  : currentHour
-                    ? `${formatPercent(currentHour.precipitationProbabilityPercent)} • ${formatRainMm(currentHour.precipitationMm)}`
-                    : null}
+                      ? `Estimado na grade (Open-Meteo) • ${formatPercent(currentHour.precipitationProbabilityPercent)} • ${formatRainMm(currentHour.precipitationMm)}`
+                      : 'Estimado na grade (Open-Meteo)'}
               </span>
             </div>
           ) : null}
