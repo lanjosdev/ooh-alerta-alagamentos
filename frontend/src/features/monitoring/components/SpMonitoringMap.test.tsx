@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen } from '@testing-library/react'
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useState } from 'react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -22,6 +22,7 @@ const leafletMockState = vi.hoisted(() => ({
   panTo: vi.fn(),
   setView: vi.fn(),
   getZoom: vi.fn(() => 11),
+  invalidateSize: vi.fn(),
   popupIsOpen: false,
   popupSetLatLng: vi.fn(),
   popupSetContent: vi.fn(),
@@ -50,6 +51,7 @@ vi.mock('leaflet', () => {
     setView: leafletMockState.setView,
     panTo: leafletMockState.panTo,
     getZoom: leafletMockState.getZoom,
+    invalidateSize: leafletMockState.invalidateSize,
   }
 
   const layerGroupInstance = {
@@ -406,5 +408,53 @@ describe('SpMonitoringMap camera centering and interactive popup', () => {
 
     await user.unhover(customPointLegendButton)
     expect(screen.queryByRole('tooltip')).not.toBeInTheDocument()
+  })
+
+  it('toggles details panel button and triggers Leaflet invalidateSize when layout mode changes', async () => {
+    const user = userEvent.setup()
+    const onToggleDetails = vi.fn()
+
+    const { rerender } = render(
+      <SpMonitoringMap
+        regions={[mockRegionButanta, mockRegionItaquera]}
+        selectedTarget={{ kind: 'region', regionId: 'zona-oeste-butanta' }}
+        customDecision={null}
+        isDetailsOpen={false}
+        activePointName="Butantã"
+        onSelectRegion={vi.fn()}
+        onSelectCoordinates={vi.fn()}
+        onToggleDetails={onToggleDetails}
+      />,
+    )
+
+    const expandButton = screen.getByRole('button', { name: /Exibir detalhes/i })
+    expect(expandButton).toHaveAttribute('aria-expanded', 'false')
+    expect(screen.getByTestId('sp-monitoring-map-canvas')).toHaveClass('lg:h-[580px]')
+
+    await user.click(expandButton)
+    expect(onToggleDetails).toHaveBeenCalledTimes(1)
+
+    leafletMockState.invalidateSize.mockClear()
+
+    rerender(
+      <SpMonitoringMap
+        regions={[mockRegionButanta, mockRegionItaquera]}
+        selectedTarget={{ kind: 'region', regionId: 'zona-oeste-butanta' }}
+        customDecision={null}
+        isDetailsOpen={true}
+        activePointName="Butantã"
+        onSelectRegion={vi.fn()}
+        onSelectCoordinates={vi.fn()}
+        onToggleDetails={onToggleDetails}
+      />,
+    )
+
+    const collapseButton = screen.getByRole('button', { name: /Recolher detalhes/i })
+    expect(collapseButton).toHaveAttribute('aria-expanded', 'true')
+    expect(screen.getByTestId('sp-monitoring-map-canvas')).toHaveClass('lg:h-[500px]')
+
+    await waitFor(() => {
+      expect(leafletMockState.invalidateSize).toHaveBeenCalledWith({ animate: false })
+    })
   })
 })

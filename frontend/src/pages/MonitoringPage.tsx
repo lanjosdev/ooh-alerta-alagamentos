@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { EmptyState } from '@/components/patterns/EmptyState'
 import { QueryErrorAlert } from '@/components/patterns/QueryErrorAlert'
 import { Card, CardContent } from '@/components/ui/card'
@@ -22,10 +22,12 @@ import type { AlertTarget } from '@/types/alerts'
 
 export function MonitoringPage() {
   const detailsRef = useRef<HTMLDivElement | null>(null)
+  const pendingScrollToDetailsRef = useRef(false)
   const [presetId, setPresetId] = useState<ScenarioPresetId>('realtime')
   const [zoneFilter, setZoneFilter] = useState<ZoneFilter>('Todas')
   const [severityFilter, setSeverityFilter] = useState<SeverityFilter>('all')
   const [selectedTarget, setSelectedTarget] = useState<AlertTarget | null>(null)
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false)
   const [activeDetailsTab, setActiveDetailsTab] = useState<PointDetailsTabId>('climate')
 
   const scenario = getScenarioPreset(presetId).query
@@ -66,6 +68,22 @@ export function MonitoringPage() {
   const detailsError =
     effectiveTarget?.kind === 'coordinates' ? coordinatesQuery.error : null
 
+  useEffect(() => {
+    if (isDetailsOpen && pendingScrollToDetailsRef.current) {
+      pendingScrollToDetailsRef.current = false
+      detailsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+  }, [isDetailsOpen])
+
+  const handleFocusDetails = () => {
+    if (isDetailsOpen) {
+      detailsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      return
+    }
+    pendingScrollToDetailsRef.current = true
+    setIsDetailsOpen(true)
+  }
+
   const handleRefresh = () => {
     void overviewQuery.refetch()
     if (effectiveTarget?.kind === 'coordinates') {
@@ -80,24 +98,17 @@ export function MonitoringPage() {
   const renderMainContent = () => {
     if (overviewQuery.isPending) {
       return (
-        <div className="grid grid-cols-1 gap-5 lg:grid-cols-12" aria-label="Carregando mapa e painel">
-          <Card className="lg:col-span-7">
+        <div className="grid grid-cols-1 gap-5" aria-label="Carregando mapa e painel">
+          <Card className="w-full">
             <CardContent className="space-y-4 p-5">
               <Skeleton className="h-6 w-64" />
-              <Skeleton className="h-[420px] w-full" />
-              <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+              <Skeleton className="h-[500px] w-full" />
+              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
+                <Skeleton className="h-14 w-full" />
                 <Skeleton className="h-14 w-full" />
                 <Skeleton className="h-14 w-full" />
                 <Skeleton className="h-14 w-full" />
               </div>
-            </CardContent>
-          </Card>
-          <Card className="lg:col-span-5">
-            <CardContent className="space-y-4 p-5">
-              <Skeleton className="h-7 w-48" />
-              <Skeleton className="h-20 w-full" />
-              <Skeleton className="h-10 w-full" />
-              <Skeleton className="h-44 w-full" />
             </CardContent>
           </Card>
         </div>
@@ -128,8 +139,14 @@ export function MonitoringPage() {
     }
 
     return (
-      <div className="grid grid-cols-1 items-start gap-5 lg:grid-cols-12">
-        <div className="lg:col-span-7">
+      <div
+        className={
+          isDetailsOpen
+            ? 'grid grid-cols-1 items-start gap-5 lg:grid-cols-12'
+            : 'grid grid-cols-1 items-start gap-5'
+        }
+      >
+        <div className={isDetailsOpen ? 'lg:col-span-7 xl:col-span-8' : 'w-full'}>
           <SpMonitoringMap
             regions={filteredRegions}
             selectedTarget={effectiveTarget}
@@ -142,6 +159,8 @@ export function MonitoringPage() {
             customError={
               effectiveTarget?.kind === 'coordinates' ? coordinatesQuery.error : null
             }
+            isDetailsOpen={isDetailsOpen}
+            activePointName={activeDecision?.location.name ?? null}
             onSelectRegion={(regionId) => setSelectedTarget({ kind: 'region', regionId })}
             onSelectCoordinates={(coords) =>
               setSelectedTarget({ kind: 'coordinates', lat: coords.lat, lon: coords.lon })
@@ -153,35 +172,37 @@ export function MonitoringPage() {
                   : null,
               )
             }
-            onFocusDetails={() =>
-              detailsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-            }
+            onFocusDetails={handleFocusDetails}
+            onToggleDetails={() => setIsDetailsOpen((open) => !open)}
           />
         </div>
 
-        <div ref={detailsRef} className="lg:col-span-5">
-          <PointDetailsPanel
-            target={effectiveTarget}
-            decision={activeDecision}
-            scenario={scenario}
-            isLoading={isDetailsLoading}
-            error={detailsError}
-            onRetry={
-              effectiveTarget?.kind === 'coordinates'
-                ? () => void coordinatesQuery.refetch()
-                : () => void overviewQuery.refetch()
-            }
-            activeTab={activeDetailsTab}
-            onTabChange={setActiveDetailsTab}
-          />
-        </div>
+        {isDetailsOpen ? (
+          <div ref={detailsRef} className="lg:col-span-5 xl:col-span-4">
+            <PointDetailsPanel
+              target={effectiveTarget}
+              decision={activeDecision}
+              scenario={scenario}
+              isLoading={isDetailsLoading}
+              error={detailsError}
+              onRetry={
+                effectiveTarget?.kind === 'coordinates'
+                  ? () => void coordinatesQuery.refetch()
+                  : () => void overviewQuery.refetch()
+              }
+              onClose={() => setIsDetailsOpen(false)}
+              activeTab={activeDetailsTab}
+              onTabChange={setActiveDetailsTab}
+            />
+          </div>
+        ) : null}
       </div>
     )
   }
 
   return (
     <main className="min-h-screen bg-background text-foreground">
-      <div className="mx-auto max-w-[1440px] space-y-5 p-4 sm:p-6">
+      <div className="mx-auto max-w-[1600px] space-y-5 p-4 sm:p-6">
         <ScenarioToolbar
           presetId={presetId}
           onSelectPreset={setPresetId}

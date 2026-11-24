@@ -1,5 +1,5 @@
 import L from 'leaflet'
-import { Crosshair, MapPin, Navigation } from 'lucide-react'
+import { Crosshair, MapPin, Navigation, PanelRightClose, PanelRightOpen } from 'lucide-react'
 import { useEffect, useId, useRef, useState } from 'react'
 import { EmptyState } from '@/components/patterns/EmptyState'
 import { SeverityBadge } from '@/components/patterns/SeverityBadge'
@@ -54,10 +54,13 @@ export interface SpMonitoringMapProps {
   customDecision: OohAlertDecision | null
   isCustomLoading?: boolean
   customError?: unknown
+  isDetailsOpen?: boolean
+  activePointName?: string | null
   onSelectRegion: (regionId: string) => void
   onSelectCoordinates: (coordinates: { lat: number; lon: number }) => void
   onClearCoordinates?: () => void
   onFocusDetails?: () => void
+  onToggleDetails?: () => void
 }
 
 function buildRegionMarkerIcon(decision: OohAlertDecision, isSelected: boolean): L.DivIcon {
@@ -108,10 +111,13 @@ export function SpMonitoringMap({
   customDecision,
   isCustomLoading = false,
   customError = null,
+  isDetailsOpen = false,
+  activePointName = null,
   onSelectRegion,
   onSelectCoordinates,
   onClearCoordinates,
   onFocusDetails,
+  onToggleDetails,
 }: SpMonitoringMapProps) {
   const containerRef = useRef<HTMLDivElement | null>(null)
   const mapRef = useRef<L.Map | null>(null)
@@ -202,11 +208,20 @@ export function SpMonitoringMap({
     map.on('popupclose', handlePopupClose)
     container.addEventListener('click', handleContainerClick, true)
 
+    const resizeObserver =
+      typeof ResizeObserver !== 'undefined'
+        ? new ResizeObserver(() => {
+            map.invalidateSize({ animate: false })
+          })
+        : null
+    resizeObserver?.observe(container)
+
     mapRef.current = map
     layerGroupRef.current = layerGroup
     popupRef.current = popup
 
     return () => {
+      resizeObserver?.disconnect()
       container.removeEventListener('click', handleContainerClick, true)
       map.off('click', handleMapClick)
       map.off('popupclose', handlePopupClose)
@@ -217,6 +232,16 @@ export function SpMonitoringMap({
       openPopupTargetKeyRef.current = null
     }
   }, [])
+
+  useEffect(() => {
+    const frameId = requestAnimationFrame(() => {
+      mapRef.current?.invalidateSize({ animate: false })
+    })
+
+    return () => {
+      cancelAnimationFrame(frameId)
+    }
+  }, [isDetailsOpen])
 
   useEffect(() => {
     const layerGroup = layerGroupRef.current
@@ -440,9 +465,39 @@ export function SpMonitoringMap({
               Leopoldina, Morumbi ou Campinas) para consulta hiperlocal via coordenadas.
             </CardDescription>
           </div>
-          <Badge variant="outline" className="shrink-0">
-            {regions.length} {regions.length === 1 ? 'região exibida' : 'regiões exibidas'}
-          </Badge>
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge variant="outline" className="shrink-0">
+              {regions.length} {regions.length === 1 ? 'região exibida' : 'regiões exibidas'}
+            </Badge>
+            {onToggleDetails ? (
+              <Button
+                type="button"
+                size="sm"
+                variant={isDetailsOpen ? 'secondary' : 'outline'}
+                aria-expanded={isDetailsOpen}
+                onClick={onToggleDetails}
+                title={
+                  isDetailsOpen
+                    ? 'Recolher painel lateral de detalhamentos'
+                    : activePointName
+                      ? `Exibir detalhes de ${activePointName}`
+                      : 'Exibir painel de detalhamentos'
+                }
+              >
+                {isDetailsOpen ? (
+                  <>
+                    <PanelRightClose className="h-3.5 w-3.5" aria-hidden="true" />
+                    <span>Recolher detalhes</span>
+                  </>
+                ) : (
+                  <>
+                    <PanelRightOpen className="h-3.5 w-3.5" aria-hidden="true" />
+                    <span>Exibir detalhes</span>
+                  </>
+                )}
+              </Button>
+            ) : null}
+          </div>
         </div>
       </CardHeader>
 
@@ -470,7 +525,12 @@ export function SpMonitoringMap({
           <div
             ref={containerRef}
             data-testid="sp-monitoring-map-canvas"
-            className="h-[360px] w-full bg-muted sm:h-[430px]"
+            className={cn(
+              'w-full bg-muted transition-[height] duration-200',
+              isDetailsOpen
+                ? 'h-[380px] sm:h-[460px] lg:h-[500px]'
+                : 'h-[400px] sm:h-[500px] lg:h-[580px]',
+            )}
           />
 
           <div className="pointer-events-none absolute top-3 right-3 z-10 flex flex-col gap-2">
@@ -564,7 +624,12 @@ export function SpMonitoringMap({
               description="Ajuste os filtros de Zona ou Severidade na barra superior para visualizar as regiões no mapa."
             />
           ) : (
-            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-3">
+            <div
+              className={cn(
+                'grid grid-cols-1 gap-2 sm:grid-cols-2',
+                isDetailsOpen ? 'xl:grid-cols-3' : 'lg:grid-cols-3 xl:grid-cols-4',
+              )}
+            >
               {regions.map((region) => {
                 const isSelected =
                   selectedTarget?.kind === 'region' &&

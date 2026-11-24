@@ -14,6 +14,9 @@ Aplicação web SPA (React 19 + Vite + TypeScript Strict + Tailwind CSS v4 + Tan
 - **Barra de Cenários de Demonstração e Saúde das Fontes:**
   - Alterna entre `Tempo Real (Hoje)`, `Dia Chuvoso Real (CGE 15/01/2026)` e simulações (`Normal`, `Atenção`, `Alerta`, `Crítico`).
   - Exibe resumo de severidade, contagem de gatilhos OOH ativos e saúde das 3 fontes (`Open-Meteo`, `INMET`, `CGE-SP`) via `GET /v1/sources/status`.
+- **Layout Map-First com Painel Lateral Recolhível:**
+  - Na carga inicial, o **Mapa Interativo de Monitoramento** ocupa toda a largura útil com altura ampliada e grade de acesso rápido em até 4 colunas.
+  - O painel lateral de detalhamentos inicia recolhido e pode ser expandido/recolhido pelo atalho **Exibir detalhes / Recolher detalhes** no cabeçalho do mapa, pelo botão **Recolher** no próprio painel ou pelo link **`Ver detalhes completos →`** dentro do popup.
 - **Painel de Detalhes (`Clima & Risco` e `Técnico JSON / XML`):**
   - **Clima & Risco:** indicador em tempo quase real (`forecast.current`, 15 min) de chuva no momento, temperatura, umidade e precipitação tanto na Capital SP (combinado à estação CGE-SP) quanto em outros municípios (ex.: Campinas), além da previsão 2h/6h com linha do tempo horária, alagamentos na zona e avisos oficiais do INMET.
   - **Técnico (JSON / XML):** justificativas do motor de risco (`reasons[]`), telemetria de cache/status das fontes, visualizador de `REST JSON` e `XML / RSS 2.0` (`/feed.xml`) com URL copiável, abertura em nova aba e cópia do payload.
