@@ -20,6 +20,16 @@ function createDeterministicProviders() {
       gridLatitude: Number((lat - 0.01).toFixed(4)),
       gridLongitude: Number((lon - 0.01).toFixed(4)),
       timezone: 'America/Sao_Paulo',
+      current: {
+        observedAt: '2026-11-23T15:00',
+        temperatureC: 23.8,
+        humidityPercent: 82,
+        precipitationMm: lat < -23.56 && lon < -46.72 ? 2.4 : 0,
+        rainMm: lat < -23.56 && lon < -46.72 ? 2.4 : 0,
+        weatherCode: lat < -23.56 && lon < -46.72 ? 80 : 2,
+        isDay: true,
+        isRaining: lat < -23.56 && lon < -46.72,
+      },
       maxRainProbabilityNext2hPercent: lat < -23.56 && lon < -46.72 ? 85 : 30,
       expectedRainNext2hMm: lat < -23.56 && lon < -46.72 ? 20 : 1,
       peakRainIntensityNext2hMmPerHour: lat < -23.56 && lon < -46.72 ? 16 : 0.8,
@@ -366,6 +376,7 @@ describe('Regions, Alerts and Feeds OOH (Integração Offline)', () => {
     expect(regionFeed.headers['content-type']).toBe('application/rss+xml; charset=utf-8')
     expect(regionFeed.body.startsWith('<?xml version="1.0" encoding="UTF-8"?>')).toBe(true)
     expect(regionFeed.body).toContain('<ooh:regionId>zona-oeste-butanta</ooh:regionId>')
+    expect(regionFeed.body).toContain('<ooh:isRainingNow>true</ooh:isRainingNow>')
     expect(regionFeed.body.match(/<item>/g)).toHaveLength(1)
 
     const coordFeed = await app.inject({

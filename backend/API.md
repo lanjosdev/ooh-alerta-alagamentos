@@ -114,6 +114,16 @@ Retorna a decisão detalhada de risco para uma região específica (ex.: `zona-o
         "gridLatitude": -23.585238,
         "gridLongitude": -46.754486,
         "timezone": "America/Sao_Paulo",
+        "current": {
+          "observedAt": "2026-11-23T19:00",
+          "temperatureC": 23.4,
+          "humidityPercent": 82,
+          "precipitationMm": 0.4,
+          "rainMm": 0.4,
+          "weatherCode": 61,
+          "isDay": false,
+          "isRaining": true
+        },
         "maxRainProbabilityNext2hPercent": 40,
         "expectedRainNext2hMm": 0.8,
         "peakRainIntensityNext2hMmPerHour": 0.5,
@@ -194,6 +204,7 @@ Feed RSS 2.0 individual por coordenada geográfica (aceita `lat`, `lon`, `cgeDat
         <ooh:riskScore>46</ooh:riskScore>
         <ooh:simulated>false</ooh:simulated>
         <ooh:rainProbabilityNext2hPercent>40</ooh:rainProbabilityNext2hPercent>
+        <ooh:isRainingNow>true</ooh:isRainingNow>
         <ooh:activeFloodingsInZone>0</ooh:activeFloodingsInZone>
         <ooh:headline>ATENÇÃO PARA CHUVA FORTE — Butantã</ooh:headline>
         <ooh:message>Chuva prevista para Butantã (40% de chance nas próximas 2h). Atenção em pontos críticos.</ooh:message>

@@ -1,6 +1,11 @@
 import { z } from 'zod'
 import { env } from '../../env.js'
-import type { ForecastProvider, HourlyRainPoint, RegionForecast } from '../forecast-provider.js'
+import type {
+  CurrentWeather,
+  ForecastProvider,
+  HourlyRainPoint,
+  RegionForecast,
+} from '../forecast-provider.js'
 
 const DEFAULT_OPEN_METEO_BASE_URL = 'https://api.open-meteo.com/v1/forecast'
 
@@ -8,6 +13,17 @@ const openMeteoResponseSchema = z.object({
   latitude: z.number(),
   longitude: z.number(),
   timezone: z.string().default('America/Sao_Paulo'),
+  current: z
+    .object({
+      time: z.string(),
+      temperature_2m: z.number().nullable().optional(),
+      relative_humidity_2m: z.number().nullable().optional(),
+      precipitation: z.number().nullable().optional(),
+      rain: z.number().nullable().optional(),
+      weather_code: z.number().nullable().optional(),
+      is_day: z.number().nullable().optional(),
+    })
+    .optional(),
   hourly: z.object({
     time: z.array(z.string()),
     precipitation_probability: z.array(z.number().nullable()),
@@ -24,6 +40,41 @@ export interface OpenMeteoForecastProviderOptions {
 
 function roundToTwoDecimals(value: number): number {
   return Math.round(value * 100) / 100
+}
+
+function isRainWeatherCode(code: number): boolean {
+  return (code >= 51 && code <= 67) || (code >= 80 && code <= 82) || (code >= 95 && code <= 99)
+}
+
+function normalizeCurrentWeather(
+  rawCurrent: z.infer<typeof openMeteoResponseSchema>['current'],
+): CurrentWeather | null {
+  if (!rawCurrent) {
+    return null
+  }
+
+  const precipitationMm = roundToTwoDecimals(rawCurrent.precipitation ?? 0)
+  const rainMm = roundToTwoDecimals(rawCurrent.rain ?? 0)
+  const weatherCode = rawCurrent.weather_code ?? 0
+  const temperatureC =
+    rawCurrent.temperature_2m !== null && rawCurrent.temperature_2m !== undefined
+      ? roundToTwoDecimals(rawCurrent.temperature_2m)
+      : null
+  const humidityPercent =
+    rawCurrent.relative_humidity_2m !== null && rawCurrent.relative_humidity_2m !== undefined
+      ? roundToTwoDecimals(rawCurrent.relative_humidity_2m)
+      : null
+
+  return {
+    observedAt: rawCurrent.time,
+    temperatureC,
+    humidityPercent,
+    precipitationMm,
+    rainMm,
+    weatherCode,
+    isDay: rawCurrent.is_day === 1,
+    isRaining: rainMm >= 0.1 || precipitationMm >= 0.1 || isRainWeatherCode(weatherCode),
+  }
 }
 
 function formatSaoPauloHourKey(date: Date): string {
@@ -58,6 +109,10 @@ export class OpenMeteoForecastProvider implements ForecastProvider {
     const url = new URL(this.baseUrl)
     url.searchParams.set('latitude', String(lat))
     url.searchParams.set('longitude', String(lon))
+    url.searchParams.set(
+      'current',
+      'temperature_2m,relative_humidity_2m,precipitation,rain,weather_code,is_day',
+    )
     url.searchParams.set('hourly', 'precipitation_probability,precipitation,weather_code')
     url.searchParams.set('timezone', 'America/Sao_Paulo')
     url.searchParams.set('forecast_days', '2')
@@ -102,6 +157,7 @@ export class OpenMeteoForecastProvider implements ForecastProvider {
       gridLatitude: payload.latitude,
       gridLongitude: payload.longitude,
       timezone: payload.timezone,
+      current: normalizeCurrentWeather(payload.current),
       maxRainProbabilityNext2hPercent: Math.max(
         0,
         ...next2h.map((point) => point.precipitationProbabilityPercent),

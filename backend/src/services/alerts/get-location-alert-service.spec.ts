@@ -20,6 +20,7 @@ function createStubProviders() {
     gridLatitude: -23.58,
     gridLongitude: -46.75,
     timezone: 'America/Sao_Paulo',
+    current: null,
     maxRainProbabilityNext2hPercent: 80,
     expectedRainNext2hMm: 18,
     peakRainIntensityNext2hMmPerHour: 12,

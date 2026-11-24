@@ -6,6 +6,26 @@
   "timezone": "America/Sao_Paulo",
   "timezone_abbreviation": "GMT-3",
   "elevation": 748,
+  "current_units": {
+    "time": "iso8601",
+    "interval": "seconds",
+    "temperature_2m": "°C",
+    "relative_humidity_2m": "%",
+    "precipitation": "mm",
+    "rain": "mm",
+    "weather_code": "wmo code",
+    "is_day": ""
+  },
+  "current": {
+    "time": "2026-11-23T14:15",
+    "interval": 900,
+    "temperature_2m": 23.4,
+    "relative_humidity_2m": 84,
+    "precipitation": 1.8,
+    "rain": 1.8,
+    "weather_code": 80,
+    "is_day": 1
+  },
   "hourly_units": {
     "time": "iso8601",
     "precipitation_probability": "%",

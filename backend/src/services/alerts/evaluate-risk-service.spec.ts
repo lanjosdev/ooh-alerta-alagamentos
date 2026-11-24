@@ -10,6 +10,7 @@ function makeForecast(overrides: Partial<RegionForecast> = {}): RegionForecast {
     gridLatitude: -23.56,
     gridLongitude: -46.72,
     timezone: 'America/Sao_Paulo',
+    current: null,
     maxRainProbabilityNext2hPercent: 10,
     expectedRainNext2hMm: 0,
     peakRainIntensityNext2hMmPerHour: 0,

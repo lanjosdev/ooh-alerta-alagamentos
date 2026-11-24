@@ -34,6 +34,10 @@ function renderItem(decision: OohAlertDecision, baseLink: string): string {
   const guid = `${decision.location.id}-${decision.severityLabel}-${decision.evaluatedAt}`
   const rainProb =
     decision.forecast !== null ? String(decision.forecast.maxRainProbabilityNext2hPercent) : ''
+  const isRainingNow =
+    decision.forecast?.current !== null && decision.forecast?.current !== undefined
+      ? String(decision.forecast.current.isRaining)
+      : ''
 
   return [
     '    <item>',
@@ -55,6 +59,7 @@ function renderItem(decision: OohAlertDecision, baseLink: string): string {
     `      <ooh:riskScore>${String(decision.riskScore)}</ooh:riskScore>`,
     `      <ooh:simulated>${String(decision.simulated)}</ooh:simulated>`,
     `      <ooh:rainProbabilityNext2hPercent>${rainProb}</ooh:rainProbabilityNext2hPercent>`,
+    `      <ooh:isRainingNow>${isRainingNow}</ooh:isRainingNow>`,
     `      <ooh:activeFloodingsInZone>${String(decision.flooding.activeInZoneCount)}</ooh:activeFloodingsInZone>`,
     `      <ooh:headline>${escapeXml(decision.display.headline)}</ooh:headline>`,
     `      <ooh:message>${escapeXml(decision.display.message)}</ooh:message>`,

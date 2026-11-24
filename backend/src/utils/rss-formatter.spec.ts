@@ -2,7 +2,20 @@ import { describe, expect, it } from 'vitest'
 import type { OohAlertDecision } from '../services/alerts/alert-types.js'
 import { OOH_XML_NAMESPACE, escapeXml, formatAlertsAsRss } from './rss-formatter.js'
 
-function makeDecision(id: string, name: string): OohAlertDecision {
+function makeDecision(
+  id: string,
+  name: string,
+  current: NonNullable<OohAlertDecision['forecast']>['current'] = {
+    observedAt: '2026-11-23T18:00',
+    temperatureC: 24.5,
+    humidityPercent: 82,
+    precipitationMm: 3.4,
+    rainMm: 3.4,
+    weatherCode: 95,
+    isDay: false,
+    isRaining: true,
+  },
+): OohAlertDecision {
   return {
     evaluatedAt: '2026-11-23T18:00:00.000Z',
     location: {
@@ -34,6 +47,7 @@ function makeDecision(id: string, name: string): OohAlertDecision {
       gridLatitude: -23.58,
       gridLongitude: -46.75,
       timezone: 'America/Sao_Paulo',
+      current,
       maxRainProbabilityNext2hPercent: 90,
       expectedRainNext2hMm: 22,
       peakRainIntensityNext2hMmPerHour: 15,
@@ -111,7 +125,33 @@ describe('rss-formatter', () => {
     expect(xml).toContain('<ooh:triggerOverride>true</ooh:triggerOverride>')
     expect(xml).toContain('<ooh:severityLevel>3</ooh:severityLevel>')
     expect(xml).toContain('<ooh:rainProbabilityNext2hPercent>90</ooh:rainProbabilityNext2hPercent>')
+    expect(xml).toContain('<ooh:isRainingNow>true</ooh:isRainingNow>')
     expect(xml).toContain('<ooh:activeFloodingsInZone>1</ooh:activeFloodingsInZone>')
     expect(xml.match(/<item>/g)).toHaveLength(2)
+  })
+
+  it('serializa ooh:isRainingNow como false quando seco e vazio quando forecast.current é null', () => {
+    const dryDecision = makeDecision('zona-leste-itaquera', 'Itaquera', {
+      observedAt: '2026-11-23T18:00',
+      temperatureC: 22.1,
+      humidityPercent: 60,
+      precipitationMm: 0,
+      rainMm: 0,
+      weatherCode: 2,
+      isDay: false,
+      isRaining: false,
+    })
+    const unavailableDecision = makeDecision('zona-sul-santo-amaro', 'Santo Amaro', null)
+
+    const xml = formatAlertsAsRss({
+      title: 'Feed OOH',
+      link: 'http://localhost:3333/v1/alerts/feed.xml',
+      description: 'Alertas OOH',
+      decisions: [dryDecision, unavailableDecision],
+      generatedAt: new Date('2026-11-23T18:00:00.000Z'),
+    })
+
+    expect(xml).toContain('<ooh:isRainingNow>false</ooh:isRainingNow>')
+    expect(xml).toContain('<ooh:isRainingNow></ooh:isRainingNow>')
   })
 })

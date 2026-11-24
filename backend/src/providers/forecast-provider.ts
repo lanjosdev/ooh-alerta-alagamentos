@@ -1,3 +1,14 @@
+export interface CurrentWeather {
+  observedAt: string
+  temperatureC: number | null
+  humidityPercent: number | null
+  precipitationMm: number
+  rainMm: number
+  weatherCode: number
+  isDay: boolean
+  isRaining: boolean
+}
+
 export interface HourlyRainPoint {
   time: string
   precipitationProbabilityPercent: number
@@ -10,6 +21,7 @@ export interface RegionForecast {
   gridLatitude: number
   gridLongitude: number
   timezone: string
+  current: CurrentWeather | null
   maxRainProbabilityNext2hPercent: number
   expectedRainNext2hMm: number
   peakRainIntensityNext2hMmPerHour: number
