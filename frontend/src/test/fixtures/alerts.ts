@@ -2,6 +2,13 @@ import type { CityOverviewData, OohAlertDecision, SourcesStatusData } from '@/ty
 
 export const mockRegionButanta: OohAlertDecision = {
   evaluatedAt: '2026-11-23T18:00:00',
+  temporal: {
+    mode: 'realtime',
+    date: null,
+    time: null,
+    resolvedTime: null,
+    referenceAt: '2026-11-23T15:00:00-03:00',
+  },
   location: {
     id: 'zona-oeste-butanta',
     name: 'Butantã',
@@ -138,6 +145,13 @@ export const mockRegionButanta: OohAlertDecision = {
 
 export const mockRegionItaquera: OohAlertDecision = {
   evaluatedAt: '2026-11-23T18:00:00',
+  temporal: {
+    mode: 'realtime',
+    date: null,
+    time: null,
+    resolvedTime: null,
+    referenceAt: '2026-11-23T15:00:00-03:00',
+  },
   location: {
     id: 'zona-leste-itaquera',
     name: 'Itaquera',
@@ -239,6 +253,13 @@ export const mockRegionItaquera: OohAlertDecision = {
 
 export const mockCampinasDecision: OohAlertDecision = {
   evaluatedAt: '2026-11-23T18:00:00',
+  temporal: {
+    mode: 'realtime',
+    date: null,
+    time: null,
+    resolvedTime: null,
+    referenceAt: '2026-11-23T15:00:00-03:00',
+  },
   location: {
     id: 'coord--22.9099--47.0626',
     name: 'Ponto (-22.9099, -47.0626)',

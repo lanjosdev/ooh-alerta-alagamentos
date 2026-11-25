@@ -2,6 +2,8 @@ import type { AlertTarget, CityOverviewFilters, ScenarioQueryParams } from '@/ty
 
 function normalizeScenario(scenario?: ScenarioQueryParams) {
   return {
+    date: scenario?.date ?? null,
+    time: scenario?.time ?? null,
     cgeDate: scenario?.cgeDate ?? null,
     simulate: scenario?.simulate ?? null,
   }
@@ -25,5 +27,6 @@ export const monitoringKeys = {
     [...monitoringKeys.all, 'coordinates', lat, lon, normalizeScenario(scenario)] as const,
   rss: (target: AlertTarget | null, scenario?: ScenarioQueryParams) =>
     [...monitoringKeys.all, 'rss', target, normalizeScenario(scenario)] as const,
+  health: () => [...monitoringKeys.all, 'health'] as const,
   sourcesStatus: () => [...monitoringKeys.all, 'sources-status'] as const,
 }

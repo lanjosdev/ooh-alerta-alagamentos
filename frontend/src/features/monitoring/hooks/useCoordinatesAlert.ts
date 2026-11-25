@@ -12,6 +12,8 @@ export function useCoordinatesAlert(
   coordinates: CoordinatesInput | null,
   scenario?: ScenarioQueryParams,
 ) {
+  const isHistorical = Boolean(scenario?.date || scenario?.cgeDate)
+
   return useQuery({
     queryKey: monitoringKeys.coordinates(
       coordinates?.lat ?? 0,
@@ -26,5 +28,6 @@ export function useCoordinatesAlert(
       return alertsService.getCoordinatesAlert(coordinates.lat, coordinates.lon, scenario)
     },
     enabled: coordinates !== null,
+    staleTime: isHistorical ? Infinity : 30_000,
   })
 }
