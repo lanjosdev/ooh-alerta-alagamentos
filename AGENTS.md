@@ -6,11 +6,12 @@ Este arquivo é a **Fonte Única da Verdade Global** com as diretrizes de govern
 
 ## 1. Estrutura do Workspace e Escopo de Regras
 
-O repositório é organizado em subaplicações com regras contextuais hierárquicas:
+O repositório é organizado em subaplicações com regras contextuais hierárquicas e documentação transversal:
+- **`docs/`**: documentação transversal de produto, análise de viabilidade, pesquisa tecnológica/fontes e especificações de escopo (índice em [`docs/README.md`](./docs/README.md); escopo vigente do Player Criativo DOOH em [`docs/03-escopo-poc-player-dooh.md`](./docs/03-escopo-poc-player-dooh.md)).
 - **`backend/`**: API Fastify v5 + TypeScript Strict + Zod para coleta, normalização, cruzamento de risco e distribuição de alertas de alagamento (JSON e XML/RSS 2.0) para mídia DOOH. Possui regras próprias em [`backend/AGENTS.md`](./backend/AGENTS.md).
 - **`frontend/`**: SPA React 19 + Vite + TypeScript Strict + Tailwind CSS v4 + TanStack Query v5 + Leaflet para monitoramento em mapa interativo e inspeção técnica JSON/RSS. Possui regras próprias em [`frontend/AGENTS.md`](./frontend/AGENTS.md).
 
-> As regras de diretório são cumulativas. Ao trabalhar em `backend/` ou `frontend/`, as regras do respectivo `AGENTS.md` complementam estas diretrizes globais e têm precedência em caso de especificidade da stack.
+> As regras de diretório são cumulativas. Ao trabalhar em `backend/` ou `frontend/`, as regras do respectivo `AGENTS.md` complementam estas diretrizes globais e têm precedência em caso de especificidade da stack. Antes de planejar ou implementar funcionalidades da frente Player Criativo DOOH ou alterações de escopo/fontes de dados, consulte [`docs/03-escopo-poc-player-dooh.md`](./docs/03-escopo-poc-player-dooh.md) e [`docs/README.md`](./docs/README.md).
 
 ---
 
@@ -47,7 +48,11 @@ O repositório é organizado em subaplicações com regras contextuais hierárqu
     - `feat(backend): ...` / `feat(providers): ...` / `feat(alerts): ...` / `feat(frontend): ...`
     - `fix(backend): ...` / `fix(frontend): ...`
     - `test(frontend): ...`
-    - `docs(backend): ...` / `docs(frontend): ...`
+    - `docs(repo): ...` / `docs(backend): ...` / `docs(frontend): ...`
+- **Manutenção Documental e Mudanças de Escopo:**
+  - **Modo Executivo:** sempre que uma entrega alterar escopo, stack, contratos de API, provedores ou decisões arquiteturais, atualize os documentos impactados (`docs/`, `backend/API.md`, `backend/docs/architecture.md`, `README.md` e os `AGENTS.md` quando a stack mudar) antes de encerrar a tarefa.
+  - **Modo Consultivo:** ao fechar uma mudança de escopo ou nova decisão em conversa, respeite a proibição de edição silenciosa e proponha explicitamente a atualização do documento correspondente em `docs/` antes de iniciar a implementação.
+  - **Novos Escopos / Fases:** registre novos escopos seguindo o padrão sequencial `docs/NN-<tema-em-kebab-case>.md` (ex.: `04-...`) e atualize o índice em [`docs/README.md`](./docs/README.md) (e o `README.md` da raiz quando aplicável).
 - **Gated Workflow (Qualidade Obrigatória):**
   - Toda tarefa concluída em `backend/` deve passar pelos 3 gates antes de ser considerada finalizada:
     1. `npm run typecheck`

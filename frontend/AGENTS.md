@@ -1,6 +1,6 @@
 # Diretrizes do Frontend — OOH Alerta Alagamentos
 
-Este arquivo rege a arquitetura, governança e convenções para o código sob `frontend/`. Complementa as diretrizes globais da raiz ([`../AGENTS.md`](../AGENTS.md)) e consome o contrato REST/RSS documentado em [`../backend/API.md`](../backend/API.md).
+Este arquivo rege a arquitetura, governança e convenções para o código sob `frontend/`. Complementa as diretrizes globais da raiz ([`../AGENTS.md`](../AGENTS.md)), consome o contrato REST/RSS documentado em [`../backend/API.md`](../backend/API.md) e segue, para o Painel Principal Unificado e o Player Criativo DOOH, o escopo em [`../docs/03-escopo-poc-player-dooh.md`](../docs/03-escopo-poc-player-dooh.md).
 
 ---
 

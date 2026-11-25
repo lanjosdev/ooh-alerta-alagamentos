@@ -1,6 +1,6 @@
 # Diretrizes do Backend — OOH Alerta Alagamentos
 
-Este arquivo rege a arquitetura, governança e convenções para o código sob `backend/`. Complementa as diretrizes globais da raiz ([`../AGENTS.md`](../AGENTS.md)) e o contrato em [`API.md`](./API.md).
+Este arquivo rege a arquitetura, governança e convenções para o código sob `backend/`. Complementa as diretrizes globais da raiz ([`../AGENTS.md`](../AGENTS.md)), o contrato em [`API.md`](./API.md) e, para a frente do Player Criativo DOOH (`/v1/player/*`, provedores geoespaciais e replay histórico), o escopo em [`../docs/03-escopo-poc-player-dooh.md`](../docs/03-escopo-poc-player-dooh.md).
 
 ---
 
