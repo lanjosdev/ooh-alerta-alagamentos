@@ -62,7 +62,7 @@ Verifica a saúde, o tempo de atividade do servidor (`uptime`, `timestamp`) e as
 ```
 
 #### `GET /v1/sources/status`
-Retorna a saúde em tempo real, número de chaves em cache, última latência e último erro (se houver) de cada provedor registrado (`open-meteo`, `inmet`, `cge-sp`).
+Retorna a saúde em tempo real, número de chaves em cache, última latência e último erro (se houver) de cada provedor registrado (`open-meteo`, `inmet`, `cge-sp`, `overpass`, `geosampa-wfs`, `nominatim`), além de provedores sob demanda como `open-meteo-historical`.
 
 ---
 
@@ -240,6 +240,101 @@ Feed RSS 2.0 individual por coordenada geográfica (aceita `lat`, `lon`, `cgeDat
       </item>
     </channel>
   </rss>
+  ```
+
+---
+
+### Player Criativo DOOH (`/v1/player/*`)
+
+> **Nota de fase PoC (Custo Zero):** as integrações públicas gratuitas de Open-Meteo (`historical-forecast-api` / `archive-api`), Overpass API e Nominatim são restritas à fase de PoC e protegidas por cache TTL de 24h (`86400s`) e fila serial no backend. Dados cartográficos e viários: `© OpenStreetMap contributors (ODbL)`.
+
+#### `GET /v1/player/assets`
+Lista o catálogo curado dos **7 corredores OOH icônicos de São Paulo** com geometrias reais OSM em snapshot local, câmera sugerida (`center`, `zoom`, `bearing`, `bounds`) e resumo atual ou histórico de risco.
+
+- **Query params opcionais:** `date`, `time`, `cgeDate`, `simulate`.
+
+#### `GET /v1/player/geocode?q=`
+Executa busca textual de endereços e avenidas restrita ao Estado de São Paulo (`BR-SP`, *viewbox* RMSP) via `NominatimGeocodingProvider`, respeitando fila serial (`>= 1100 ms` entre chamadas) e cache TTL.
+
+- **Query params obrigatórios:**
+  - `q`: texto de busca entre `3` e `120` caracteres (`400` fora desse intervalo).
+
+#### `GET /v1/player/scene`
+Orquestra a cena completa pronta para o Player Criativo DOOH (`PlayerSceneData`): decisão de risco (`decision`, contendo `decision.temporal` como fonte única), textos editoriais PT-BR (`editorial`), câmera com `bounds`, `FeatureCollection` GeoJSON dos trechos viários com `riskIntensity` (`0..1`) e status detalhado das 5 fontes.
+
+- **Query params:**
+  - **Alvo (XOR obrigatório):** informe `assetId` (ex.: `av-roberto-marinho`) **ou** o par completo `lat` + `lon`. Informar ambos ou omitir ambos retorna **`400 Bad Request`**. Se `assetId` não existir no catálogo, retorna **`404 Not Found`**.
+  - **Temporais / Simulação (opcionais):** `date` (`YYYY-MM-DD`), `time` (`HH:MM`), `cgeDate` (`DD/MM/AAAA`), `simulate`.
+- **Degradação graciosa:** em consultas por coordenadas (`lat`/`lon`), caso todos os mirrors do Overpass ou o GeoSampa WFS falhem, o endpoint ainda responde **`200 OK`** com `roads.features: []` (ou `geoSampaZonesCount: 0`) e `sources.roadGeometry.status = "error"` (`sources.floodSusceptibility.status = "error"`). Fora da Capital SP (`ibgeCode !== "3550308"`), `sources.floodSusceptibility.status` é `"skipped"`.
+- **Exemplo resumido de Resposta `200 OK`:**
+  ```json
+  {
+    "success": true,
+    "message": null,
+    "data": {
+      "evaluatedAt": "2025-01-24T20:30:00.000Z",
+      "assetId": "av-roberto-marinho",
+      "targetKind": "asset",
+      "decision": {
+        "temporal": {
+          "mode": "historical",
+          "date": "2025-01-24",
+          "time": "20:30",
+          "resolvedTime": "20:30",
+          "referenceAt": "2025-01-24T20:30:00-03:00"
+        },
+        "severityLevel": 3,
+        "severityLabel": "CRITICO",
+        "riskScore": 95,
+        "triggerOverride": true
+      },
+      "editorial": {
+        "headline": "ALAGAMENTO INTRANSITÁVEL NA VIA",
+        "corridorName": "Av. Jornalista Roberto Marinho",
+        "riskWindowLabel": "Via com bloqueio por alagamento",
+        "statusNote": "1 ocorrência(s) ativa(s) na região. Evite trechos baixos e busque rotas alternativas.",
+        "sourcesLabel": "Dados CGE-SP / Open-Meteo Histórico / GeoSampa",
+        "telemetryModeLabel": "REPLAY • 24/01/2025 20:30",
+        "telemetryStatusPill": "REPLAY HISTÓRICO"
+      },
+      "camera": {
+        "center": [-46.6869, -23.6217],
+        "zoom": 15.2,
+        "bearing": 12,
+        "bounds": [[-46.6942, -23.6284], [-46.6795, -23.6149]]
+      },
+      "roads": {
+        "type": "FeatureCollection",
+        "features": [
+          {
+            "type": "Feature",
+            "geometry": {
+              "type": "LineString",
+              "coordinates": [[-46.69, -23.621], [-46.685, -23.622]]
+            },
+            "properties": {
+              "osmId": "123456",
+              "streetName": "Avenida Jornalista Roberto Marinho",
+              "highway": "primary",
+              "isPrimaryCorridor": true,
+              "matchedCge": true,
+              "matchedCgeImpassable": true,
+              "inGeoSampaZone": true,
+              "riskIntensity": 1
+            }
+          }
+        ]
+      },
+      "geoSampaZonesCount": 2,
+      "sources": {
+        "forecast": { "provider": "open-meteo-historical", "status": "ok", "cached": false, "stale": false, "fetchedAt": "2025-01-24T20:30:00.000Z", "error": null },
+        "officialAlerts": { "provider": "inmet", "status": "skipped", "cached": false, "stale": false, "fetchedAt": null, "error": null },
+        "floodingMonitor": { "provider": "cge-sp", "status": "ok", "cached": false, "stale": false, "fetchedAt": "2025-01-24T20:30:00.000Z", "error": null },
+        "roadGeometry": { "provider": "osm-curated-snapshot", "status": "ok", "cached": true, "stale": false, "fetchedAt": null, "error": null },
+        "floodSusceptibility": { "provider": "geosampa-wfs", "status": "ok", "cached": false, "stale": false, "fetchedAt": "2025-01-24T20:30:00.000Z", "error": null }
+      }
+    }
+  }
   ```
 
 ---
