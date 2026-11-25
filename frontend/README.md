@@ -1,25 +1,62 @@
-# OOH Alerta Alagamentos — Frontend de Monitoramento
+# OOH Alerta Alagamentos — Frontend (Painel Unificado & Player DOOH)
 
-Aplicação web SPA (React 19 + Vite + TypeScript Strict + Tailwind CSS v4 + TanStack Query v5 + Leaflet) para visualização operacional das 12 regiões monitoradas na Capital de São Paulo, consulta hiperlocal por clique livre em qualquer coordenada geográfica e inspeção técnica em tempo real dos payloads `REST JSON` e `XML / RSS 2.0` consumidos por players DOOH.
+Aplicação web SPA (React 19 + Vite 8 + TypeScript Strict + Tailwind CSS v4 + TanStack Query v5 + `MapLibre GL JS` + `deck.gl`) com estrutura enxuta em **2 rotas** para monitoramento operacional em São Paulo, simulação e replay histórico por data/hora, e geração vetorial animada da peça criativa DOOH (`9:16` e `16:9`).
 
 ---
 
-## Funcionalidades Implementadas
+## Rotas e Funcionalidades Implementadas
 
-- **Mapa Interativo de São Paulo (`Leaflet` + OpenStreetMap):**
-  - Exibe marcadores das 12 regiões monitoradas coloridos por severidade (`Normal`, `Atenção`, `Alerta`, `Crítico`).
-  - **Popup interativo ancorado ao pin:** ao clicar em um marcador, em um card de acesso rápido ou em qualquer ponto do mapa, exibe card estruturado com faixa de severidade, coordenadas sutis, classificação composta (`Risco: <Nível> • X/100`), status de exibição (`Alerta no OOH: Ativo` / `Inativo — Campanha normal`), bloco destacado de clima atual em 3 estados (`Chovendo agora` / `Possível garoa na região` / `Sem chuva no momento`) com origem explícita (`Confirmado na estação CGE-SP` vs `Estimado na grade (Open-Meteo)`), previsão 2h/6h em linguagem natural, grade 2 colunas CGE-SP/INMET e ação para focar o painel completo (atualiza em segundo plano no auto-refresh sem fechar ou mover a câmera).
-  - **Clique livre no mapa:** consulta `GET /v1/alerts/by-coordinates?lat=&lon=` ao vivo, vinculando automaticamente à estação física do CGE-SP na Capital SP ou operando em modo multi-município (Open-Meteo + INMET) fora da Capital.
-  - Botão flutuante **Centralizar em SP**, filtros por Zona e Severidade, e lista acessível de seleção rápida.
-- **Barra de Cenários de Demonstração e Saúde das Fontes:**
-  - Alterna entre `Tempo Real (Hoje)`, `Dia Chuvoso Real (CGE 15/01/2026)` e simulações (`Normal`, `Atenção`, `Alerta`, `Crítico`).
-  - Exibe resumo de severidade, contagem de gatilhos OOH ativos e saúde das 3 fontes (`Open-Meteo`, `INMET`, `CGE-SP`) via `GET /v1/sources/status`.
-- **Layout Map-First com Painel Lateral Recolhível:**
-  - Na carga inicial, o **Mapa Interativo de Monitoramento** ocupa toda a largura útil com altura ampliada e grade de acesso rápido em até 4 colunas.
-  - O painel lateral de detalhamentos inicia recolhido e pode ser expandido/recolhido pelo atalho **Exibir detalhes / Recolher detalhes** no cabeçalho do mapa, pelo botão **Recolher** no próprio painel ou pelo link **`Ver detalhes completos →`** dentro do popup.
-- **Painel de Detalhes (`Clima & Risco` e `Técnico JSON / XML`):**
-  - **Clima & Risco:** indicador em tempo quase real (`forecast.current`, 15 min) de chuva no momento, temperatura, umidade e precipitação tanto na Capital SP (combinado à estação CGE-SP) quanto em outros municípios (ex.: Campinas), além da previsão 2h/6h com linha do tempo horária, alagamentos na zona e avisos oficiais do INMET.
-  - **Técnico (JSON / XML):** justificativas do motor de risco (`reasons[]`), telemetria de cache/status das fontes, visualizador de `REST JSON` e `XML / RSS 2.0` (`/feed.xml`) com URL copiável, abertura em nova aba e cópia do payload.
+### 1. Painel Principal Unificado (`/`)
+- **Cabeçalho Compacto de 1 Faixa (`TopControlBar`):**
+  - **Seletor Temporal 3-em-1:**
+    - `Tempo Real`: leitura ao vivo de Open-Meteo, INMET, CGE-SP e GeoSampa.
+    - `Histórico`: popover com Data (`YYYY-MM-DD`) + Hora opcional (`HH:MM` ou *Pico automático*) e atalhos reais validados no CGE-SP (**`24/01/2025 • 20:30`** e **`16/01/2026 • 18:15`**).
+    - `Simular`: menu (`Normal`, `Atenção`, `Alerta`, `Crítico`) habilitado automaticamente conforme `GET /v1/health` (`capabilities.simulation`).
+  - **Saúde Consolidada das Fontes:** pill com popover detalhado (`Open-Meteo`, `Open-Meteo Histórico`, `INMET`, `CGE-SP`, `Overpass OSM`, `GeoSampa WFS`, `Nominatim`) exibindo status, latência, chaves em cache e `lastErrorMessage` quando degradado.
+- **Mapa Explorador (`ExplorerMapPanel` — esquerda ~60–65%):**
+  - `MapLibre GL JS` (`^5`) com estilo `OpenFreeMap positron`, maximizando a área útil sem chips inferiores.
+  - **Toggle discreto flutuante:** alterna entre **`Pontos OOH (7)`** (corredores curados com geometria OSM embarcada) e **`Regiões SP (12)`**.
+  - **Busca Nominatim no submit:** consulta `GET /v1/player/geocode?q=` apenas ao pressionar Enter ou clicar em `Buscar` (nunca em `onChange`).
+  - **Clique livre no mapa** (via Overpass API + GeoSampa WFS) e filtros rápidos por `Zona` e `Em Alerta`.
+- **Palco do Player DOOH (`PointInspectorStage` — direita ~35–40%, aberto por padrão):**
+  - **Aba `Preview OOH`:** renderiza `PlayerCanvas` + `FloodGenerativeMap` (`MapLibre GL JS` P&B minimalista sobre `planet` + `@deck.gl/mapbox` `interleaved: true` com `FloodFlowExtension` animada a 60fps via uniform `uTime`). Suporta:
+    - **`9:16` Vertical** (inline) e **`16:9` Split Horizontal** (`38%` editorial / `62%` mapa generativo) em palco expandido modal (desmontando o inline para economizar contextos WebGL).
+    - **Personalização White-label PT-BR:** nome da marca (`<= 40` chars), subtítulo/tag (`<= 30` chars) e cor de destaque `--player-accent` (`^[0-9a-fA-F]{6}$`).
+    - Botões **`Copiar URL`** e **`Player Limpo`** apontando para a rota canônica.
+  - **Aba `Clima & Risco`:** telemetria atual (CGE-SP / grade), previsão 2h/6h, alagamentos na zona e avisos INMET.
+  - **Aba `Técnico`:** justificativas do motor, telemetria das **5 fontes** da cena e inspetor para **`REST JSON`**, **`XML / RSS 2.0`** (protegido em tempo real) e **`GeoJSON (Cena DOOH)`** (`/v1/player/scene`).
+
+### 2. Modo Player Limpo (`/?mode=player&...` canônica | `/player?...` alias)
+- Renderização em tela cheia (`9:16` ou `16:9`) sem cabeçalho, barra de filtros ou painel lateral, mantendo atribuição ODbL visível (`© OpenStreetMap • OpenFreeMap`).
+- Dirigida 100% por parâmetros de URL:
+  - Alvo: `asset=<id>` (ex.: `av-roberto-marinho`) ou `lat=<num>&lon=<num>`
+  - Formato: `format=portrait|landscape`
+  - Temporal/Simulação: `date=YYYY-MM-DD`, `time=HH:MM`, `cgeDate=DD/MM/AAAA`, `simulate=normal|attention|alert|critical`
+  - White-label: `brand=<texto>`, `tag=<texto>`, `accent=<RRGGBB>`
+
+---
+
+## Rewrite SPA para o Alias `/player`
+
+A rota **`/?mode=player&...` é a URL canônica** e funciona nativamente em qualquer servidor ou CDN estático sem configuração adicional. Para utilizar também o alias **`/player?...`** em produção, configure o rewrite SPA devolvendo `index.html`:
+
+- **Vite (`npm run dev` / `npm run preview`):** suporta `/player` nativamente (SPA fallback padrão).
+- **Nginx:**
+  ```nginx
+  location / {
+    try_files $uri $uri/ /index.html;
+  }
+  ```
+- **Vercel (`vercel.json`):**
+  ```json
+  {
+    "rewrites": [{ "source": "/player", "destination": "/index.html" }]
+  }
+  ```
+- **Netlify (`public/_redirects`):**
+  ```text
+  /player  /index.html  200
+  ```
 
 ---
 
@@ -28,8 +65,6 @@ Aplicação web SPA (React 19 + Vite + TypeScript Strict + Tailwind CSS v4 + Tan
 - **Node.js** `>= 22`
 - **npm** `>= 10`
 - Backend da API em execução (por padrão em `http://localhost:3333/v1`).
-
-Copie o arquivo de exemplo antes de rodar em desenvolvimento:
 
 ```bash
 cd frontend
@@ -41,7 +76,7 @@ cp .env.example .env
 | `VITE_API_BASE_URL` | `http://localhost:3333/v1` | URL base da API (`/v1`) validada via Zod na inicialização |
 | `VITE_API_TIMEOUT_MS` | `15000` | Timeout HTTP em milissegundos (`1000` a `120000`) |
 
-> **Dica para demonstrações com simulação:** para utilizar os botões `CGE 15/01/2026` e `Simular Normal/Atenção/Alerta/Crítico` contra o backend local, habilite `ENABLE_SIMULATION_PARAMS=true` em `backend/.env`.
+> **Replay histórico vs Simulação:** o modo **Histórico** (`date`/`time`) funciona sempre em endpoints JSON. Para habilitar o menu **Simular** (`simulate=`), configure `ENABLE_SIMULATION_PARAMS=true` em `backend/.env` (refletido automaticamente via `GET /v1/health`).
 
 ---
 
@@ -72,9 +107,9 @@ Execute todos os comandos dentro de `frontend/`:
 ```bash
 cd frontend
 npm run typecheck   # Verificação estrita TypeScript (tsc -b --noEmit)
-npm run lint        # ESLint (inclui proibição de any e de fetch/axios fora de lib/services)
-npm run test        # Suíte de testes unitários e de integração (Vitest + Testing Library)
-npm run build       # Build de produção em frontend/dist/
+npm run lint        # ESLint (no-explicit-any, react-hooks v7, sem fetch/axios fora de lib/services)
+npm run test        # Suíte unitária e de integração (Vitest + Testing Library + mocks MapLibre/deck.gl)
+npm run build       # Build de produção em frontend/dist/ (chunks separados para maplibre e deckgl)
 npm run format      # Formatação com Prettier + prettier-plugin-tailwindcss
 ```
 
@@ -82,6 +117,7 @@ npm run format      # Formatação com Prettier + prettier-plugin-tailwindcss
 
 ## Documentação Relacionada
 
+- [Escopo da PoC — Player Criativo DOOH (`docs/03-escopo-poc-player-dooh.md`)](../docs/03-escopo-poc-player-dooh.md)
 - [Diretrizes do Frontend (`frontend/AGENTS.md`)](./AGENTS.md)
 - [Diretrizes Globais do Monorepo (`AGENTS.md`)](../AGENTS.md)
 - [Contrato da API (`backend/API.md`)](../backend/API.md)
