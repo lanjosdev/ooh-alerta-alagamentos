@@ -15,6 +15,7 @@ Plataforma tecnológica para transformar telas digitais de mídia OOH (como rel�
 ooh-alerta-alagamentos/
 ├── AGENTS.md                  # Diretrizes globais de governança e código
 ├── README.md                  # Visão geral do repositório
+├── docs/                      # Documentação de produto, viabilidade, pesquisa e escopo DOOH
 ├── backend/                   # API Fastify v5 + TypeScript + Zod + Swagger + Vitest
 │   ├── AGENTS.md              # Diretrizes arquiteturais do backend
 │   ├── API.md                 # Contrato dos endpoints REST e RSS 2.0
@@ -106,6 +107,10 @@ npm run validate:routes  # Validação E2E HTTP real de todos os 8 blocos do rot
 
 ## Documentação Adicional
 
+- [Índice de Produto, Pesquisa e Escopo (`docs/README.md`)](./docs/README.md)
+  - [Análise do Briefing e Viabilidade Técnica (`docs/01-analise-briefing-e-viabilidade.md`)](./docs/01-analise-briefing-e-viabilidade.md)
+  - [Pesquisa de Stack e Fontes de Dados (`docs/02-pesquisa-stack-e-fontes-dados.md`)](./docs/02-pesquisa-stack-e-fontes-dados.md)
+  - [Escopo da PoC — Player Criativo DOOH (`docs/03-escopo-poc-player-dooh.md`)](./docs/03-escopo-poc-player-dooh.md)
 - [Diretrizes do Backend (`backend/AGENTS.md`)](./backend/AGENTS.md)
 - [Diretrizes do Frontend (`frontend/AGENTS.md`)](./frontend/AGENTS.md)
 - [Guia do Frontend (`frontend/README.md`)](./frontend/README.md)
