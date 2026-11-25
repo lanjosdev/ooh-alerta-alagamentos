@@ -1,0 +1,133 @@
+import { describe, expect, it, vi } from 'vitest'
+import overpassSample from './__fixtures__/overpass-sample.json' with { type: 'json' }
+import { OverpassRoadGeometryProvider } from './overpass-road-geometry-provider.js'
+
+describe('OverpassRoadGeometryProvider', () => {
+  it('envia POST form-urlencoded e converte {lat, lon} para [lon, lat]', async () => {
+    let capturedMethod = ''
+    let capturedBody = ''
+    let capturedContentType = ''
+
+    const fetchFn: typeof fetch = vi.fn(async (_input, init) => {
+      capturedMethod = init?.method ?? ''
+      capturedBody = String(init?.body ?? '')
+      capturedContentType =
+        new Headers(init?.headers).get('content-type') ?? ''
+
+      return new Response(JSON.stringify(overpassSample), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      })
+    })
+
+    const provider = new OverpassRoadGeometryProvider({
+      fetchFn,
+      urls: ['https://primary.overpass.test/api/interpreter'],
+    })
+
+    const segments = await provider.getNearbyRoads(-23.622, -46.685)
+
+    expect(capturedMethod).toBe('POST')
+    expect(capturedContentType).toContain('application/x-www-form-urlencoded')
+    expect(decodeURIComponent(capturedBody)).toContain('way(around:300,-23.622,-46.685)')
+    expect(segments).toEqual([
+      {
+        osmId: '1001',
+        streetName: 'Avenida Jornalista Roberto Marinho',
+        highway: 'primary',
+        coordinates: [
+          [-46.69, -23.621],
+          [-46.685, -23.622],
+          [-46.68, -23.623],
+        ],
+      },
+    ])
+  })
+
+  it('faz fallback do mirror primário (502/timeout) para o mirror secundário', async () => {
+    const calledUrls: string[] = []
+    const fetchFn: typeof fetch = vi.fn(async (input) => {
+      const url = String(input)
+      calledUrls.push(url)
+      if (url.includes('primary')) {
+        return new Response('Bad Gateway', { status: 502 })
+      }
+      return new Response(JSON.stringify(overpassSample), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      })
+    })
+
+    const provider = new OverpassRoadGeometryProvider({
+      fetchFn,
+      urls: [
+        'https://primary.overpass.test/api/interpreter',
+        'https://secondary.overpass.test/api/interpreter',
+      ],
+    })
+
+    const segments = await provider.getNearbyRoads(-23.622, -46.685)
+    expect(calledUrls).toEqual([
+      'https://primary.overpass.test/api/interpreter',
+      'https://secondary.overpass.test/api/interpreter',
+    ])
+    expect(segments).toHaveLength(1)
+  })
+
+  it('expande raio de 300 m para 450 m incluindo vias locais quando o primeiro retorno vem vazio', async () => {
+    const queries: string[] = []
+    const fetchFn: typeof fetch = vi.fn(async (_input, init) => {
+      const decoded = decodeURIComponent(String(init?.body ?? ''))
+      queries.push(decoded)
+
+      if (queries.length === 1) {
+        return new Response(JSON.stringify({ elements: [] }), {
+          status: 200,
+          headers: { 'content-type': 'application/json' },
+        })
+      }
+
+      return new Response(
+        JSON.stringify({
+          elements: [
+            {
+              type: 'way',
+              id: 2002,
+              tags: { name: 'Rua Local Teste', highway: 'residential' },
+              geometry: [
+                { lat: -23.6, lon: -46.6 },
+                { lat: -23.601, lon: -46.601 },
+              ],
+            },
+          ],
+        }),
+        { status: 200, headers: { 'content-type': 'application/json' } },
+      )
+    })
+
+    const provider = new OverpassRoadGeometryProvider({
+      fetchFn,
+      urls: ['https://primary.overpass.test/api/interpreter'],
+    })
+
+    const segments = await provider.getNearbyRoads(-23.6, -46.6)
+    expect(queries).toHaveLength(2)
+    expect(queries[0]).toContain('way(around:300,')
+    expect(queries[1]).toContain('way(around:450,')
+    expect(queries[1]).toContain('residential|unclassified')
+    expect(segments[0].streetName).toBe('Rua Local Teste')
+  })
+
+  it('lança erro quando todos os mirrors falham', async () => {
+    const fetchFn: typeof fetch = vi.fn(async () => new Response('Unavailable', { status: 504 }))
+    const provider = new OverpassRoadGeometryProvider({
+      fetchFn,
+      urls: [
+        'https://primary.overpass.test/api/interpreter',
+        'https://secondary.overpass.test/api/interpreter',
+      ],
+    })
+
+    await expect(provider.getNearbyRoads(-23.6, -46.6)).rejects.toThrow('HTTP 504')
+  })
+})

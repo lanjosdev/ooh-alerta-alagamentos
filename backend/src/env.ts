@@ -19,6 +19,19 @@ const envSchema = z.object({
   CACHE_TTL_INMET_SECONDS: z.coerce.number().int().positive().default(600),
   CACHE_TTL_CGE_SECONDS: z.coerce.number().int().positive().default(300),
   CACHE_TTL_HISTORICAL_SECONDS: z.coerce.number().int().positive().default(86400),
+  CACHE_TTL_OVERPASS_SECONDS: z.coerce.number().int().positive().default(86400),
+  CACHE_TTL_GEOSAMPA_SECONDS: z.coerce.number().int().positive().default(86400),
+  CACHE_TTL_GEOCODE_SECONDS: z.coerce.number().int().positive().default(86400),
+  OVERPASS_URLS: z
+    .string()
+    .min(1)
+    .default(
+      'https://maps.mail.ru/osm/tools/overpass/api/interpreter,https://overpass-api.de/api/interpreter',
+    ),
+  NOMINATIM_USER_AGENT: z
+    .string()
+    .min(1)
+    .default('ooh-alerta-alagamentos/0.2 (+https://github.com/lanjosdev/ooh-alerta-alagamentos)'),
 })
 
 const parsed = envSchema.safeParse(process.env)

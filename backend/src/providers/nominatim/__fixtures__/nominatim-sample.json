@@ -1,0 +1,30 @@
+[
+  {
+    "osm_type": "way",
+    "osm_id": 123456,
+    "lat": "-23.6215",
+    "lon": "-46.6891",
+    "display_name": "Avenida Jornalista Roberto Marinho, Brooklin, São Paulo, SP, Brasil",
+    "name": "Avenida Jornalista Roberto Marinho",
+    "address": {
+      "road": "Avenida Jornalista Roberto Marinho",
+      "suburb": "Brooklin",
+      "city": "São Paulo",
+      "state": "São Paulo",
+      "ISO3166-2-lvl4": "BR-SP"
+    }
+  },
+  {
+    "osm_type": "node",
+    "osm_id": 999999,
+    "lat": "-22.9068",
+    "lon": "-43.1729",
+    "display_name": "Avenida Rio Branco, Rio de Janeiro, RJ, Brasil",
+    "address": {
+      "road": "Avenida Rio Branco",
+      "city": "Rio de Janeiro",
+      "state": "Rio de Janeiro",
+      "ISO3166-2-lvl4": "BR-RJ"
+    }
+  }
+]
