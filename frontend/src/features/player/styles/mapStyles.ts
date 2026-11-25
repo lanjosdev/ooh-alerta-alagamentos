@@ -45,6 +45,14 @@ export const SEVERITY_VISUAL_PROFILES: Readonly<Record<SeverityLevel, SeverityVi
   },
 }
 
+export const PLAYER_ACCENT_PRESETS: ReadonlyArray<{ label: string; hex: string }> = [
+  { label: 'Azul OOH', hex: '0057FF' },
+  { label: 'Ciano Água', hex: '0284C7' },
+  { label: 'Grafite Urbano', hex: '18181B' },
+  { label: 'Âmbar Alerta', hex: 'D97706' },
+  { label: 'Carmim Crítico', hex: 'DC2626' },
+]
+
 export function buildPlayerAccentCssVars(accentHex: string): CSSProperties {
   const safeHex = sanitizeAccentHex(accentHex)
   return {

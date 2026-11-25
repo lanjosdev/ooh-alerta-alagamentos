@@ -1,8 +1,19 @@
-import { Check, Code2, Copy, Database, ExternalLink, FileCode2, ListChecks } from 'lucide-react'
+import {
+  Check,
+  Code2,
+  Copy,
+  Database,
+  ExternalLink,
+  FileCode2,
+  Info,
+  ListChecks,
+  Map as MapIcon,
+} from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { EmptyState } from '@/components/patterns/EmptyState'
 import { QueryErrorAlert } from '@/components/patterns/QueryErrorAlert'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -13,20 +24,24 @@ import { formatDateTimeBr } from '@/features/monitoring/utils/formatters'
 import { getProviderStatusMeta } from '@/features/monitoring/utils/severity'
 import { cn } from '@/lib/utils'
 import { alertsService } from '@/services/alertsService'
+import { playerService } from '@/services/playerService'
 import type {
   AlertTarget,
   OohAlertDecision,
   ScenarioQueryParams,
   SourceExecutionStatus,
 } from '@/types/alerts'
+import type { PlayerSceneData, PlayerTarget } from '@/types/player'
 
 export interface TechnicalInspectorTabProps {
   decision: OohAlertDecision
   target: AlertTarget
   scenario: ScenarioQueryParams
+  scene?: PlayerSceneData | null
+  playerTarget?: PlayerTarget | null
 }
 
-type PayloadFormat = 'json' | 'xml'
+type PayloadFormat = 'json' | 'xml' | 'geojson'
 
 async function copyTextToClipboard(text: string, label: string): Promise<boolean> {
   if (!navigator.clipboard || typeof navigator.clipboard.writeText !== 'function') {
@@ -48,19 +63,44 @@ export function TechnicalInspectorTab({
   decision,
   target,
   scenario,
+  scene = null,
+  playerTarget = null,
 }: TechnicalInspectorTabProps) {
   const [format, setFormat] = useState<PayloadFormat>('json')
   const [copiedKey, setCopiedKey] = useState<string | null>(null)
 
   const rssQuery = useRssFeed(target, scenario, format === 'xml')
-  const endpointUrl = alertsService.buildAlertEndpointUrl(target, format, scenario)
-  const formattedJson = JSON.stringify(decision, null, 2)
+  const resolvedPlayerTarget: PlayerTarget =
+    playerTarget ??
+    (scene?.assetId
+      ? { kind: 'asset', assetId: scene.assetId }
+      : {
+          kind: 'coordinates',
+          lat: decision.location.latitude,
+          lon: decision.location.longitude,
+        })
 
-  const sourceEntries: Array<{ label: string; info: SourceExecutionStatus }> = [
-    { label: 'Previsão Horária', info: decision.sources.forecast },
-    { label: 'Avisos Oficiais', info: decision.sources.officialAlerts },
-    { label: 'Monitor de Alagamentos', info: decision.sources.floodingMonitor },
-  ]
+  const endpointUrl =
+    format === 'geojson'
+      ? playerService.buildSceneEndpointUrl(resolvedPlayerTarget, scenario)
+      : alertsService.buildAlertEndpointUrl(target, format, scenario)
+
+  const formattedJson = JSON.stringify(decision, null, 2)
+  const formattedGeoJson = scene ? JSON.stringify(scene, null, 2) : ''
+
+  const sourceEntries: Array<{ label: string; info: SourceExecutionStatus }> = scene
+    ? [
+        { label: 'Previsão Horária', info: scene.sources.forecast },
+        { label: 'Avisos Oficiais', info: scene.sources.officialAlerts },
+        { label: 'Monitor de Alagamentos', info: scene.sources.floodingMonitor },
+        { label: 'Geometria Viária', info: scene.sources.roadGeometry },
+        { label: 'Suscetibilidade GeoSampa', info: scene.sources.floodSusceptibility },
+      ]
+    : [
+        { label: 'Previsão Horária', info: decision.sources.forecast },
+        { label: 'Avisos Oficiais', info: decision.sources.officialAlerts },
+        { label: 'Monitor de Alagamentos', info: decision.sources.floodingMonitor },
+      ]
 
   const handleCopy = async (key: string, text: string, label: string) => {
     const ok = await copyTextToClipboard(text, label)
@@ -95,7 +135,10 @@ export function TechnicalInspectorTab({
                   key={reason}
                   className="flex items-start gap-2 rounded-md border border-border bg-muted/30 px-2.5 py-2 text-foreground"
                 >
-                  <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" aria-hidden="true" />
+                  <span
+                    className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-primary"
+                    aria-hidden="true"
+                  />
                   <span>{reason}</span>
                 </li>
               ))}
@@ -154,10 +197,10 @@ export function TechnicalInspectorTab({
         <CardHeader className="pb-3">
           <CardTitle className="flex items-center gap-1.5">
             <Code2 className="h-4 w-4 text-primary" aria-hidden="true" />
-            <span>Inspetor de Payload (JSON / RSS 2.0)</span>
+            <span>Inspetor de Payload (JSON / RSS 2.0 / GeoJSON)</span>
           </CardTitle>
           <CardDescription>
-            Endpoint direto e resposta bruta entregues aos players DOOH
+            Endpoints diretos e respostas brutas entregues aos players DOOH
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
@@ -174,12 +217,21 @@ export function TechnicalInspectorTab({
                 <FileCode2 className="h-3.5 w-3.5" aria-hidden="true" />
                 <span>XML / RSS 2.0</span>
               </TabsTrigger>
+              <TabsTrigger value="geojson">
+                <MapIcon className="h-3.5 w-3.5" aria-hidden="true" />
+                <span>GeoJSON (Cena DOOH)</span>
+              </TabsTrigger>
             </TabsList>
 
             <div className="mt-3 space-y-2 rounded-lg border border-border bg-muted/40 p-2.5">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <span className="text-[11px] font-semibold tracking-wide text-muted-foreground uppercase">
-                  Endpoint {format === 'json' ? 'JSON' : 'RSS 2.0'}
+                  Endpoint{' '}
+                  {format === 'json'
+                    ? 'JSON'
+                    : format === 'xml'
+                      ? 'RSS 2.0'
+                      : 'Cena DOOH (/v1/player/scene)'}
                 </span>
                 <div className="flex flex-wrap items-center gap-1.5">
                   <Button
@@ -235,6 +287,19 @@ export function TechnicalInspectorTab({
             </TabsContent>
 
             <TabsContent value="xml">
+              {scenario.date ? (
+                <Alert variant="info" className="mb-3">
+                  <Info className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
+                  <div>
+                    <AlertTitle className="text-xs">Feed RSS protegido em tempo real</AlertTitle>
+                    <AlertDescription>
+                      Os endpoints <code>/feed.xml</code> rejeitam <code>date</code>/<code>time</code>{' '}
+                      históricos para evitar exibição de replay em telas DOOH. Abaixo é exibido o feed ao vivo.
+                    </AlertDescription>
+                  </div>
+                </Alert>
+              ) : null}
+
               {rssQuery.isPending ? (
                 <div className="space-y-2" aria-label="Carregando feed XML RSS">
                   <Skeleton className="h-8 w-36" />
@@ -272,6 +337,46 @@ export function TechnicalInspectorTab({
                   </div>
                   <pre className="max-h-96 overflow-auto rounded-lg border border-border bg-muted/40 p-3 font-mono text-[11px] leading-relaxed text-foreground">
                     <code>{rssQuery.data}</code>
+                  </pre>
+                </div>
+              )}
+            </TabsContent>
+
+            <TabsContent value="geojson">
+              {!scene ? (
+                <EmptyState
+                  title="Cena DOOH não carregada"
+                  description="Selecione um ponto no mapa para inspecionar o GeoJSON viário e a câmera da cena."
+                />
+              ) : (
+                <div className="space-y-2">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      <Badge variant="outline">
+                        Trechos viários: {scene.roads.features.length}
+                      </Badge>
+                      <Badge variant="outline">
+                        Manchas GeoSampa: {scene.geoSampaZonesCount}
+                      </Badge>
+                    </div>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="secondary"
+                      onClick={() =>
+                        void handleCopy('geojson', formattedGeoJson, 'GeoJSON da Cena DOOH')
+                      }
+                    >
+                      {copiedKey === 'geojson' ? (
+                        <Check className="h-3.5 w-3.5" aria-hidden="true" />
+                      ) : (
+                        <Copy className="h-3.5 w-3.5" aria-hidden="true" />
+                      )}
+                      <span>Copiar payload</span>
+                    </Button>
+                  </div>
+                  <pre className="max-h-96 overflow-auto rounded-lg border border-border bg-muted/40 p-3 font-mono text-[11px] leading-relaxed text-foreground">
+                    <code>{formattedGeoJson}</code>
                   </pre>
                 </div>
               )}

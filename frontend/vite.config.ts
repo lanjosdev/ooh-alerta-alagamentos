@@ -10,6 +10,25 @@ export default defineConfig({
       '@': path.resolve(import.meta.dirname, './src'),
     },
   },
+  build: {
+    chunkSizeWarningLimit: 1100,
+    rolldownOptions: {
+      output: {
+        codeSplitting: {
+          groups: [
+            {
+              name: 'maplibre',
+              test: /[\\/]node_modules[\\/]maplibre-gl[\\/]/,
+            },
+            {
+              name: 'deckgl',
+              test: /[\\/]node_modules[\\/](@deck\.gl|@luma\.gl|@math\.gl|@loaders\.gl)[\\/]/,
+            },
+          ],
+        },
+      },
+    },
+  },
   test: {
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.ts'],
