@@ -18,6 +18,7 @@ const envSchema = z.object({
   CACHE_TTL_FORECAST_SECONDS: z.coerce.number().int().positive().default(900),
   CACHE_TTL_INMET_SECONDS: z.coerce.number().int().positive().default(600),
   CACHE_TTL_CGE_SECONDS: z.coerce.number().int().positive().default(300),
+  CACHE_TTL_HISTORICAL_SECONDS: z.coerce.number().int().positive().default(86400),
 })
 
 const parsed = envSchema.safeParse(process.env)

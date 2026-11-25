@@ -3,6 +3,14 @@ import { successResponseSchema } from './common.js'
 
 export const simulationModeSchema = z.enum(['normal', 'attention', 'alert', 'critical'])
 
+export const isoDateSchema = z
+  .string()
+  .regex(/^\d{4}-\d{2}-\d{2}$/, 'Data deve estar no formato YYYY-MM-DD')
+
+export const timeHmSchema = z
+  .string()
+  .regex(/^([01]\d|2[0-3]):[0-5]\d$/, 'Hora deve estar no formato HH:MM')
+
 export const cgeDateSchema = z
   .string()
   .regex(/^\d{2}\/\d{2}\/\d{4}$/, 'Data deve estar no formato DD/MM/AAAA')
@@ -11,7 +19,9 @@ export const regionIdParamsSchema = z.object({
   regionId: z.string().trim().min(1),
 })
 
-export const simulationQuerySchema = z.object({
+export const regionAlertQuerySchema = z.object({
+  date: isoDateSchema.optional(),
+  time: timeHmSchema.optional(),
   cgeDate: cgeDateSchema.optional(),
   simulate: simulationModeSchema.optional(),
 })
@@ -19,6 +29,8 @@ export const simulationQuerySchema = z.object({
 export const cityOverviewQuerySchema = z.object({
   zone: z.string().trim().min(1).optional(),
   ibgeCode: z.string().trim().min(1).optional(),
+  date: isoDateSchema.optional(),
+  time: timeHmSchema.optional(),
   cgeDate: cgeDateSchema.optional(),
   simulate: simulationModeSchema.optional(),
 })
@@ -33,12 +45,78 @@ function coordinateSchema(min: number, max: number) {
 export const coordinatesAlertQuerySchema = z.object({
   lat: coordinateSchema(-90, 90),
   lon: coordinateSchema(-180, 180),
+  date: isoDateSchema.optional(),
+  time: timeHmSchema.optional(),
   cgeDate: cgeDateSchema.optional(),
   simulate: simulationModeSchema.optional(),
 })
 
-const severityLevelSchema = z.union([z.literal(0), z.literal(1), z.literal(2), z.literal(3)])
-const severityLabelSchema = z.enum(['NORMAL', 'ATENCAO', 'ALERTA', 'CRITICO'])
+function forbidReplayParamsOnRss(
+  val: { date?: unknown; time?: unknown },
+  ctx: z.RefinementCtx,
+): void {
+  if (val.date !== undefined) {
+    ctx.addIssue({
+      code: 'custom',
+      path: ['date'],
+      message: 'Parâmetro date não é permitido em feeds XML/RSS',
+    })
+  }
+  if (val.time !== undefined) {
+    ctx.addIssue({
+      code: 'custom',
+      path: ['time'],
+      message: 'Parâmetro time não é permitido em feeds XML/RSS',
+    })
+  }
+}
+
+export const rssRegionAlertQuerySchema = z
+  .object({
+    cgeDate: cgeDateSchema.optional(),
+    simulate: simulationModeSchema.optional(),
+    date: z.string().optional(),
+    time: z.string().optional(),
+  })
+  .superRefine(forbidReplayParamsOnRss)
+
+export const rssCityOverviewQuerySchema = z
+  .object({
+    zone: z.string().trim().min(1).optional(),
+    ibgeCode: z.string().trim().min(1).optional(),
+    cgeDate: cgeDateSchema.optional(),
+    simulate: simulationModeSchema.optional(),
+    date: z.string().optional(),
+    time: z.string().optional(),
+  })
+  .superRefine(forbidReplayParamsOnRss)
+
+export const rssCoordinatesAlertQuerySchema = z
+  .object({
+    lat: coordinateSchema(-90, 90),
+    lon: coordinateSchema(-180, 180),
+    cgeDate: cgeDateSchema.optional(),
+    simulate: simulationModeSchema.optional(),
+    date: z.string().optional(),
+    time: z.string().optional(),
+  })
+  .superRefine(forbidReplayParamsOnRss)
+
+export const severityLevelSchema = z.union([
+  z.literal(0),
+  z.literal(1),
+  z.literal(2),
+  z.literal(3),
+])
+export const severityLabelSchema = z.enum(['NORMAL', 'ATENCAO', 'ALERTA', 'CRITICO'])
+
+export const temporalContextSchema = z.object({
+  mode: z.enum(['realtime', 'historical', 'simulated']),
+  date: z.string().nullable(),
+  time: z.string().nullable(),
+  resolvedTime: z.string().nullable(),
+  referenceAt: z.string(),
+})
 
 const currentWeatherSchema = z.object({
   observedAt: z.string(),
@@ -114,7 +192,7 @@ const stationRainfallSchema = z.object({
   humidityPercent: z.number().nullable(),
 })
 
-const sourceExecutionStatusSchema = z.object({
+export const sourceExecutionStatusSchema = z.object({
   provider: z.string(),
   status: z.enum(['ok', 'stale', 'error', 'skipped']),
   cached: z.boolean(),
@@ -125,6 +203,7 @@ const sourceExecutionStatusSchema = z.object({
 
 export const oohAlertDecisionSchema = z.object({
   evaluatedAt: z.string(),
+  temporal: temporalContextSchema,
   location: z.object({
     id: z.string(),
     name: z.string(),

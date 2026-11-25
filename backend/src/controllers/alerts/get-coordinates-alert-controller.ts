@@ -1,11 +1,15 @@
 import type { FastifyReply, FastifyRequest } from 'fastify'
 import type { z } from 'zod'
-import type { coordinatesAlertQuerySchema } from '../../routes/schemas/alerts.js'
+import type {
+  coordinatesAlertQuerySchema,
+  rssCoordinatesAlertQuerySchema,
+} from '../../routes/schemas/alerts.js'
 import type { GetLocationAlertService } from '../../services/alerts/get-location-alert-service.js'
 import { successResponse } from '../../utils/api-response.js'
 import { buildFeedSelfLink, formatAlertsAsRss } from '../../utils/rss-formatter.js'
 
 type CoordinatesAlertQuery = z.infer<typeof coordinatesAlertQuerySchema>
+type RssCoordinatesAlertQuery = z.infer<typeof rssCoordinatesAlertQuerySchema>
 
 export class GetCoordinatesAlertController {
   constructor(private readonly getLocationAlertService: GetLocationAlertService) {}
@@ -18,6 +22,8 @@ export class GetCoordinatesAlertController {
       mode: 'coordinates',
       lat: request.query.lat,
       lon: request.query.lon,
+      date: request.query.date,
+      time: request.query.time,
       cgeDate: request.query.cgeDate,
       simulate: request.query.simulate,
     })
@@ -26,7 +32,7 @@ export class GetCoordinatesAlertController {
   }
 
   async handleRss(
-    request: FastifyRequest<{ Querystring: CoordinatesAlertQuery }>,
+    request: FastifyRequest<{ Querystring: RssCoordinatesAlertQuery }>,
     reply: FastifyReply,
   ) {
     const decision = await this.getLocationAlertService.execute({

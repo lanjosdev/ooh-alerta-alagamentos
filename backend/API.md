@@ -44,7 +44,22 @@ Documentação de referência dos endpoints HTTP expostos pelo `backend/`. A esp
 ### Infra e Diagnóstico
 
 #### `GET /v1/health`
-Verifica a saúde e o tempo de atividade do servidor (`uptime`, `timestamp`).
+Verifica a saúde, o tempo de atividade do servidor (`uptime`, `timestamp`) e as capacidades ativas (`capabilities.simulation` refletindo `ENABLE_SIMULATION_PARAMS`).
+
+```json
+{
+  "success": true,
+  "message": null,
+  "data": {
+    "status": "ok",
+    "uptime": 12.34,
+    "timestamp": "2026-11-25T18:00:00.000Z",
+    "capabilities": {
+      "simulation": false
+    }
+  }
+}
+```
 
 #### `GET /v1/sources/status`
 Retorna a saúde em tempo real, número de chaves em cache, última latência e último erro (se houver) de cada provedor registrado (`open-meteo`, `inmet`, `cge-sp`).
@@ -64,20 +79,23 @@ Lista o catálogo inicial de 12 regiões monitoradas na Capital de São Paulo (`
 
 ### Alertas (JSON `ApiResponse`)
 
-#### Query Params Comuns de Simulação / Demonstração
-Disponíveis apenas quando `ENABLE_SIMULATION_PARAMS=true` no `.env` (caso contrário retornam `400 Bad Request`):
-- `cgeDate`: consulta histórico real de alagamentos do CGE-SP no formato `DD/MM/AAAA` (ex.: `15/01/2026`).
-- `simulate`: força nível de resposta (`normal` | `attention` | `alert` | `critical`) marcando `simulated: true`.
+#### Query Params Temporais, Replay Histórico e Simulação
+- **Replay histórico real (sempre habilitado nos endpoints JSON):**
+  - `date`: consulta replay histórico completo em `YYYY-MM-DD` (rejeita datas futuras no fuso `America/Sao_Paulo` com `400`). Reconstrói os pontos ativos do CGE-SP pela janela horária (`De HH:MM a HH:MM` / `Desde HH:MM`) e busca série horária histórica via `historical-forecast-api.open-meteo.com` (fallback `archive-api`). No modo histórico, `officialAlerts` retorna `status: "skipped"` e `flooding.stationRainfall` retorna `null`.
+  - `time`: horário opcional em `HH:MM` (`00:00` a `23:59`; exige `date` junto, senão retorna `400`). Quando omitido, o backend seleciona automaticamente o minuto de pico de alagamentos no CGE-SP (ou o pico de precipitação horária do Open-Meteo / `12:00` se o dia estiver vazio/seco).
+  - `cgeDate`: formato legado `DD/MM/AAAA` para consulta histórica do CGE-SP (mutuamente exclusivo com `date` — informar ambos retorna `400`).
+- **Simulação artificial (`ENABLE_SIMULATION_PARAMS=true`):**
+  - `simulate`: força nível de resposta (`normal` | `attention` | `alert` | `critical`) marcando `simulated: true`. Quando `ENABLE_SIMULATION_PARAMS=false`, apenas `simulate` retorna `400 Bad Request`.
 
 #### `GET /v1/alerts/regions`
 Retorna o panorama consolidado de todas as regiões monitoradas, ordenado por `severityLevel` descendente, `riskScore` descendente e `location.id` ascendente.
 
-- **Query params opcionais:** `zone`, `ibgeCode`, `cgeDate`, `simulate`.
+- **Query params opcionais:** `zone`, `ibgeCode`, `date`, `time`, `cgeDate`, `simulate`.
 
 #### `GET /v1/alerts/regions/:regionId`
 Retorna a decisão detalhada de risco para uma região específica (ex.: `zona-oeste-butanta`, `zona-leste-itaquera`). Retorna `404` se a região não existir.
 
-- **Query params opcionais:** `cgeDate`, `simulate`.
+- **Query params opcionais:** `date`, `time`, `cgeDate`, `simulate`.
 - **Exemplo de Resposta `200 OK`:**
   ```json
   {
@@ -85,6 +103,13 @@ Retorna a decisão detalhada de risco para uma região específica (ex.: `zona-o
     "message": null,
     "data": {
       "evaluatedAt": "2026-11-23T19:00:00.000Z",
+      "temporal": {
+        "mode": "realtime",
+        "date": null,
+        "time": null,
+        "resolvedTime": null,
+        "referenceAt": "2026-11-23T16:00:00-03:00"
+      },
       "location": {
         "id": "zona-oeste-butanta",
         "name": "Butantã",
@@ -166,6 +191,8 @@ Decisão hiperlocal para qualquer coordenada (`lat` entre `-90` e `90`, `lon` en
 ---
 
 ### Feeds DOOH (`XML / RSS 2.0`)
+
+> **Proteção para Players DOOH:** os endpoints `/feed.xml` rejeitam `date` e `time` com **`400 Bad Request`** para evitar que replays históricos sejam exibidos em telas de rua como alertas em tempo real.
 
 #### `GET /v1/alerts/feed.xml`
 Feed RSS 2.0 consolidado de todas as regiões monitoradas (aceita `zone`, `ibgeCode`, `cgeDate`, `simulate`).

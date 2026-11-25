@@ -6,8 +6,11 @@ import {
   cityOverviewQuerySchema,
   cityOverviewResponseSchema,
   coordinatesAlertQuerySchema,
+  regionAlertQuerySchema,
   regionIdParamsSchema,
-  simulationQuerySchema,
+  rssCityOverviewQuerySchema,
+  rssCoordinatesAlertQuerySchema,
+  rssRegionAlertQuerySchema,
   singleAlertResponseSchema,
 } from './schemas/alerts.js'
 import { errorResponseSchema } from './schemas/common.js'
@@ -42,7 +45,7 @@ export const alertRoutes: FastifyPluginAsyncZod<AlertRoutesOptions> = async (app
         tags: ['Alertas'],
         summary: 'Decisão dinâmica de alerta para uma região monitorada',
         params: regionIdParamsSchema,
-        querystring: simulationQuerySchema,
+        querystring: regionAlertQuerySchema,
         response: {
           200: singleAlertResponseSchema,
           400: errorResponseSchema,
@@ -78,8 +81,8 @@ export const alertRoutes: FastifyPluginAsyncZod<AlertRoutesOptions> = async (app
         tags: ['Feeds OOH'],
         summary: 'Feed XML RSS 2.0 consolidado de todas as regiões',
         description:
-          'Entrega XML puro (`Content-Type: application/rss+xml; charset=utf-8`) com tags padrão RSS 2.0 e extensões `<ooh:*>` para players DOOH.',
-        querystring: cityOverviewQuerySchema,
+          'Entrega XML puro (`Content-Type: application/rss+xml; charset=utf-8`) com tags padrão RSS 2.0 e extensões `<ooh:*>` para players DOOH. Rejeita parâmetros históricos `date` e `time`.',
+        querystring: rssCityOverviewQuerySchema,
         response: {
           400: errorResponseSchema,
         },
@@ -95,9 +98,9 @@ export const alertRoutes: FastifyPluginAsyncZod<AlertRoutesOptions> = async (app
         tags: ['Feeds OOH'],
         summary: 'Feed XML RSS 2.0 individual de uma região monitorada',
         description:
-          'Entrega XML puro (`Content-Type: application/rss+xml; charset=utf-8`) para consumo direto pelo player DOOH da região.',
+          'Entrega XML puro (`Content-Type: application/rss+xml; charset=utf-8`) para consumo direto pelo player DOOH da região. Rejeita parâmetros históricos `date` e `time`.',
         params: regionIdParamsSchema,
-        querystring: simulationQuerySchema,
+        querystring: rssRegionAlertQuerySchema,
         response: {
           400: errorResponseSchema,
           404: errorResponseSchema,
@@ -114,8 +117,8 @@ export const alertRoutes: FastifyPluginAsyncZod<AlertRoutesOptions> = async (app
         tags: ['Feeds OOH'],
         summary: 'Feed XML RSS 2.0 individual por coordenada geográfica',
         description:
-          'Entrega XML puro (`Content-Type: application/rss+xml; charset=utf-8`) com decisão hiperlocal por coordenada.',
-        querystring: coordinatesAlertQuerySchema,
+          'Entrega XML puro (`Content-Type: application/rss+xml; charset=utf-8`) com decisão hiperlocal por coordenada. Rejeita parâmetros históricos `date` e `time`.',
+        querystring: rssCoordinatesAlertQuerySchema,
         response: {
           400: errorResponseSchema,
         },

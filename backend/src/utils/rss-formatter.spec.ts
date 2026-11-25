@@ -18,6 +18,13 @@ function makeDecision(
 ): OohAlertDecision {
   return {
     evaluatedAt: '2026-11-23T18:00:00.000Z',
+    temporal: {
+      mode: 'realtime',
+      date: null,
+      time: null,
+      resolvedTime: null,
+      referenceAt: '2026-11-23T15:00:00-03:00',
+    },
     location: {
       id,
       name,

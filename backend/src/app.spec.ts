@@ -44,6 +44,25 @@ function createDeterministicProviders() {
         },
       ],
     })),
+    getHistoricalHourly: vi.fn(async (lat, lon, dateIso) => ({
+      provider: 'open-meteo-historical',
+      dateIso,
+      gridLatitude: Number((lat - 0.01).toFixed(4)),
+      gridLongitude: Number((lon - 0.01).toFixed(4)),
+      timezone: 'America/Sao_Paulo',
+      hourly: [
+        {
+          time: `${dateIso}T20:00`,
+          precipitationProbabilityPercent: 90,
+          precipitationMm: 20,
+          rainMm: 20,
+          weatherCode: 95,
+          temperatureC: 22.5,
+          humidityPercent: 90,
+          isDay: false,
+        },
+      ],
+    })),
   }
 
   const officialAlertsProvider: OfficialAlertsProvider = {
@@ -121,7 +140,7 @@ describe('HTTP', () => {
     await app.close()
   })
 
-  it('GET /v1/health retorna 200 no padrão ApiResponse', async () => {
+  it('GET /v1/health retorna 200 com capabilities.simulation no padrão ApiResponse', async () => {
     const response = await app.inject({ method: 'GET', url: '/v1/health' })
 
     expect(response.statusCode).toBe(200)
@@ -130,6 +149,9 @@ describe('HTTP', () => {
       message: null,
       data: {
         status: 'ok',
+        capabilities: {
+          simulation: expect.any(Boolean),
+        },
       },
     })
     expect(typeof response.json().data.uptime).toBe('number')
@@ -335,7 +357,7 @@ describe('Regions, Alerts and Feeds OOH (Integração Offline)', () => {
     expect(badDate.statusCode).toBe(400)
   })
 
-  it('rejeita simulate e cgeDate com 400 quando ENABLE_SIMULATION_PARAMS=false', async () => {
+  it('rejeita simulate com 400 quando ENABLE_SIMULATION_PARAMS=false, mas mantém date/cgeDate habilitados', async () => {
     const lockedApp = await buildApp({
       ...createDeterministicProviders(),
       cache: new MemoryCache(),
@@ -344,20 +366,76 @@ describe('Regions, Alerts and Feeds OOH (Integração Offline)', () => {
     await lockedApp.ready()
 
     try {
+      const healthRes = await lockedApp.inject({ method: 'GET', url: '/v1/health' })
+      expect(healthRes.statusCode).toBe(200)
+      expect(healthRes.json().data.capabilities).toEqual({ simulation: false })
+
       const resSim = await lockedApp.inject({
         method: 'GET',
         url: '/v1/alerts/regions/centro-se?simulate=critical',
       })
       expect(resSim.statusCode).toBe(400)
 
-      const resDate = await lockedApp.inject({
+      const resHistorical = await lockedApp.inject({
+        method: 'GET',
+        url: '/v1/alerts/regions/centro-se?date=2025-01-24&time=20:00',
+      })
+      expect(resHistorical.statusCode).toBe(200)
+      expect(resHistorical.json().data.temporal).toMatchObject({
+        mode: 'historical',
+        date: '2025-01-24',
+        time: '20:00',
+        resolvedTime: '20:00',
+      })
+      expect(resHistorical.json().data.sources.officialAlerts.status).toBe('skipped')
+
+      const resCgeDate = await lockedApp.inject({
         method: 'GET',
         url: '/v1/alerts/regions/centro-se?cgeDate=15/01/2026',
       })
-      expect(resDate.statusCode).toBe(400)
+      expect(resCgeDate.statusCode).toBe(200)
+      expect(resCgeDate.json().data.flooding.cgeDate).toBe('15/01/2026')
+
+      const resFutureDate = await lockedApp.inject({
+        method: 'GET',
+        url: '/v1/alerts/regions/centro-se?date=2099-01-01',
+      })
+      expect(resFutureDate.statusCode).toBe(400)
+
+      const resTimeWithoutDate = await lockedApp.inject({
+        method: 'GET',
+        url: '/v1/alerts/regions/centro-se?time=20:00',
+      })
+      expect(resTimeWithoutDate.statusCode).toBe(400)
+
+      const resBothDates = await lockedApp.inject({
+        method: 'GET',
+        url: '/v1/alerts/regions/centro-se?date=2025-01-24&cgeDate=24/01/2025',
+      })
+      expect(resBothDates.statusCode).toBe(400)
     } finally {
       await lockedApp.close()
     }
+  })
+
+  it('rejeita date e time com HTTP 400 em todos os feeds /feed.xml', async () => {
+    const overviewWithDate = await app.inject({
+      method: 'GET',
+      url: '/v1/alerts/feed.xml?date=2025-01-24',
+    })
+    expect(overviewWithDate.statusCode).toBe(400)
+
+    const regionWithTime = await app.inject({
+      method: 'GET',
+      url: '/v1/alerts/regions/centro-se/feed.xml?date=2025-01-24&time=20:00',
+    })
+    expect(regionWithTime.statusCode).toBe(400)
+
+    const coordsWithDate = await app.inject({
+      method: 'GET',
+      url: '/v1/alerts/by-coordinates/feed.xml?lat=-23.55&lon=-46.63&date=2025-01-24',
+    })
+    expect(coordsWithDate.statusCode).toBe(400)
   })
 
   it('entrega feeds XML RSS 2.0 puros em todas as rotas /feed.xml e 404 para região inexistente', async () => {

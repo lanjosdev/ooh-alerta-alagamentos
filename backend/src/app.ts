@@ -55,6 +55,7 @@ function parseCorsOrigin(value: string): boolean | string[] {
 
 export async function buildApp(dependencies: AppDependencies = {}) {
   const cache = dependencies.cache ?? new MemoryCache()
+  const enableSimulationParams = dependencies.enableSimulationParams ?? env.ENABLE_SIMULATION_PARAMS
   const regionRepository = dependencies.regionRepository ?? new InMemoryRegionRepository()
   const forecastProvider = dependencies.forecastProvider ?? createForecastProvider()
   const officialAlertsProvider = dependencies.officialAlertsProvider ?? new InmetAlertsProvider()
@@ -73,7 +74,7 @@ export async function buildApp(dependencies: AppDependencies = {}) {
     officialAlertsProvider,
     floodingMonitorProvider,
     cache,
-    enableSimulationParams: dependencies.enableSimulationParams,
+    enableSimulationParams,
   })
   const getCityOverviewService = new GetCityOverviewService(
     regionRepository,
@@ -136,6 +137,7 @@ export async function buildApp(dependencies: AppDependencies = {}) {
   await app.register(healthRoutes, {
     prefix: API_PREFIX,
     getSourcesStatusController,
+    enableSimulationParams,
   })
   await app.register(regionRoutes, {
     prefix: API_PREFIX,

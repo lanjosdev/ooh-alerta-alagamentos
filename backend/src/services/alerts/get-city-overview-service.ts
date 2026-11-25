@@ -1,5 +1,4 @@
 import type { RegionRepository } from '../../repositories/region-repository.js'
-import { BadRequestError } from '../../utils/application-error.js'
 import type { OohAlertDecision, SeverityLabel, SeverityLevel, SimulationMode } from './alert-types.js'
 import { getSeverityLabel } from './evaluate-risk-service.js'
 import type { GetLocationAlertService } from './get-location-alert-service.js'
@@ -7,6 +6,8 @@ import type { GetLocationAlertService } from './get-location-alert-service.js'
 export interface GetCityOverviewInput {
   zone?: string
   ibgeCode?: string
+  date?: string
+  time?: string
   cgeDate?: string
   simulate?: SimulationMode
 }
@@ -30,14 +31,12 @@ export class GetCityOverviewService {
   ) {}
 
   async execute(input: GetCityOverviewInput = {}): Promise<CityOverviewResult> {
-    if (
-      !this.getLocationAlertService.isSimulationEnabled() &&
-      (input.cgeDate !== undefined || input.simulate !== undefined)
-    ) {
-      throw new BadRequestError(
-        'Parâmetros de simulação (cgeDate e simulate) estão desabilitados neste ambiente.',
-      )
-    }
+    this.getLocationAlertService.validateInput({
+      date: input.date,
+      time: input.time,
+      cgeDate: input.cgeDate,
+      simulate: input.simulate,
+    })
 
     const regions = await this.regionRepository.listAll({
       zone: input.zone,
@@ -49,6 +48,8 @@ export class GetCityOverviewService {
         this.getLocationAlertService.execute({
           mode: 'region',
           regionId: region.id,
+          date: input.date,
+          time: input.time,
           cgeDate: input.cgeDate,
           simulate: input.simulate,
         }),

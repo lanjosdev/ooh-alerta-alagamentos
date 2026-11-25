@@ -1,26 +1,30 @@
 import type { FastifyReply, FastifyRequest } from 'fastify'
 import type { z } from 'zod'
 import type {
+  regionAlertQuerySchema,
   regionIdParamsSchema,
-  simulationQuerySchema,
+  rssRegionAlertQuerySchema,
 } from '../../routes/schemas/alerts.js'
 import type { GetLocationAlertService } from '../../services/alerts/get-location-alert-service.js'
 import { successResponse } from '../../utils/api-response.js'
 import { buildFeedSelfLink, formatAlertsAsRss } from '../../utils/rss-formatter.js'
 
 type RegionParams = z.infer<typeof regionIdParamsSchema>
-type SimulationQuery = z.infer<typeof simulationQuerySchema>
+type RegionAlertQuery = z.infer<typeof regionAlertQuerySchema>
+type RssRegionAlertQuery = z.infer<typeof rssRegionAlertQuerySchema>
 
 export class GetRegionAlertController {
   constructor(private readonly getLocationAlertService: GetLocationAlertService) {}
 
   async handleJson(
-    request: FastifyRequest<{ Params: RegionParams; Querystring: SimulationQuery }>,
+    request: FastifyRequest<{ Params: RegionParams; Querystring: RegionAlertQuery }>,
     reply: FastifyReply,
   ) {
     const decision = await this.getLocationAlertService.execute({
       mode: 'region',
       regionId: request.params.regionId,
+      date: request.query.date,
+      time: request.query.time,
       cgeDate: request.query.cgeDate,
       simulate: request.query.simulate,
     })
@@ -29,7 +33,7 @@ export class GetRegionAlertController {
   }
 
   async handleRss(
-    request: FastifyRequest<{ Params: RegionParams; Querystring: SimulationQuery }>,
+    request: FastifyRequest<{ Params: RegionParams; Querystring: RssRegionAlertQuery }>,
     reply: FastifyReply,
   ) {
     const decision = await this.getLocationAlertService.execute({
