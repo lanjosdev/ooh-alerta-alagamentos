@@ -8,7 +8,7 @@ import type {
 const DEFAULT_GEOSAMPA_WFS_URL = 'https://wfs.geosampa.prefeitura.sp.gov.br/geoserver/geoportal/wfs'
 const PRIMARY_LAYER_NAME = 'geoportal:mancha_inundacao_25'
 const FALLBACK_LAYER_NAME = 'geoportal:area_inundavel'
-const DEFAULT_RADIUS_METERS = 1_200
+const DEFAULT_RADIUS_METERS = 500
 const DEFAULT_TIMEOUT_MS = 5_000
 const METERS_PER_DEGREE_LAT = 111_320
 

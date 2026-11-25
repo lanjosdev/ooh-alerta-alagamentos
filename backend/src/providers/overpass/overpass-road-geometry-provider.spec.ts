@@ -3,16 +3,20 @@ import overpassSample from './__fixtures__/overpass-sample.json' with { type: 'j
 import { OverpassRoadGeometryProvider } from './overpass-road-geometry-provider.js'
 
 describe('OverpassRoadGeometryProvider', () => {
-  it('envia POST form-urlencoded e converte {lat, lon} para [lon, lat]', async () => {
+  it('envia POST form-urlencoded com Accept/User-Agent e converte {lat, lon} para [lon, lat]', async () => {
     let capturedMethod = ''
     let capturedBody = ''
     let capturedContentType = ''
+    let capturedAccept = ''
+    let capturedUserAgent = ''
 
     const fetchFn: typeof fetch = vi.fn(async (_input, init) => {
       capturedMethod = init?.method ?? ''
       capturedBody = String(init?.body ?? '')
-      capturedContentType =
-        new Headers(init?.headers).get('content-type') ?? ''
+      const headers = new Headers(init?.headers)
+      capturedContentType = headers.get('content-type') ?? ''
+      capturedAccept = headers.get('accept') ?? ''
+      capturedUserAgent = headers.get('user-agent') ?? ''
 
       return new Response(JSON.stringify(overpassSample), {
         status: 200,
@@ -23,12 +27,15 @@ describe('OverpassRoadGeometryProvider', () => {
     const provider = new OverpassRoadGeometryProvider({
       fetchFn,
       urls: ['https://primary.overpass.test/api/interpreter'],
+      userAgent: 'ooh-alerta-test/0.2',
     })
 
     const segments = await provider.getNearbyRoads(-23.622, -46.685)
 
     expect(capturedMethod).toBe('POST')
     expect(capturedContentType).toContain('application/x-www-form-urlencoded')
+    expect(capturedAccept).toBe('application/json')
+    expect(capturedUserAgent).toBe('ooh-alerta-test/0.2')
     expect(decodeURIComponent(capturedBody)).toContain('way(around:300,-23.622,-46.685)')
     expect(segments).toEqual([
       {

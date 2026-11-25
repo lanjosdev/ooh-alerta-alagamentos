@@ -36,6 +36,7 @@ const overpassResponseSchema = z.object({
 export interface OverpassRoadGeometryProviderOptions {
   fetchFn?: typeof fetch
   urls?: string[]
+  userAgent?: string
   totalBudgetMs?: number
   perMirrorTimeoutMs?: number
   nowFn?: () => number
@@ -62,6 +63,7 @@ export class OverpassRoadGeometryProvider implements RoadGeometryProvider {
 
   private readonly fetchFn: typeof fetch
   private readonly urls: string[]
+  private readonly userAgent: string
   private readonly totalBudgetMs: number
   private readonly perMirrorTimeoutMs: number
   private readonly nowFn: () => number
@@ -69,6 +71,7 @@ export class OverpassRoadGeometryProvider implements RoadGeometryProvider {
   constructor(options: OverpassRoadGeometryProviderOptions = {}) {
     this.fetchFn = options.fetchFn ?? fetch
     this.urls = options.urls ?? parseOverpassUrls(env.OVERPASS_URLS)
+    this.userAgent = options.userAgent ?? env.NOMINATIM_USER_AGENT
     this.totalBudgetMs = options.totalBudgetMs ?? DEFAULT_TOTAL_BUDGET_MS
     this.perMirrorTimeoutMs = options.perMirrorTimeoutMs ?? DEFAULT_PER_MIRROR_TIMEOUT_MS
     this.nowFn = options.nowFn ?? (() => Date.now())
@@ -123,6 +126,8 @@ export class OverpassRoadGeometryProvider implements RoadGeometryProvider {
           method: 'POST',
           headers: {
             'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
+            accept: 'application/json',
+            'user-agent': this.userAgent,
           },
           body,
           signal: AbortSignal.timeout(requestTimeoutMs),
