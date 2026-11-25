@@ -36,7 +36,9 @@ describe('OverpassRoadGeometryProvider', () => {
     expect(capturedContentType).toContain('application/x-www-form-urlencoded')
     expect(capturedAccept).toBe('application/json')
     expect(capturedUserAgent).toBe('ooh-alerta-test/0.2')
-    expect(decodeURIComponent(capturedBody)).toContain('way(around:300,-23.622,-46.685)')
+    expect(decodeURIComponent(capturedBody)).toMatch(
+      /way\(-23\.624\d+,-46\.687\d+,-23\.619\d+,-46\.682\d+\)/,
+    )
     expect(segments).toEqual([
       {
         osmId: '1001',
@@ -119,8 +121,8 @@ describe('OverpassRoadGeometryProvider', () => {
 
     const segments = await provider.getNearbyRoads(-23.6, -46.6)
     expect(queries).toHaveLength(2)
-    expect(queries[0]).toContain('way(around:300,')
-    expect(queries[1]).toContain('way(around:450,')
+    expect(queries[0]).toMatch(/way\(-23\.602\d+,-46\.602\d+,-23\.597\d+,-46\.597\d+\)/)
+    expect(queries[1]).toMatch(/way\(-23\.604\d+,-46\.604\d+,-23\.595\d+,-46\.595\d+\)/)
     expect(queries[1]).toContain('residential|unclassified')
     expect(segments[0].streetName).toBe('Rua Local Teste')
   })

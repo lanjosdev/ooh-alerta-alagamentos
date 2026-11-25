@@ -5,8 +5,9 @@ import type { RoadGeometryProvider, RoadSegment } from '../road-geometry-provide
 
 const DEFAULT_PRIMARY_RADIUS_METERS = 300
 const DEFAULT_FALLBACK_RADIUS_METERS = 450
-const DEFAULT_TOTAL_BUDGET_MS = 10_000
-const DEFAULT_PER_MIRROR_TIMEOUT_MS = 4_500
+const DEFAULT_TOTAL_BUDGET_MS = 15_000
+const DEFAULT_PER_MIRROR_TIMEOUT_MS = 7_000
+const METERS_PER_DEGREE_LAT = 111_320
 
 const PRIMARY_HIGHWAY_REGEX = '^(motorway|trunk|primary|secondary|tertiary)(_link)?$'
 const FALLBACK_HIGHWAY_REGEX =
@@ -48,7 +49,16 @@ function buildOverpassQuery(
   radiusMeters: number,
   highwayRegex: string,
 ): string {
-  return `[out:json][timeout:8];way(around:${radiusMeters},${lat},${lon})["highway"~"${highwayRegex}"];out tags geom;`
+  const deltaLat = radiusMeters / METERS_PER_DEGREE_LAT
+  const cosLat = Math.max(0.2, Math.cos((lat * Math.PI) / 180))
+  const deltaLon = radiusMeters / (METERS_PER_DEGREE_LAT * cosLat)
+
+  const south = (lat - deltaLat).toFixed(6)
+  const west = (lon - deltaLon).toFixed(6)
+  const north = (lat + deltaLat).toFixed(6)
+  const east = (lon + deltaLon).toFixed(6)
+
+  return `[out:json][timeout:10];way(${south},${west},${north},${east})["highway"~"${highwayRegex}"];out tags geom;`
 }
 
 function parseOverpassUrls(raw: string): string[] {
