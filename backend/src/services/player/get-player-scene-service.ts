@@ -53,6 +53,8 @@ export interface GetPlayerSceneDependencies {
 
 const DEFAULT_OVERPASS_COOLDOWN_MS = 30_000
 const CURATED_SNAPSHOT_PROVIDER = 'osm-curated-snapshot'
+const NAMED_STREET_MAX_DISTANCE_METERS = 150
+const METERS_PER_DEGREE_LAT = 111_320
 
 function toErrorMessage(error: unknown): string {
   return error instanceof Error ? error.message : String(error)
@@ -60,6 +62,85 @@ function toErrorMessage(error: unknown): string {
 
 function roundCoord(value: number): number {
   return Math.round(value * 1_000_000) / 1_000_000
+}
+
+function pointToSegmentDistanceMeters(
+  lat: number,
+  lon: number,
+  start: readonly [number, number],
+  end: readonly [number, number],
+): number {
+  const cosLat = Math.max(0.2, Math.cos((lat * Math.PI) / 180))
+  const ax = (start[0] - lon) * METERS_PER_DEGREE_LAT * cosLat
+  const ay = (start[1] - lat) * METERS_PER_DEGREE_LAT
+  const bx = (end[0] - lon) * METERS_PER_DEGREE_LAT * cosLat
+  const by = (end[1] - lat) * METERS_PER_DEGREE_LAT
+
+  const dx = bx - ax
+  const dy = by - ay
+  const lenSq = dx * dx + dy * dy
+
+  if (lenSq === 0) {
+    return Math.hypot(ax, ay)
+  }
+
+  const t = Math.max(0, Math.min(1, -(ax * dx + ay * dy) / lenSq))
+  const projX = ax + t * dx
+  const projY = ay + t * dy
+  return Math.hypot(projX, projY)
+}
+
+function resolveNearestNamedStreet(
+  roads: readonly RoadSegmentForMatching[],
+  lat: number,
+  lon: number,
+  maxDistanceMeters: number = NAMED_STREET_MAX_DISTANCE_METERS,
+): string | undefined {
+  let closestPrimaryName: string | undefined
+  let closestPrimaryDistance = Number.POSITIVE_INFINITY
+  let closestAnyName: string | undefined
+  let closestAnyDistance = Number.POSITIVE_INFINITY
+
+  for (const segment of roads) {
+    const trimmedName = segment.streetName.trim()
+    if (trimmedName.length === 0 || /^via sem nome$/i.test(trimmedName)) {
+      continue
+    }
+
+    let segmentMinDistance = Number.POSITIVE_INFINITY
+    const coords = segment.coordinates
+    if (coords.length < 2) {
+      for (const [segLon, segLat] of coords) {
+        const d = getDistanceInMeters(lat, lon, segLat, segLon)
+        if (d < segmentMinDistance) {
+          segmentMinDistance = d
+        }
+      }
+    } else {
+      for (let i = 0; i < coords.length - 1; i++) {
+        const d = pointToSegmentDistanceMeters(lat, lon, coords[i], coords[i + 1])
+        if (d < segmentMinDistance) {
+          segmentMinDistance = d
+        }
+      }
+    }
+
+    if (segmentMinDistance > maxDistanceMeters) {
+      continue
+    }
+
+    if (segment.isPrimaryCorridor && segmentMinDistance < closestPrimaryDistance) {
+      closestPrimaryDistance = segmentMinDistance
+      closestPrimaryName = trimmedName
+    }
+
+    if (segmentMinDistance < closestAnyDistance) {
+      closestAnyDistance = segmentMinDistance
+      closestAnyName = trimmedName
+    }
+  }
+
+  return closestPrimaryName ?? closestAnyName
 }
 
 function markNearestStreetAsPrimary(
@@ -256,9 +337,13 @@ export class GetPlayerSceneService {
       floodSusceptibility: geoSampaResult.status,
     }
 
+    const corridorNameOverride =
+      curatedAsset?.corridorName ??
+      resolveNearestNamedStreet(roadsResult.roads, targetLat, targetLon)
+
     const editorial = buildPlayerEditorial({
       decision,
-      corridorNameOverride: curatedAsset?.corridorName,
+      corridorNameOverride,
       hasGeoSampaData: geoSampaResult.zones.length > 0,
       sources,
     })

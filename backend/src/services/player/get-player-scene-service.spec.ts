@@ -205,6 +205,7 @@ describe('GetPlayerSceneService', () => {
 
     expect(spScene.targetKind).toBe('coordinates')
     expect(spScene.assetId).toBeNull()
+    expect(spScene.editorial.corridorName).toBe('Avenida Paulista')
     expect(spScene.sources.roadGeometry.provider).toBe('overpass')
     expect(spScene.sources.roadGeometry.status).toBe('ok')
     expect(spScene.sources.floodSusceptibility.status).toBe('ok')
@@ -232,10 +233,83 @@ describe('GetPlayerSceneService', () => {
 
     expect(scene.roads).toEqual({ type: 'FeatureCollection', features: [] })
     expect(scene.geoSampaZonesCount).toBe(0)
+    expect(scene.editorial.corridorName).toContain('São Paulo')
     expect(scene.sources.roadGeometry.status).toBe('error')
     expect(scene.sources.roadGeometry.error).toContain('Overpass timeout')
     expect(scene.sources.floodSusceptibility.status).toBe('error')
     expect(scene.sources.floodSusceptibility.error).toContain('GeoSampa WFS offline')
+  })
+
+  it('ignora via sem nome ou via distante (> 150 m) mantendo o fallback regional', async () => {
+    const cache = new MemoryCache()
+    const roadGeometryProvider: RoadGeometryProvider = {
+      providerName: 'overpass',
+      getNearbyRoads: vi.fn(async (): Promise<RoadSegment[]> => [
+        {
+          osmId: '8001',
+          streetName: 'Via sem nome',
+          highway: 'unclassified',
+          coordinates: [
+            [-46.657, -23.5615],
+            [-46.656, -23.5615],
+          ],
+        },
+        {
+          osmId: '8002',
+          streetName: 'Avenida Distante',
+          highway: 'primary',
+          coordinates: [
+            [-46.6565, -23.565],
+            [-46.655, -23.565],
+          ],
+        },
+      ]),
+    }
+
+    const alertService = new GetLocationAlertService({
+      regionRepository: new InMemoryRegionRepository(),
+      forecastProvider: {
+        providerName: 'open-meteo',
+        getHourlyForecast: vi.fn(async (lat, lon) => ({
+          provider: 'open-meteo',
+          gridLatitude: lat,
+          gridLongitude: lon,
+          timezone: 'America/Sao_Paulo',
+          current: null,
+          maxRainProbabilityNext2hPercent: 10,
+          expectedRainNext2hMm: 0,
+          peakRainIntensityNext2hMmPerHour: 0,
+          maxRainProbabilityNext6hPercent: 10,
+          expectedRainNext6hMm: 0,
+          hourly: [],
+        })),
+      },
+      officialAlertsProvider: {
+        providerName: 'inmet',
+        getActiveAlerts: vi.fn(async () => []),
+      },
+      floodingMonitorProvider: {
+        providerName: 'cge-sp',
+        getFloodingPoints: vi.fn(async () => []),
+        getStationRainfall: vi.fn(async () => null),
+      },
+      cache,
+      nowFn: () => new Date('2026-11-25T18:00:00Z'),
+    })
+
+    const service = new GetPlayerSceneService({
+      oohAssetRepository: new InMemoryOohAssetRepository(),
+      getLocationAlertService: alertService,
+      roadGeometryProvider,
+      floodSusceptibilityProvider: {
+        providerName: 'geosampa-wfs',
+        getFloodZones: vi.fn(async () => []),
+      },
+      cache,
+    })
+
+    const scene = await service.execute({ lat: -23.5615, lon: -46.6565 })
+    expect(scene.editorial.corridorName).toBe(scene.decision.location.name)
   })
 
   it('aplica cooldown negativo após falha no Overpass e retoma após expiração', async () => {
