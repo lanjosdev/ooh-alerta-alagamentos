@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { createPlayerBwStyle } from '@/features/player/styles/mapStyles'
 import { mockPlayerSceneCritical, mockPlayerSceneNormal } from '@/test/fixtures/player'
 import { maplibreMockState } from '@/test/mocks/maplibre'
 import { FloodGenerativeMap } from './FloodGenerativeMap'
@@ -40,9 +41,22 @@ describe('FloodGenerativeMap', () => {
     expect(map.addControl).toHaveBeenCalledWith(overlay)
     expect(map.fitBounds).toHaveBeenCalled()
 
-    const latestProps = maplibreMockState.overlayPropsHistory.at(-1) as { layers?: unknown[] }
+    const latestProps = maplibreMockState.overlayPropsHistory.at(-1) as {
+      layers?: Array<{ props?: { beforeId?: string } }>
+    }
     expect(Array.isArray(latestProps.layers)).toBe(true)
     expect(latestProps.layers).toHaveLength(3)
+    for (const layer of latestProps.layers ?? []) {
+      expect(layer.props?.beforeId).toBe('road-name-minor')
+    }
+
+    const style = createPlayerBwStyle()
+    const layerIds = style.layers.map((layer) => layer.id)
+    expect(layerIds).toContain('road-major-casing')
+    expect(layerIds).toContain('road-major-fill')
+    expect(layerIds).toContain('bridge-major-casing')
+    expect(layerIds).toContain('road-name-minor')
+    expect(layerIds).toContain('road-name')
 
     unmount()
 

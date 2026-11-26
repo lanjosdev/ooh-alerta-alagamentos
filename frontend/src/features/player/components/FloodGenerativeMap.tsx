@@ -21,6 +21,7 @@ import type {
 } from '@/types/player'
 
 interface FloodFlowLayerProps {
+  beforeId?: string
   floodTime?: number
   floodFlowSpeed?: number
   floodPulseStrength?: number
@@ -108,6 +109,7 @@ function buildFloodLayers(
   const coreColor = scaleColorAlpha(FLOOD_COLOR_CORE_CYAN, profile.glowOpacity)
 
   const sharedProps = {
+    beforeId: 'road-name-minor',
     data: features,
     getPath: (feature: RoadFloodFeature) => feature.geometry.coordinates,
     widthUnits: 'meters' as const,

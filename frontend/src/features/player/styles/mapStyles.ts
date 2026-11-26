@@ -64,7 +64,7 @@ export function buildPlayerAccentCssVars(accentHex: string): CSSProperties {
 export function createPlayerBwStyle(): StyleSpecification {
   return {
     version: 8,
-    name: 'OOH Editorial P&B Minimalista',
+    name: 'OOH Editorial Traço P&B Minimalista',
     sources: {
       openmaptiles: {
         type: 'vector',
@@ -86,8 +86,8 @@ export function createPlayerBwStyle(): StyleSpecification {
         source: 'openmaptiles',
         'source-layer': 'park',
         paint: {
-          'fill-color': '#F5F6F8',
-          'fill-opacity': 0.8,
+          'fill-color': '#F8F9FA',
+          'fill-opacity': 0.65,
         },
       },
       {
@@ -96,7 +96,17 @@ export function createPlayerBwStyle(): StyleSpecification {
         source: 'openmaptiles',
         'source-layer': 'water',
         paint: {
-          'fill-color': '#E5E7EB',
+          'fill-color': '#F3F4F6',
+        },
+      },
+      {
+        id: 'water-outline',
+        type: 'line',
+        source: 'openmaptiles',
+        'source-layer': 'water',
+        paint: {
+          'line-color': '#CBD5E1',
+          'line-width': 0.8,
         },
       },
       {
@@ -105,8 +115,8 @@ export function createPlayerBwStyle(): StyleSpecification {
         source: 'openmaptiles',
         'source-layer': 'waterway',
         paint: {
-          'line-color': '#D1D5DB',
-          'line-width': ['interpolate', ['linear'], ['zoom'], 11, 0.8, 16, 2.2],
+          'line-color': '#CBD5E1',
+          'line-width': ['interpolate', ['linear'], ['zoom'], 11, 0.6, 16, 1.4],
         },
       },
       {
@@ -124,53 +134,208 @@ export function createPlayerBwStyle(): StyleSpecification {
           'line-join': 'round',
         },
         paint: {
-          'line-color': '#D4D4D8',
-          'line-width': ['interpolate', ['linear'], ['zoom'], 12, 0.6, 16, 2.5],
+          'line-color': '#8E929B',
+          'line-width': ['interpolate', ['linear'], ['zoom'], 12, 0.55, 16, 1.05],
         },
       },
       {
-        id: 'road-tertiary',
+        id: 'road-tertiary-casing',
         type: 'line',
         source: 'openmaptiles',
         'source-layer': 'transportation',
-        filter: ['all', ['==', '$type', 'LineString'], ['==', 'class', 'tertiary']],
-        layout: {
-          'line-cap': 'round',
-          'line-join': 'round',
-        },
-        paint: {
-          'line-color': '#A1A1AA',
-          'line-width': ['interpolate', ['linear'], ['zoom'], 11, 0.9, 16, 3.6],
-        },
-      },
-      {
-        id: 'road-secondary',
-        type: 'line',
-        source: 'openmaptiles',
-        'source-layer': 'transportation',
-        filter: ['all', ['==', '$type', 'LineString'], ['in', 'class', 'secondary', 'primary']],
+        filter: [
+          'all',
+          ['==', '$type', 'LineString'],
+          ['==', 'class', 'tertiary'],
+          ['!=', 'brunnel', 'bridge'],
+        ],
         layout: {
           'line-cap': 'round',
           'line-join': 'round',
         },
         paint: {
           'line-color': '#52525B',
-          'line-width': ['interpolate', ['linear'], ['zoom'], 11, 1.4, 16, 5.2],
+          'line-width': ['interpolate', ['linear'], ['zoom'], 11, 1.6, 16, 4.2],
         },
       },
       {
-        id: 'road-major',
+        id: 'road-secondary-casing',
         type: 'line',
         source: 'openmaptiles',
         'source-layer': 'transportation',
-        filter: ['all', ['==', '$type', 'LineString'], ['in', 'class', 'trunk', 'motorway']],
+        filter: [
+          'all',
+          ['==', '$type', 'LineString'],
+          ['in', 'class', 'secondary', 'primary'],
+          ['!=', 'brunnel', 'bridge'],
+        ],
         layout: {
           'line-cap': 'round',
           'line-join': 'round',
         },
         paint: {
-          'line-color': '#18181B',
-          'line-width': ['interpolate', ['linear'], ['zoom'], 11, 2, 16, 6.8],
+          'line-color': '#3F3F46',
+          'line-width': ['interpolate', ['linear'], ['zoom'], 11, 2.2, 16, 6.4],
+        },
+      },
+      {
+        id: 'road-major-casing',
+        type: 'line',
+        source: 'openmaptiles',
+        'source-layer': 'transportation',
+        filter: [
+          'all',
+          ['==', '$type', 'LineString'],
+          ['in', 'class', 'trunk', 'motorway'],
+          ['!=', 'brunnel', 'bridge'],
+        ],
+        layout: {
+          'line-cap': 'round',
+          'line-join': 'round',
+        },
+        paint: {
+          'line-color': '#1F2937',
+          'line-width': ['interpolate', ['linear'], ['zoom'], 11, 2.8, 16, 8.6],
+        },
+      },
+      {
+        id: 'road-tertiary-fill',
+        type: 'line',
+        source: 'openmaptiles',
+        'source-layer': 'transportation',
+        filter: [
+          'all',
+          ['==', '$type', 'LineString'],
+          ['==', 'class', 'tertiary'],
+          ['!=', 'brunnel', 'bridge'],
+        ],
+        layout: {
+          'line-cap': 'round',
+          'line-join': 'round',
+        },
+        paint: {
+          'line-color': '#FFFFFF',
+          'line-width': ['interpolate', ['linear'], ['zoom'], 11, 0.5, 16, 2.6],
+        },
+      },
+      {
+        id: 'road-secondary-fill',
+        type: 'line',
+        source: 'openmaptiles',
+        'source-layer': 'transportation',
+        filter: [
+          'all',
+          ['==', '$type', 'LineString'],
+          ['in', 'class', 'secondary', 'primary'],
+          ['!=', 'brunnel', 'bridge'],
+        ],
+        layout: {
+          'line-cap': 'round',
+          'line-join': 'round',
+        },
+        paint: {
+          'line-color': '#FFFFFF',
+          'line-width': ['interpolate', ['linear'], ['zoom'], 11, 0.9, 16, 4.6],
+        },
+      },
+      {
+        id: 'road-major-fill',
+        type: 'line',
+        source: 'openmaptiles',
+        'source-layer': 'transportation',
+        filter: [
+          'all',
+          ['==', '$type', 'LineString'],
+          ['in', 'class', 'trunk', 'motorway'],
+          ['!=', 'brunnel', 'bridge'],
+        ],
+        layout: {
+          'line-cap': 'round',
+          'line-join': 'round',
+        },
+        paint: {
+          'line-color': '#FFFFFF',
+          'line-width': ['interpolate', ['linear'], ['zoom'], 11, 1.3, 16, 6.6],
+        },
+      },
+      {
+        id: 'bridge-secondary-casing',
+        type: 'line',
+        source: 'openmaptiles',
+        'source-layer': 'transportation',
+        filter: [
+          'all',
+          ['==', '$type', 'LineString'],
+          ['in', 'class', 'tertiary', 'secondary', 'primary'],
+          ['==', 'brunnel', 'bridge'],
+        ],
+        layout: {
+          'line-cap': 'butt',
+          'line-join': 'round',
+        },
+        paint: {
+          'line-color': '#3F3F46',
+          'line-width': ['interpolate', ['linear'], ['zoom'], 11, 2.2, 16, 6.4],
+        },
+      },
+      {
+        id: 'bridge-major-casing',
+        type: 'line',
+        source: 'openmaptiles',
+        'source-layer': 'transportation',
+        filter: [
+          'all',
+          ['==', '$type', 'LineString'],
+          ['in', 'class', 'trunk', 'motorway'],
+          ['==', 'brunnel', 'bridge'],
+        ],
+        layout: {
+          'line-cap': 'butt',
+          'line-join': 'round',
+        },
+        paint: {
+          'line-color': '#1F2937',
+          'line-width': ['interpolate', ['linear'], ['zoom'], 11, 2.8, 16, 8.6],
+        },
+      },
+      {
+        id: 'bridge-secondary-fill',
+        type: 'line',
+        source: 'openmaptiles',
+        'source-layer': 'transportation',
+        filter: [
+          'all',
+          ['==', '$type', 'LineString'],
+          ['in', 'class', 'tertiary', 'secondary', 'primary'],
+          ['==', 'brunnel', 'bridge'],
+        ],
+        layout: {
+          'line-cap': 'butt',
+          'line-join': 'round',
+        },
+        paint: {
+          'line-color': '#FFFFFF',
+          'line-width': ['interpolate', ['linear'], ['zoom'], 11, 0.9, 16, 4.6],
+        },
+      },
+      {
+        id: 'bridge-major-fill',
+        type: 'line',
+        source: 'openmaptiles',
+        'source-layer': 'transportation',
+        filter: [
+          'all',
+          ['==', '$type', 'LineString'],
+          ['in', 'class', 'trunk', 'motorway'],
+          ['==', 'brunnel', 'bridge'],
+        ],
+        layout: {
+          'line-cap': 'butt',
+          'line-join': 'round',
+        },
+        paint: {
+          'line-color': '#FFFFFF',
+          'line-width': ['interpolate', ['linear'], ['zoom'], 11, 1.3, 16, 6.6],
         },
       },
       {
@@ -191,21 +356,41 @@ export function createPlayerBwStyle(): StyleSpecification {
         },
       },
       {
+        id: 'road-name-minor',
+        type: 'symbol',
+        source: 'openmaptiles',
+        'source-layer': 'transportation_name',
+        minzoom: 14,
+        filter: ['in', 'class', 'tertiary', 'minor'],
+        layout: {
+          'symbol-placement': 'line',
+          'text-field': ['coalesce', ['get', 'name:pt'], ['get', 'name']],
+          'text-font': ['Noto Sans Regular'],
+          'text-size': ['interpolate', ['linear'], ['zoom'], 14, 9.5, 16, 11],
+          'text-max-angle': 30,
+        },
+        paint: {
+          'text-color': '#3F3F46',
+          'text-halo-color': '#FFFFFF',
+          'text-halo-width': 1.5,
+        },
+      },
+      {
         id: 'road-name',
         type: 'symbol',
         source: 'openmaptiles',
         'source-layer': 'transportation_name',
-        minzoom: 13,
+        minzoom: 12.5,
         filter: ['in', 'class', 'motorway', 'trunk', 'primary', 'secondary'],
         layout: {
           'symbol-placement': 'line',
           'text-field': ['coalesce', ['get', 'name:pt'], ['get', 'name']],
-          'text-font': ['Noto Sans Bold'],
-          'text-size': ['interpolate', ['linear'], ['zoom'], 13, 10, 16, 12.5],
+          'text-font': ['Noto Sans Regular'],
+          'text-size': ['interpolate', ['linear'], ['zoom'], 12.5, 10, 16, 12],
           'text-max-angle': 30,
         },
         paint: {
-          'text-color': '#111827',
+          'text-color': '#18181B',
           'text-halo-color': '#FFFFFF',
           'text-halo-width': 1.8,
         },
