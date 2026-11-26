@@ -1,7 +1,11 @@
 import { env } from '../../env.js'
 import type { CacheLookupResult, MemoryCache } from '../../lib/cache.js'
 import { logger } from '../../lib/logger.js'
-import { SAO_PAULO_IBGE_CODE } from '../../providers/cge-sp/cge-sp-stations.js'
+import {
+  DEFAULT_CGE_STATION_MAX_DISTANCE_METERS,
+  SAO_PAULO_IBGE_CODE,
+  findNearestCgeStation,
+} from '../../providers/cge-sp/cge-sp-stations.js'
 import type {
   FloodSusceptibilityPolygon,
   FloodSusceptibilityProvider,
@@ -43,8 +47,11 @@ export interface GetPlayerSceneDependencies {
     overpassSeconds?: number
     geoSampaSeconds?: number
   }
+  overpassCooldownMs?: number
+  nowFn?: () => number
 }
 
+const DEFAULT_OVERPASS_COOLDOWN_MS = 30_000
 const CURATED_SNAPSHOT_PROVIDER = 'osm-curated-snapshot'
 
 function toErrorMessage(error: unknown): string {
@@ -133,12 +140,18 @@ function buildCoordinatesCamera(
 export class GetPlayerSceneService {
   private readonly overpassTtlSeconds: number
   private readonly geoSampaTtlSeconds: number
+  private readonly overpassCooldownMs: number
+  private readonly nowFn: () => number
+  private overpassCooldownUntilMs = 0
+  private lastOverpassError: string | null = null
 
   constructor(private readonly deps: GetPlayerSceneDependencies) {
     this.overpassTtlSeconds =
       deps.cacheTtls?.overpassSeconds ?? env.CACHE_TTL_OVERPASS_SECONDS
     this.geoSampaTtlSeconds =
       deps.cacheTtls?.geoSampaSeconds ?? env.CACHE_TTL_GEOSAMPA_SECONDS
+    this.overpassCooldownMs = deps.overpassCooldownMs ?? DEFAULT_OVERPASS_COOLDOWN_MS
+    this.nowFn = deps.nowFn ?? (() => Date.now())
   }
 
   async execute(input: GetPlayerSceneInput): Promise<PlayerSceneData> {
@@ -195,27 +208,32 @@ export class GetPlayerSceneService {
         })
       : this.fetchOverpassRoads(targetLat, targetLon)
 
-    const decision = await decisionPromise
-    const isCapitalSp = decision.location.ibgeCode === SAO_PAULO_IBGE_CODE
+    const isCapitalSpTarget =
+      curatedAsset !== null ||
+      findNearestCgeStation(targetLat, targetLon, DEFAULT_CGE_STATION_MAX_DISTANCE_METERS) !==
+        null
 
-    const [roadsResult, geoSampaResult] = await Promise.all([
+    const geoSampaPromise: Promise<{
+      zones: FloodSusceptibilityPolygon[]
+      status: SourceExecutionStatus
+    }> = isCapitalSpTarget
+      ? this.fetchGeoSampaZones(targetLat, targetLon)
+      : Promise.resolve({
+          zones: [],
+          status: {
+            provider: this.deps.floodSusceptibilityProvider.providerName,
+            status: 'skipped',
+            cached: false,
+            stale: false,
+            fetchedAt: null,
+            error: null,
+          },
+        })
+
+    const [decision, roadsResult, geoSampaResult] = await Promise.all([
+      decisionPromise,
       roadsPromise,
-      isCapitalSp
-        ? this.fetchGeoSampaZones(targetLat, targetLon)
-        : Promise.resolve<{
-            zones: FloodSusceptibilityPolygon[]
-            status: SourceExecutionStatus
-          }>({
-            zones: [],
-            status: {
-              provider: this.deps.floodSusceptibilityProvider.providerName,
-              status: 'skipped',
-              cached: false,
-              stale: false,
-              fetchedAt: null,
-              error: null,
-            },
-          }),
+      geoSampaPromise,
     ])
 
     const camera = curatedAsset
@@ -268,7 +286,24 @@ export class GetPlayerSceneService {
         provider: roadGeometryProvider.providerName,
         key: `overpass:${lat.toFixed(3)}:${lon.toFixed(3)}`,
         ttlSeconds: this.overpassTtlSeconds,
-        fetcher: () => roadGeometryProvider.getNearbyRoads(lat, lon),
+        fetcher: async () => {
+          if (this.nowFn() < this.overpassCooldownUntilMs) {
+            throw new Error(
+              `Overpass em cooldown após falha recente: ${this.lastOverpassError ?? 'indisponível'}`,
+            )
+          }
+
+          try {
+            const segments = await roadGeometryProvider.getNearbyRoads(lat, lon)
+            this.overpassCooldownUntilMs = 0
+            this.lastOverpassError = null
+            return segments
+          } catch (error) {
+            this.overpassCooldownUntilMs = this.nowFn() + this.overpassCooldownMs
+            this.lastOverpassError = toErrorMessage(error)
+            throw error
+          }
+        },
       })
 
       return {

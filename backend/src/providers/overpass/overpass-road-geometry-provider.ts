@@ -5,8 +5,8 @@ import type { RoadGeometryProvider, RoadSegment } from '../road-geometry-provide
 
 const DEFAULT_PRIMARY_RADIUS_METERS = 300
 const DEFAULT_FALLBACK_RADIUS_METERS = 450
-const DEFAULT_TOTAL_BUDGET_MS = 15_000
-const DEFAULT_PER_MIRROR_TIMEOUT_MS = 7_000
+const DEFAULT_TOTAL_BUDGET_MS = 8_000
+const DEFAULT_PER_MIRROR_TIMEOUT_MS = 6_500
 const METERS_PER_DEGREE_LAT = 111_320
 
 const PRIMARY_HIGHWAY_REGEX = '^(motorway|trunk|primary|secondary|tertiary)(_link)?$'
@@ -58,7 +58,7 @@ function buildOverpassQuery(
   const north = (lat + deltaLat).toFixed(6)
   const east = (lon + deltaLon).toFixed(6)
 
-  return `[out:json][timeout:10];way(${south},${west},${north},${east})["highway"~"${highwayRegex}"];out tags geom;`
+  return `[out:json][timeout:6];way(${south},${west},${north},${east})["highway"~"${highwayRegex}"];out tags geom;`
 }
 
 function parseOverpassUrls(raw: string): string[] {
@@ -120,18 +120,21 @@ export class OverpassRoadGeometryProvider implements RoadGeometryProvider {
       throw new Error('Nenhum endpoint Overpass configurado em OVERPASS_URLS')
     }
 
-    let lastError: unknown = null
+    const remainingMs = deadlineMs - this.nowFn()
+    if (remainingMs <= 0) {
+      throw new Error('Orçamento de tempo esgotado ao consultar Overpass API')
+    }
 
-    for (const mirrorUrl of this.urls) {
-      const remainingMs = deadlineMs - this.nowFn()
-      if (remainingMs <= 0) {
-        break
-      }
+    const requestTimeoutMs = Math.min(this.perMirrorTimeoutMs, remainingMs)
+    const raceController = new AbortController()
+    const timeoutId = setTimeout(() => {
+      raceController.abort(new DOMException('The operation was aborted due to timeout', 'TimeoutError'))
+    }, requestTimeoutMs)
 
-      const requestTimeoutMs = Math.min(this.perMirrorTimeoutMs, remainingMs)
+    const body = new URLSearchParams({ data: query }).toString()
 
+    const mirrorPromises = this.urls.map(async (mirrorUrl): Promise<RoadSegment[]> => {
       try {
-        const body = new URLSearchParams({ data: query }).toString()
         const response = await this.fetchFn(mirrorUrl, {
           method: 'POST',
           headers: {
@@ -140,7 +143,7 @@ export class OverpassRoadGeometryProvider implements RoadGeometryProvider {
             'user-agent': this.userAgent,
           },
           body,
-          signal: AbortSignal.timeout(requestTimeoutMs),
+          signal: raceController.signal,
         })
 
         if (!response.ok) {
@@ -166,13 +169,29 @@ export class OverpassRoadGeometryProvider implements RoadGeometryProvider {
 
         return segments
       } catch (error) {
-        lastError = error
-        logger.warn({ mirrorUrl, err: error }, 'Falha ao consultar mirror Overpass')
+        if (!raceController.signal.aborted) {
+          logger.warn({ mirrorUrl, err: error }, 'Falha ao consultar mirror Overpass')
+        }
+        throw error
       }
-    }
+    })
 
-    throw lastError instanceof Error
-      ? lastError
-      : new Error('Orçamento de tempo esgotado ao consultar Overpass API')
+    try {
+      const winnerSegments = await Promise.any(mirrorPromises)
+      clearTimeout(timeoutId)
+      raceController.abort()
+      return winnerSegments
+    } catch (error) {
+      clearTimeout(timeoutId)
+      if (error instanceof AggregateError) {
+        const firstError = error.errors.find((entry): entry is Error => entry instanceof Error)
+        if (firstError) {
+          throw firstError
+        }
+      }
+      throw error instanceof Error
+        ? error
+        : new Error('Orçamento de tempo esgotado ao consultar Overpass API')
+    }
   }
 }

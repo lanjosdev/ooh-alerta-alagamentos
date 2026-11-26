@@ -139,4 +139,36 @@ describe('OverpassRoadGeometryProvider', () => {
 
     await expect(provider.getNearbyRoads(-23.6, -46.6)).rejects.toThrow('HTTP 504')
   })
+
+  it('retorna o mirror mais rápido em paralelo e aborta mirrors lentos restantes', async () => {
+    let slowSignal: AbortSignal | undefined
+    const fetchFn: typeof fetch = vi.fn(async (input, init) => {
+      const url = String(input)
+      if (url.includes('slow')) {
+        slowSignal = init?.signal ?? undefined
+        return await new Promise<Response>((_resolve, reject) => {
+          init?.signal?.addEventListener('abort', () => {
+            reject(new DOMException('Aborted', 'AbortError'))
+          })
+        })
+      }
+
+      return new Response(JSON.stringify(overpassSample), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      })
+    })
+
+    const provider = new OverpassRoadGeometryProvider({
+      fetchFn,
+      urls: [
+        'https://slow.overpass.test/api/interpreter',
+        'https://fast.overpass.test/api/interpreter',
+      ],
+    })
+
+    const segments = await provider.getNearbyRoads(-23.622, -46.685)
+    expect(segments).toHaveLength(1)
+    expect(slowSignal?.aborted).toBe(true)
+  })
 })

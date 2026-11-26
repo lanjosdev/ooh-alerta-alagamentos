@@ -237,4 +237,88 @@ describe('GetPlayerSceneService', () => {
     expect(scene.sources.floodSusceptibility.status).toBe('error')
     expect(scene.sources.floodSusceptibility.error).toContain('GeoSampa WFS offline')
   })
+
+  it('aplica cooldown negativo após falha no Overpass e retoma após expiração', async () => {
+    let nowMs = 1_000_000
+    const { floodSusceptibilityProvider } = createDeps()
+
+    const cache = new MemoryCache(() => nowMs)
+    const roadGeometryProvider: RoadGeometryProvider = {
+      providerName: 'overpass',
+      getNearbyRoads: vi
+        .fn()
+        .mockRejectedValueOnce(new Error('Overpass timeout'))
+        .mockResolvedValueOnce([
+          {
+            osmId: '9003',
+            streetName: 'Avenida Rebouças',
+            highway: 'primary',
+            coordinates: [
+              [-46.678, -23.563],
+              [-46.675, -23.562],
+            ],
+          },
+        ]),
+    }
+
+    const alertService = new GetLocationAlertService({
+      regionRepository: new InMemoryRegionRepository(),
+      forecastProvider: {
+        providerName: 'open-meteo',
+        getHourlyForecast: vi.fn(async (lat, lon) => ({
+          provider: 'open-meteo',
+          gridLatitude: lat,
+          gridLongitude: lon,
+          timezone: 'America/Sao_Paulo',
+          current: null,
+          maxRainProbabilityNext2hPercent: 10,
+          expectedRainNext2hMm: 0,
+          peakRainIntensityNext2hMmPerHour: 0,
+          maxRainProbabilityNext6hPercent: 10,
+          expectedRainNext6hMm: 0,
+          hourly: [],
+        })),
+      },
+      officialAlertsProvider: {
+        providerName: 'inmet',
+        getActiveAlerts: vi.fn(async () => []),
+      },
+      floodingMonitorProvider: {
+        providerName: 'cge-sp',
+        getFloodingPoints: vi.fn(async () => []),
+        getStationRainfall: vi.fn(async () => null),
+      },
+      cache,
+      nowFn: () => new Date('2026-11-25T18:00:00Z'),
+    })
+
+    const cooldownService = new GetPlayerSceneService({
+      oohAssetRepository: new InMemoryOohAssetRepository(),
+      getLocationAlertService: alertService,
+      roadGeometryProvider,
+      floodSusceptibilityProvider,
+      cache,
+      overpassCooldownMs: 30_000,
+      nowFn: () => nowMs,
+    })
+
+    // 1. Primeira falha ativa cooldown
+    const first = await cooldownService.execute({ lat: -23.5615, lon: -46.6565 })
+    expect(first.sources.roadGeometry.status).toBe('error')
+    expect(roadGeometryProvider.getNearbyRoads).toHaveBeenCalledTimes(1)
+
+    // 2. Outro ponto dentro do cooldown degrada imediatamente sem chamar Overpass
+    nowMs += 5_000
+    const second = await cooldownService.execute({ lat: -23.5815, lon: -46.6765 })
+    expect(second.sources.roadGeometry.status).toBe('error')
+    expect(second.sources.roadGeometry.error).toContain('cooldown')
+    expect(roadGeometryProvider.getNearbyRoads).toHaveBeenCalledTimes(1)
+
+    // 3. Após expirar cooldown, volta a consultar Overpass normalmente
+    nowMs += 30_000
+    const third = await cooldownService.execute({ lat: -23.5815, lon: -46.6765 })
+    expect(third.sources.roadGeometry.status).toBe('ok')
+    expect(third.roads.features.length).toBeGreaterThan(0)
+    expect(roadGeometryProvider.getNearbyRoads).toHaveBeenCalledTimes(2)
+  })
 })
