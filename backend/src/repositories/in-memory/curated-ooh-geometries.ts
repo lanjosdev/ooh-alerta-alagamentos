@@ -13,23 +13,23 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
     "corridorName": "Av. Jornalista Roberto Marinho",
     "neighborhood": "Brooklin / Campo Belo",
     "zone": "Zona Sul",
-    "latitude": -23.6217,
-    "longitude": -46.6869,
+    "latitude": -23.61808,
+    "longitude": -46.683831,
     "camera": {
       "center": [
-        -46.6869,
-        -23.6217
+        -46.683831,
+        -23.61808
       ],
       "zoom": 15.2,
       "bearing": 12,
       "bounds": [
         [
-          -46.690491,
-          -23.628459
+          -46.691041,
+          -23.624815
         ],
         [
-          -46.679549,
-          -23.614999
+          -46.676775,
+          -23.611648
         ]
       ]
     },
@@ -39,46 +39,6 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
       "AVENIDA AGUAS ESPRAIADAS"
     ],
     "roads": [
-      {
-        "osmId": "4560525",
-        "streetName": "Avenida Santo Amaro",
-        "highway": "primary",
-        "isPrimaryCorridor": false,
-        "coordinates": [
-          [
-            -46.688684,
-            -23.628344
-          ],
-          [
-            -46.688598,
-            -23.628222
-          ],
-          [
-            -46.68855,
-            -23.628156
-          ],
-          [
-            -46.68821,
-            -23.62767
-          ],
-          [
-            -46.688027,
-            -23.627401
-          ],
-          [
-            -46.687977,
-            -23.627327
-          ],
-          [
-            -46.687642,
-            -23.626835
-          ],
-          [
-            -46.687598,
-            -23.626775
-          ]
-        ]
-      },
       {
         "osmId": "8427139",
         "streetName": "Avenida Jornalista Roberto Marinho",
@@ -240,6 +200,30 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
         ]
       },
       {
+        "osmId": "183017638",
+        "streetName": "Avenida Santo Amaro",
+        "highway": "primary",
+        "isPrimaryCorridor": false,
+        "coordinates": [
+          [
+            -46.677763,
+            -23.611648
+          ],
+          [
+            -46.677864,
+            -23.611921
+          ],
+          [
+            -46.678188,
+            -23.612799
+          ],
+          [
+            -46.678239,
+            -23.612954
+          ]
+        ]
+      },
+      {
         "osmId": "183343571",
         "streetName": "Avenida Santo Amaro",
         "highway": "primary",
@@ -316,6 +300,30 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
         ]
       },
       {
+        "osmId": "250844665",
+        "streetName": "Avenida Jornalista Roberto Marinho",
+        "highway": "primary",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.677185,
+            -23.623955
+          ],
+          [
+            -46.677528,
+            -23.623411
+          ],
+          [
+            -46.677734,
+            -23.623103
+          ],
+          [
+            -46.677761,
+            -23.62307
+          ]
+        ]
+      },
+      {
         "osmId": "251628560",
         "streetName": "Avenida Santo Amaro",
         "highway": "primary",
@@ -332,98 +340,70 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
         ]
       },
       {
-        "osmId": "258405450",
+        "osmId": "255818926",
         "streetName": "Avenida Santo Amaro",
         "highway": "primary",
         "isPrimaryCorridor": false,
         "coordinates": [
           [
-            -46.687648,
-            -23.626649
+            -46.679767,
+            -23.615621
           ],
           [
-            -46.687942,
-            -23.627067
+            -46.679219,
+            -23.614818
           ],
           [
-            -46.688081,
-            -23.627256
+            -46.679011,
+            -23.614521
           ],
           [
-            -46.688333,
-            -23.627596
-          ],
-          [
-            -46.688537,
-            -23.627884
-          ],
-          [
-            -46.68896,
-            -23.628459
+            -46.678628,
+            -23.613933
           ]
         ]
       },
       {
-        "osmId": "258405451",
+        "osmId": "260042477",
         "streetName": "Avenida Santo Amaro",
         "highway": "primary",
         "isPrimaryCorridor": false,
         "coordinates": [
           [
-            -46.687389,
-            -23.626493
+            -46.678748,
+            -23.613874
           ],
           [
-            -46.68721,
-            -23.62625
-          ]
-        ]
-      },
-      {
-        "osmId": "258405452",
-        "streetName": "Avenida Santo Amaro",
-        "highway": "primary",
-        "isPrimaryCorridor": false,
-        "coordinates": [
-          [
-            -46.687334,
-            -23.626186
+            -46.678894,
+            -23.61407
           ],
           [
-            -46.687498,
-            -23.626431
-          ]
-        ]
-      },
-      {
-        "osmId": "258405453",
-        "streetName": "Avenida Santo Amaro",
-        "highway": "primary",
-        "isPrimaryCorridor": false,
-        "coordinates": [
-          [
-            -46.687057,
-            -23.626036
+            -46.679151,
+            -23.614439
           ],
           [
-            -46.686836,
-            -23.625736
+            -46.679288,
+            -23.614638
           ],
           [
-            -46.686654,
-            -23.625484
+            -46.679366,
+            -23.614743
           ],
           [
-            -46.686364,
-            -23.625085
+            -46.679475,
+            -23.614895
           ],
           [
-            -46.686289,
-            -23.624981
+            -46.679673,
+            -23.615173
           ],
           [
-            -46.685947,
-            -23.624504
+            -46.679689,
+            -23.615197
+          ],
+          [
+            -46.679906,
+            -23.615522
           ]
         ]
       },
@@ -456,10 +436,6 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
           [
             -46.686382,
             -23.624815
-          ],
-          [
-            -46.686439,
-            -23.6249
           ]
         ]
       },
@@ -504,6 +480,46 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
           [
             -46.683244,
             -23.618493
+          ]
+        ]
+      },
+      {
+        "osmId": "323866548",
+        "streetName": "Avenida Santo Amaro",
+        "highway": "primary",
+        "isPrimaryCorridor": false,
+        "coordinates": [
+          [
+            -46.680699,
+            -23.616924
+          ],
+          [
+            -46.68048,
+            -23.616612
+          ],
+          [
+            -46.680445,
+            -23.616564
+          ],
+          [
+            -46.680327,
+            -23.61639
+          ],
+          [
+            -46.680142,
+            -23.616119
+          ],
+          [
+            -46.679972,
+            -23.615903
+          ],
+          [
+            -46.6799,
+            -23.615804
+          ],
+          [
+            -46.679837,
+            -23.615718
           ]
         ]
       },
@@ -640,6 +656,74 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
         ]
       },
       {
+        "osmId": "325315245",
+        "streetName": "Avenida Santo Amaro",
+        "highway": "primary",
+        "isPrimaryCorridor": false,
+        "coordinates": [
+          [
+            -46.678239,
+            -23.612954
+          ],
+          [
+            -46.678266,
+            -23.613035
+          ],
+          [
+            -46.67838,
+            -23.613322
+          ],
+          [
+            -46.678502,
+            -23.613534
+          ],
+          [
+            -46.678658,
+            -23.613761
+          ],
+          [
+            -46.678748,
+            -23.613874
+          ]
+        ]
+      },
+      {
+        "osmId": "325315247",
+        "streetName": "Avenida Santo Amaro",
+        "highway": "primary",
+        "isPrimaryCorridor": false,
+        "coordinates": [
+          [
+            -46.678628,
+            -23.613933
+          ],
+          [
+            -46.678582,
+            -23.613869
+          ],
+          [
+            -46.678535,
+            -23.613804
+          ],
+          [
+            -46.678374,
+            -23.613544
+          ],
+          [
+            -46.678209,
+            -23.61323
+          ],
+          [
+            -46.678146,
+            -23.613077
+          ],
+          [
+            -46.678109,
+            -23.612989
+          ]
+        ]
+      },
+      {
         "osmId": "325315248",
         "streetName": "Avenida Santo Amaro",
         "highway": "primary",
@@ -752,6 +836,58 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
         ]
       },
       {
+        "osmId": "326384504",
+        "streetName": "Avenida Jornalista Roberto Marinho",
+        "highway": "primary",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.677212,
+            -23.624477
+          ],
+          [
+            -46.677106,
+            -23.624672
+          ],
+          [
+            -46.677041,
+            -23.624787
+          ]
+        ]
+      },
+      {
+        "osmId": "326384506",
+        "streetName": "Avenida Jornalista Roberto Marinho",
+        "highway": "primary",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.677028,
+            -23.624251
+          ],
+          [
+            -46.677185,
+            -23.623955
+          ]
+        ]
+      },
+      {
+        "osmId": "326384510",
+        "streetName": "Avenida Jornalista Roberto Marinho",
+        "highway": "primary",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.676775,
+            -23.624692
+          ],
+          [
+            -46.677028,
+            -23.624251
+          ]
+        ]
+      },
+      {
         "osmId": "326384533",
         "streetName": "Avenida Jornalista Roberto Marinho",
         "highway": "primary",
@@ -772,46 +908,6 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
           [
             -46.684502,
             -23.61789
-          ]
-        ]
-      },
-      {
-        "osmId": "328627478",
-        "streetName": "Avenida Santo Amaro",
-        "highway": "primary",
-        "isPrimaryCorridor": false,
-        "coordinates": [
-          [
-            -46.687598,
-            -23.626775
-          ],
-          [
-            -46.68746,
-            -23.62659
-          ],
-          [
-            -46.687389,
-            -23.626493
-          ]
-        ]
-      },
-      {
-        "osmId": "328645699",
-        "streetName": "Avenida Santo Amaro",
-        "highway": "primary",
-        "isPrimaryCorridor": false,
-        "coordinates": [
-          [
-            -46.687498,
-            -23.626431
-          ],
-          [
-            -46.687564,
-            -23.626526
-          ],
-          [
-            -46.687648,
-            -23.626649
           ]
         ]
       },
@@ -976,90 +1072,6 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
           [
             -46.681342,
             -23.617458
-          ]
-        ]
-      },
-      {
-        "osmId": "485948036",
-        "streetName": "Parada Santo Amaro",
-        "highway": "platform",
-        "isPrimaryCorridor": false,
-        "coordinates": [
-          [
-            -46.687918,
-            -23.62609
-          ],
-          [
-            -46.687902,
-            -23.626067
-          ],
-          [
-            -46.687663,
-            -23.626206
-          ],
-          [
-            -46.68767,
-            -23.626216
-          ],
-          [
-            -46.687679,
-            -23.626229
-          ],
-          [
-            -46.687918,
-            -23.62609
-          ]
-        ]
-      },
-      {
-        "osmId": "485948037",
-        "streetName": "Parada Santo Amaro",
-        "highway": "platform",
-        "isPrimaryCorridor": false,
-        "coordinates": [
-          [
-            -46.687859,
-            -23.626007
-          ],
-          [
-            -46.687875,
-            -23.626031
-          ],
-          [
-            -46.687703,
-            -23.626125
-          ],
-          [
-            -46.687696,
-            -23.626114
-          ],
-          [
-            -46.687687,
-            -23.626101
-          ],
-          [
-            -46.687859,
-            -23.626007
-          ]
-        ]
-      },
-      {
-        "osmId": "528125825",
-        "streetName": "Avenida Santo Amaro",
-        "highway": "primary",
-        "isPrimaryCorridor": false,
-        "coordinates": [
-          [
-            -46.687109,
-            -23.625878
-          ],
-          [
-            -46.687266,
-            -23.626088
-          ],
-          [
-            -46.687334,
-            -23.626186
           ]
         ]
       },
@@ -1232,6 +1244,26 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
         ]
       },
       {
+        "osmId": "742776774",
+        "streetName": "Avenida Jornalista Roberto Marinho",
+        "highway": "primary",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.689795,
+            -23.614999
+          ],
+          [
+            -46.690032,
+            -23.614927
+          ],
+          [
+            -46.691041,
+            -23.614654
+          ]
+        ]
+      },
+      {
         "osmId": "742778914",
         "streetName": "Avenida Jornalista Roberto Marinho",
         "highway": "primary",
@@ -1304,50 +1336,42 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
           [
             -46.679549,
             -23.621634
+          ],
+          [
+            -46.679147,
+            -23.621968
+          ],
+          [
+            -46.678855,
+            -23.622248
+          ],
+          [
+            -46.678449,
+            -23.622656
           ]
         ]
       },
       {
-        "osmId": "762552387",
-        "streetName": "Avenida Santo Amaro",
+        "osmId": "759049934",
+        "streetName": "Avenida Jornalista Roberto Marinho",
         "highway": "primary",
-        "isPrimaryCorridor": false,
+        "isPrimaryCorridor": true,
         "coordinates": [
           [
-            -46.686439,
-            -23.6249
+            -46.678281,
+            -23.622452
           ],
           [
-            -46.686656,
-            -23.625217
+            -46.678675,
+            -23.62202
           ],
           [
-            -46.686919,
-            -23.625601
+            -46.67892,
+            -23.621795
           ],
           [
-            -46.687109,
-            -23.625878
-          ]
-        ]
-      },
-      {
-        "osmId": "762552392",
-        "streetName": "Avenida Santo Amaro",
-        "highway": "primary",
-        "isPrimaryCorridor": false,
-        "coordinates": [
-          [
-            -46.68721,
-            -23.62625
-          ],
-          [
-            -46.687142,
-            -23.626157
-          ],
-          [
-            -46.687057,
-            -23.626036
+            -46.679034,
+            -23.621686
           ]
         ]
       },
@@ -1436,6 +1460,38 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
         ]
       },
       {
+        "osmId": "939517545",
+        "streetName": "Avenida Jornalista Roberto Marinho",
+        "highway": "primary",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.678449,
+            -23.622656
+          ],
+          [
+            -46.678206,
+            -23.622927
+          ],
+          [
+            -46.678019,
+            -23.623169
+          ],
+          [
+            -46.677785,
+            -23.623506
+          ],
+          [
+            -46.677438,
+            -23.624064
+          ],
+          [
+            -46.677212,
+            -23.624477
+          ]
+        ]
+      },
+      {
         "osmId": "939517546",
         "streetName": "Avenida Jornalista Roberto Marinho",
         "highway": "primary",
@@ -1520,6 +1576,106 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
         ]
       },
       {
+        "osmId": "941515962",
+        "streetName": "Avenida Jornalista Roberto Marinho",
+        "highway": "primary",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.679034,
+            -23.621686
+          ],
+          [
+            -46.679317,
+            -23.621455
+          ],
+          [
+            -46.679729,
+            -23.621136
+          ]
+        ]
+      },
+      {
+        "osmId": "941515963",
+        "streetName": "Avenida Jornalista Roberto Marinho",
+        "highway": "primary",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.677761,
+            -23.62307
+          ],
+          [
+            -46.677949,
+            -23.622845
+          ],
+          [
+            -46.678281,
+            -23.622452
+          ]
+        ]
+      },
+      {
+        "osmId": "942715189",
+        "streetName": "Avenida Santo Amaro",
+        "highway": "primary",
+        "isPrimaryCorridor": false,
+        "coordinates": [
+          [
+            -46.678109,
+            -23.612989
+          ],
+          [
+            -46.678048,
+            -23.612842
+          ],
+          [
+            -46.677972,
+            -23.612643
+          ],
+          [
+            -46.677731,
+            -23.611996
+          ],
+          [
+            -46.67762,
+            -23.611704
+          ]
+        ]
+      },
+      {
+        "osmId": "944848648",
+        "streetName": "Avenida Santo Amaro",
+        "highway": "primary",
+        "isPrimaryCorridor": false,
+        "coordinates": [
+          [
+            -46.679837,
+            -23.615718
+          ],
+          [
+            -46.679767,
+            -23.615621
+          ]
+        ]
+      },
+      {
+        "osmId": "944848649",
+        "streetName": "Avenida Santo Amaro",
+        "highway": "primary",
+        "isPrimaryCorridor": false,
+        "coordinates": [
+          [
+            -46.679906,
+            -23.615522
+          ],
+          [
+            -46.679964,
+            -23.615608
+          ]
+        ]
+      },
+      {
         "osmId": "1028089755",
         "streetName": "Avenida Santo Amaro",
         "highway": "primary",
@@ -1575,22 +1731,22 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
     "corridorName": "Marginal Pinheiros",
     "neighborhood": "Pinheiros / Cidade Jardim",
     "zone": "Zona Oeste",
-    "latitude": -23.5885,
-    "longitude": -46.6975,
+    "latitude": -23.589168,
+    "longitude": -46.692788,
     "camera": {
       "center": [
-        -46.6975,
-        -23.5885
+        -46.692788,
+        -23.589168
       ],
       "zoom": 15,
       "bearing": -14,
       "bounds": [
         [
-          -46.695541,
-          -23.595285
+          -46.696714,
+          -23.595963
         ],
         [
-          -46.690112,
+          -46.685561,
           -23.582416
         ]
       ]
@@ -1647,6 +1803,14 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
         "highway": "motorway",
         "isPrimaryCorridor": true,
         "coordinates": [
+          [
+            -46.692611,
+            -23.595867
+          ],
+          [
+            -46.692567,
+            -23.595493
+          ],
           [
             -46.69255,
             -23.595186
@@ -1706,6 +1870,26 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
           [
             -46.690141,
             -23.586756
+          ],
+          [
+            -46.69004,
+            -23.586729
+          ],
+          [
+            -46.68993,
+            -23.586687
+          ],
+          [
+            -46.689842,
+            -23.586644
+          ],
+          [
+            -46.689772,
+            -23.586601
+          ],
+          [
+            -46.689711,
+            -23.58655
           ]
         ]
       },
@@ -1862,6 +2046,26 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
           [
             -46.695541,
             -23.595219
+          ],
+          [
+            -46.695798,
+            -23.595474
+          ],
+          [
+            -46.696029,
+            -23.595637
+          ],
+          [
+            -46.696228,
+            -23.595737
+          ],
+          [
+            -46.696457,
+            -23.595842
+          ],
+          [
+            -46.696714,
+            -23.595963
           ]
         ]
       },
@@ -1962,6 +2166,14 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
           [
             -46.695255,
             -23.595285
+          ],
+          [
+            -46.695349,
+            -23.595525
+          ],
+          [
+            -46.695417,
+            -23.595693
           ]
         ]
       },
@@ -2038,6 +2250,26 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
           [
             -46.693835,
             -23.590624
+          ]
+        ]
+      },
+      {
+        "osmId": "252344054",
+        "streetName": "Avenida Cidade Jardim",
+        "highway": "trunk",
+        "isPrimaryCorridor": false,
+        "coordinates": [
+          [
+            -46.689711,
+            -23.58655
+          ],
+          [
+            -46.689189,
+            -23.586053
+          ],
+          [
+            -46.688978,
+            -23.585865
           ]
         ]
       },
@@ -2126,6 +2358,90 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
         ]
       },
       {
+        "osmId": "340315117",
+        "streetName": "Avenida Cidade Jardim",
+        "highway": "trunk",
+        "isPrimaryCorridor": false,
+        "coordinates": [
+          [
+            -46.68627,
+            -23.583164
+          ],
+          [
+            -46.686174,
+            -23.583074
+          ],
+          [
+            -46.686059,
+            -23.582962
+          ],
+          [
+            -46.685561,
+            -23.582453
+          ]
+        ]
+      },
+      {
+        "osmId": "369907163",
+        "streetName": "Avenida Cidade Jardim",
+        "highway": "trunk",
+        "isPrimaryCorridor": false,
+        "coordinates": [
+          [
+            -46.686346,
+            -23.583059
+          ],
+          [
+            -46.686394,
+            -23.583104
+          ],
+          [
+            -46.686476,
+            -23.583179
+          ],
+          [
+            -46.68687,
+            -23.583559
+          ],
+          [
+            -46.68699,
+            -23.583676
+          ],
+          [
+            -46.687486,
+            -23.584147
+          ],
+          [
+            -46.687871,
+            -23.584515
+          ],
+          [
+            -46.687971,
+            -23.584611
+          ],
+          [
+            -46.687991,
+            -23.584629
+          ],
+          [
+            -46.688156,
+            -23.584794
+          ],
+          [
+            -46.68878,
+            -23.585421
+          ],
+          [
+            -46.688982,
+            -23.585594
+          ],
+          [
+            -46.689275,
+            -23.585867
+          ]
+        ]
+      },
+      {
         "osmId": "480196895",
         "streetName": "Avenida Cidade Jardim",
         "highway": "trunk",
@@ -2142,6 +2458,38 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
           [
             -46.690112,
             -23.586678
+          ],
+          [
+            -46.690027,
+            -23.586638
+          ],
+          [
+            -46.689937,
+            -23.586588
+          ],
+          [
+            -46.689849,
+            -23.586524
+          ],
+          [
+            -46.689657,
+            -23.586348
+          ],
+          [
+            -46.689392,
+            -23.586091
+          ],
+          [
+            -46.689161,
+            -23.585869
+          ],
+          [
+            -46.689029,
+            -23.585755
+          ],
+          [
+            -46.688656,
+            -23.585482
           ]
         ]
       },
@@ -2490,6 +2838,26 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
         ]
       },
       {
+        "osmId": "802948730",
+        "streetName": "Avenida das Nações Unidas",
+        "highway": "trunk",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.692334,
+            -23.595808
+          ],
+          [
+            -46.692297,
+            -23.59524
+          ],
+          [
+            -46.692278,
+            -23.594628
+          ]
+        ]
+      },
+      {
         "osmId": "864924050",
         "streetName": "Ponte Cidade Jardim",
         "highway": "trunk",
@@ -2534,6 +2902,62 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
           [
             -46.69184,
             -23.586829
+          ]
+        ]
+      },
+      {
+        "osmId": "866807551",
+        "streetName": "Avenida Cidade Jardim",
+        "highway": "trunk",
+        "isPrimaryCorridor": false,
+        "coordinates": [
+          [
+            -46.688534,
+            -23.585359
+          ],
+          [
+            -46.688471,
+            -23.585294
+          ],
+          [
+            -46.68794,
+            -23.584752
+          ],
+          [
+            -46.687903,
+            -23.584714
+          ]
+        ]
+      },
+      {
+        "osmId": "866807552",
+        "streetName": "Avenida Cidade Jardim",
+        "highway": "trunk",
+        "isPrimaryCorridor": false,
+        "coordinates": [
+          [
+            -46.688978,
+            -23.585865
+          ],
+          [
+            -46.688872,
+            -23.585767
+          ],
+          [
+            -46.688795,
+            -23.585692
+          ],
+          [
+            -46.688733,
+            -23.585621
+          ],
+          [
+            -46.68869,
+            -23.585552
+          ],
+          [
+            -46.688656,
+            -23.585482
           ]
         ]
       },
@@ -2794,6 +3218,34 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
         ]
       },
       {
+        "osmId": "937385659",
+        "streetName": "Avenida Cidade Jardim",
+        "highway": "trunk",
+        "isPrimaryCorridor": false,
+        "coordinates": [
+          [
+            -46.685854,
+            -23.582581
+          ],
+          [
+            -46.686082,
+            -23.582803
+          ],
+          [
+            -46.686232,
+            -23.582949
+          ],
+          [
+            -46.686264,
+            -23.58298
+          ],
+          [
+            -46.686346,
+            -23.583059
+          ]
+        ]
+      },
+      {
         "osmId": "938508974",
         "streetName": "Avenida Cidade Jardim",
         "highway": "trunk",
@@ -2816,12 +3268,100 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
         "isPrimaryCorridor": false,
         "coordinates": [
           [
+            -46.689826,
+            -23.586379
+          ],
+          [
+            -46.689961,
+            -23.586484
+          ],
+          [
+            -46.690079,
+            -23.586548
+          ],
+          [
             -46.690191,
             -23.586586
           ],
           [
             -46.690298,
             -23.586607
+          ]
+        ]
+      },
+      {
+        "osmId": "939137474",
+        "streetName": "Avenida Cidade Jardim",
+        "highway": "trunk",
+        "isPrimaryCorridor": false,
+        "coordinates": [
+          [
+            -46.687903,
+            -23.584714
+          ],
+          [
+            -46.687001,
+            -23.583873
+          ],
+          [
+            -46.686433,
+            -23.583321
+          ],
+          [
+            -46.686353,
+            -23.583244
+          ],
+          [
+            -46.686323,
+            -23.583215
+          ],
+          [
+            -46.68627,
+            -23.583164
+          ]
+        ]
+      },
+      {
+        "osmId": "942919551",
+        "streetName": "Avenida Cidade Jardim",
+        "highway": "trunk",
+        "isPrimaryCorridor": false,
+        "coordinates": [
+          [
+            -46.688656,
+            -23.585482
+          ],
+          [
+            -46.688644,
+            -23.58547
+          ],
+          [
+            -46.688569,
+            -23.585395
+          ],
+          [
+            -46.688534,
+            -23.585359
+          ]
+        ]
+      },
+      {
+        "osmId": "946620669",
+        "streetName": "Avenida Cidade Jardim",
+        "highway": "trunk",
+        "isPrimaryCorridor": false,
+        "coordinates": [
+          [
+            -46.689275,
+            -23.585867
+          ],
+          [
+            -46.689424,
+            -23.586006
+          ],
+          [
+            -46.689826,
+            -23.586379
           ]
         ]
       },
@@ -2893,23 +3433,23 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
     "corridorName": "Av. Washington Luís",
     "neighborhood": "Campo Belo",
     "zone": "Zona Sul",
-    "latitude": -23.6261,
-    "longitude": -46.6564,
+    "latitude": -23.625784,
+    "longitude": -46.661881,
     "camera": {
       "center": [
-        -46.6564,
-        -23.6261
+        -46.661881,
+        -23.625784
       ],
       "zoom": 15.2,
       "bearing": 8,
       "bounds": [
         [
-          -46.662932,
-          -23.628433
+          -46.669163,
+          -23.63258
         ],
         [
-          -46.649014,
-          -23.619343
+          -46.654755,
+          -23.619018
         ]
       ]
     },
@@ -2919,6 +3459,38 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
       "PRACA COMANDANTE LINEU GOMES"
     ],
     "roads": [
+      {
+        "osmId": "4331371",
+        "streetName": "Avenida Washington Luís",
+        "highway": "trunk",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.669047,
+            -23.632004
+          ],
+          [
+            -46.66903,
+            -23.631823
+          ],
+          [
+            -46.66901,
+            -23.631685
+          ],
+          [
+            -46.668987,
+            -23.631572
+          ],
+          [
+            -46.66895,
+            -23.631427
+          ],
+          [
+            -46.668865,
+            -23.631146
+          ]
+        ]
+      },
       {
         "osmId": "28033956",
         "streetName": "Avenida Washington Luís",
@@ -2992,27 +3564,135 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
         ]
       },
       {
+        "osmId": "183017582",
+        "streetName": "Avenida Washington Luís",
+        "highway": "trunk",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.668939,
+            -23.630961
+          ],
+          [
+            -46.669068,
+            -23.631447
+          ],
+          [
+            -46.6691,
+            -23.631595
+          ],
+          [
+            -46.669137,
+            -23.631787
+          ],
+          [
+            -46.669151,
+            -23.631937
+          ],
+          [
+            -46.669163,
+            -23.632144
+          ]
+        ]
+      },
+      {
+        "osmId": "183343598",
+        "streetName": "Avenida Washington Luís",
+        "highway": "trunk",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.66697,
+            -23.629382
+          ],
+          [
+            -46.666525,
+            -23.629307
+          ],
+          [
+            -46.666427,
+            -23.62929
+          ],
+          [
+            -46.666261,
+            -23.629264
+          ]
+        ]
+      },
+      {
+        "osmId": "234501215",
+        "streetName": "Avenida Washington Luís",
+        "highway": "trunk",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.664754,
+            -23.628825
+          ],
+          [
+            -46.665001,
+            -23.628882
+          ],
+          [
+            -46.665402,
+            -23.628982
+          ],
+          [
+            -46.665774,
+            -23.629065
+          ],
+          [
+            -46.666481,
+            -23.629209
+          ]
+        ]
+      },
+      {
+        "osmId": "234501216",
+        "streetName": "Avenida Washington Luís",
+        "highway": "trunk",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.661941,
+            -23.61975
+          ],
+          [
+            -46.661966,
+            -23.619563
+          ]
+        ]
+      },
+      {
+        "osmId": "234731988",
+        "streetName": "Avenida Washington Luís",
+        "highway": "trunk",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.666481,
+            -23.629209
+          ],
+          [
+            -46.666635,
+            -23.629237
+          ],
+          [
+            -46.666716,
+            -23.629252
+          ],
+          [
+            -46.667045,
+            -23.629317
+          ]
+        ]
+      },
+      {
         "osmId": "326382903",
         "streetName": "Avenida dos Bandeirantes",
         "highway": "trunk",
         "isPrimaryCorridor": false,
         "coordinates": [
-          [
-            -46.652435,
-            -23.622475
-          ],
-          [
-            -46.653458,
-            -23.62181
-          ],
-          [
-            -46.653831,
-            -23.621567
-          ],
-          [
-            -46.653861,
-            -23.621548
-          ],
           [
             -46.655504,
             -23.620479
@@ -3044,34 +3724,10 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
           [
             -46.65744,
             -23.619366
-          ]
-        ]
-      },
-      {
-        "osmId": "326382905",
-        "streetName": "Avenida dos Bandeirantes",
-        "highway": "trunk",
-        "isPrimaryCorridor": false,
-        "coordinates": [
-          [
-            -46.652246,
-            -23.622782
           ],
           [
-            -46.652127,
-            -23.622861
-          ],
-          [
-            -46.652007,
-            -23.622944
-          ],
-          [
-            -46.651971,
-            -23.622969
-          ],
-          [
-            -46.651804,
-            -23.62308
+            -46.658009,
+            -23.619098
           ]
         ]
       },
@@ -3124,6 +3780,90 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
           [
             -46.661785,
             -23.619343
+          ],
+          [
+            -46.661763,
+            -23.619241
+          ],
+          [
+            -46.661697,
+            -23.619131
+          ],
+          [
+            -46.661587,
+            -23.619018
+          ]
+        ]
+      },
+      {
+        "osmId": "401056089",
+        "streetName": "Avenida Washington Luís",
+        "highway": "trunk",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.668865,
+            -23.631146
+          ],
+          [
+            -46.668763,
+            -23.630898
+          ],
+          [
+            -46.668718,
+            -23.630773
+          ],
+          [
+            -46.668645,
+            -23.630626
+          ],
+          [
+            -46.668516,
+            -23.630416
+          ],
+          [
+            -46.668451,
+            -23.630322
+          ],
+          [
+            -46.66828,
+            -23.630118
+          ],
+          [
+            -46.668158,
+            -23.63
+          ],
+          [
+            -46.668057,
+            -23.629914
+          ],
+          [
+            -46.667936,
+            -23.62982
+          ],
+          [
+            -46.667804,
+            -23.62973
+          ],
+          [
+            -46.667666,
+            -23.629648
+          ],
+          [
+            -46.66757,
+            -23.629596
+          ],
+          [
+            -46.66738,
+            -23.629516
+          ],
+          [
+            -46.667138,
+            -23.629428
+          ],
+          [
+            -46.66697,
+            -23.629382
           ]
         ]
       },
@@ -3152,6 +3892,14 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
           [
             -46.662932,
             -23.62835
+          ],
+          [
+            -46.664331,
+            -23.628721
+          ],
+          [
+            -46.664754,
+            -23.628825
           ]
         ]
       },
@@ -3440,11 +4188,91 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
         ]
       },
       {
+        "osmId": "565527577",
+        "streetName": "Avenida Washington Luís",
+        "highway": "trunk",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.667045,
+            -23.629317
+          ],
+          [
+            -46.667257,
+            -23.629384
+          ],
+          [
+            -46.667407,
+            -23.629438
+          ],
+          [
+            -46.667618,
+            -23.629527
+          ],
+          [
+            -46.667809,
+            -23.629633
+          ],
+          [
+            -46.667936,
+            -23.629713
+          ],
+          [
+            -46.66807,
+            -23.629816
+          ],
+          [
+            -46.668152,
+            -23.629889
+          ],
+          [
+            -46.66824,
+            -23.629968
+          ],
+          [
+            -46.668337,
+            -23.630067
+          ],
+          [
+            -46.668432,
+            -23.630175
+          ],
+          [
+            -46.668585,
+            -23.630372
+          ],
+          [
+            -46.668672,
+            -23.630518
+          ],
+          [
+            -46.668939,
+            -23.630961
+          ]
+        ]
+      },
+      {
         "osmId": "565527581",
         "streetName": "Avenida Washington Luís",
         "highway": "trunk",
         "isPrimaryCorridor": true,
         "coordinates": [
+          [
+            -46.666261,
+            -23.629264
+          ],
+          [
+            -46.665712,
+            -23.62914
+          ],
+          [
+            -46.665216,
+            -23.629025
+          ],
+          [
+            -46.664732,
+            -23.628911
+          ],
           [
             -46.662762,
             -23.628385
@@ -3452,142 +4280,6 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
           [
             -46.662676,
             -23.628361
-          ]
-        ]
-      },
-      {
-        "osmId": "617085816",
-        "streetName": "Avenida dos Bandeirantes",
-        "highway": "trunk",
-        "isPrimaryCorridor": false,
-        "coordinates": [
-          [
-            -46.651322,
-            -23.623405
-          ],
-          [
-            -46.651228,
-            -23.623464
-          ],
-          [
-            -46.650988,
-            -23.623636
-          ],
-          [
-            -46.650858,
-            -23.623745
-          ],
-          [
-            -46.650755,
-            -23.623823
-          ],
-          [
-            -46.650633,
-            -23.623917
-          ],
-          [
-            -46.650281,
-            -23.624256
-          ],
-          [
-            -46.650183,
-            -23.624358
-          ],
-          [
-            -46.650061,
-            -23.624499
-          ],
-          [
-            -46.649833,
-            -23.624788
-          ],
-          [
-            -46.649646,
-            -23.625048
-          ],
-          [
-            -46.649489,
-            -23.625312
-          ],
-          [
-            -46.649368,
-            -23.625524
-          ],
-          [
-            -46.649298,
-            -23.625683
-          ],
-          [
-            -46.649119,
-            -23.626059
-          ]
-        ]
-      },
-      {
-        "osmId": "617086232",
-        "streetName": "Avenida dos Bandeirantes",
-        "highway": "trunk",
-        "isPrimaryCorridor": false,
-        "coordinates": [
-          [
-            -46.649014,
-            -23.625714
-          ],
-          [
-            -46.649203,
-            -23.625326
-          ],
-          [
-            -46.64934,
-            -23.625117
-          ],
-          [
-            -46.64938,
-            -23.625065
-          ],
-          [
-            -46.649471,
-            -23.624948
-          ],
-          [
-            -46.649572,
-            -23.624812
-          ],
-          [
-            -46.649774,
-            -23.624546
-          ],
-          [
-            -46.649993,
-            -23.624304
-          ],
-          [
-            -46.650202,
-            -23.624078
-          ],
-          [
-            -46.650478,
-            -23.623827
-          ],
-          [
-            -46.650788,
-            -23.623608
-          ],
-          [
-            -46.651593,
-            -23.623032
-          ],
-          [
-            -46.651828,
-            -23.622873
-          ],
-          [
-            -46.652046,
-            -23.622718
-          ],
-          [
-            -46.652168,
-            -23.622633
           ]
         ]
       },
@@ -3674,6 +4366,10 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
         "isPrimaryCorridor": false,
         "coordinates": [
           [
+            -46.658163,
+            -23.619206
+          ],
+          [
             -46.657338,
             -23.619584
           ],
@@ -3708,46 +4404,6 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
           [
             -46.654755,
             -23.621146
-          ],
-          [
-            -46.654327,
-            -23.621434
-          ],
-          [
-            -46.654051,
-            -23.621616
-          ],
-          [
-            -46.653746,
-            -23.621814
-          ],
-          [
-            -46.653486,
-            -23.621983
-          ],
-          [
-            -46.653313,
-            -23.622096
-          ],
-          [
-            -46.653176,
-            -23.622186
-          ],
-          [
-            -46.652878,
-            -23.62238
-          ],
-          [
-            -46.652729,
-            -23.622472
-          ],
-          [
-            -46.652572,
-            -23.622574
-          ],
-          [
-            -46.652445,
-            -23.622651
           ]
         ]
       },
@@ -3840,34 +4496,22 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
         ]
       },
       {
-        "osmId": "759449673",
-        "streetName": "Avenida dos Bandeirantes",
+        "osmId": "769156138",
+        "streetName": "Avenida Washington Luís",
         "highway": "trunk",
-        "isPrimaryCorridor": false,
+        "isPrimaryCorridor": true,
         "coordinates": [
           [
-            -46.652445,
-            -23.622651
+            -46.66208,
+            -23.619563
           ],
           [
-            -46.652246,
-            -23.622782
-          ]
-        ]
-      },
-      {
-        "osmId": "759449677",
-        "streetName": "Avenida dos Bandeirantes",
-        "highway": "trunk",
-        "isPrimaryCorridor": false,
-        "coordinates": [
-          [
-            -46.652168,
-            -23.622633
+            -46.662044,
+            -23.620005
           ],
           [
-            -46.652435,
-            -23.622475
+            -46.661999,
+            -23.620512
           ]
         ]
       },
@@ -3972,6 +4616,22 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
         ]
       },
       {
+        "osmId": "961151339",
+        "streetName": "Avenida Washington Luís",
+        "highway": "trunk",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.661873,
+            -23.620481
+          ],
+          [
+            -46.661941,
+            -23.61975
+          ]
+        ]
+      },
+      {
         "osmId": "965246314",
         "streetName": "Praça Comandante Lineu Gomes",
         "highway": "unclassified",
@@ -3984,26 +4644,6 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
           [
             -46.659736,
             -23.627865
-          ]
-        ]
-      },
-      {
-        "osmId": "978822151",
-        "streetName": "Avenida dos Bandeirantes",
-        "highway": "trunk",
-        "isPrimaryCorridor": false,
-        "coordinates": [
-          [
-            -46.651804,
-            -23.62308
-          ],
-          [
-            -46.65146,
-            -23.623312
-          ],
-          [
-            -46.651322,
-            -23.623405
           ]
         ]
       },
@@ -4022,6 +4662,26 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
             -23.624605
           ]
         ]
+      },
+      {
+        "osmId": "1551953676",
+        "streetName": "Avenida Washington Luís",
+        "highway": "trunk",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.669059,
+            -23.63258
+          ],
+          [
+            -46.669057,
+            -23.632187
+          ],
+          [
+            -46.669047,
+            -23.632004
+          ]
+        ]
       }
     ]
   },
@@ -4031,23 +4691,23 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
     "corridorName": "Av. 23 de Maio / Viaduto Jaceguaí",
     "neighborhood": "Centro / Bela Vista",
     "zone": "Centro",
-    "latitude": -23.5582,
-    "longitude": -46.6433,
+    "latitude": -23.556415,
+    "longitude": -46.637818,
     "camera": {
       "center": [
-        -46.6433,
-        -23.5582
+        -46.637818,
+        -23.556415
       ],
       "zoom": 15.3,
       "bearing": 0,
       "bounds": [
         [
-          -46.650591,
-          -23.562036
+          -46.644981,
+          -23.563074
         ],
         [
-          -46.635905,
-          -23.551403
+          -46.631966,
+          -23.549625
         ]
       ]
     },
@@ -4114,6 +4774,22 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
         ]
       },
       {
+        "osmId": "8103470",
+        "streetName": "Avenida da Liberdade",
+        "highway": "primary",
+        "isPrimaryCorridor": false,
+        "coordinates": [
+          [
+            -46.634512,
+            -23.552378
+          ],
+          [
+            -46.634742,
+            -23.552848
+          ]
+        ]
+      },
+      {
         "osmId": "16975107",
         "streetName": "Avenida da Liberdade",
         "highway": "primary",
@@ -4154,190 +4830,18 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
         ]
       },
       {
-        "osmId": "34431215",
-        "streetName": "Rua Jaceguaí",
-        "highway": "residential",
-        "isPrimaryCorridor": true,
-        "coordinates": [
-          [
-            -46.639475,
-            -23.555603
-          ],
-          [
-            -46.639532,
-            -23.555602
-          ],
-          [
-            -46.639609,
-            -23.555602
-          ],
-          [
-            -46.640038,
-            -23.555453
-          ],
-          [
-            -46.640138,
-            -23.555415
-          ],
-          [
-            -46.64018,
-            -23.555406
-          ]
-        ]
-      },
-      {
         "osmId": "38630330",
         "streetName": "Avenida Nove de Julho",
         "highway": "primary",
         "isPrimaryCorridor": false,
         "coordinates": [
           [
-            -46.647116,
-            -23.552014
+            -46.644912,
+            -23.550945
           ],
           [
-            -46.646969,
-            -23.551818
-          ],
-          [
-            -46.646846,
-            -23.551689
-          ],
-          [
-            -46.64674,
-            -23.551602
-          ],
-          [
-            -46.646617,
-            -23.551524
-          ],
-          [
-            -46.646431,
-            -23.551442
-          ]
-        ]
-      },
-      {
-        "osmId": "38630334",
-        "streetName": "Avenida Nove de Julho",
-        "highway": "secondary",
-        "isPrimaryCorridor": false,
-        "coordinates": [
-          [
-            -46.647381,
-            -23.552133
-          ],
-          [
-            -46.647423,
-            -23.552209
-          ],
-          [
-            -46.647668,
-            -23.552601
-          ],
-          [
-            -46.648014,
-            -23.553233
-          ],
-          [
-            -46.648407,
-            -23.55395
-          ],
-          [
-            -46.648496,
-            -23.554107
-          ]
-        ]
-      },
-      {
-        "osmId": "38630335",
-        "streetName": "Avenida Nove de Julho",
-        "highway": "secondary",
-        "isPrimaryCorridor": false,
-        "coordinates": [
-          [
-            -46.649379,
-            -23.555553
-          ],
-          [
-            -46.649083,
-            -23.555314
-          ],
-          [
-            -46.648846,
-            -23.555098
-          ],
-          [
-            -46.648733,
-            -23.554965
-          ],
-          [
-            -46.648644,
-            -23.554845
-          ]
-        ]
-      },
-      {
-        "osmId": "72916473",
-        "streetName": "Rua Jaceguaí",
-        "highway": "residential",
-        "isPrimaryCorridor": true,
-        "coordinates": [
-          [
-            -46.641172,
-            -23.555319
-          ],
-          [
-            -46.641248,
-            -23.555311
-          ],
-          [
-            -46.641502,
-            -23.555288
-          ],
-          [
-            -46.64162,
-            -23.555283
-          ],
-          [
-            -46.641895,
-            -23.555271
-          ],
-          [
-            -46.642001,
-            -23.555267
-          ],
-          [
-            -46.6421,
-            -23.555255
-          ],
-          [
-            -46.642201,
-            -23.555244
-          ],
-          [
-            -46.642276,
-            -23.555219
-          ],
-          [
-            -46.642367,
-            -23.555171
-          ],
-          [
-            -46.642381,
-            -23.555158
-          ],
-          [
-            -46.642399,
-            -23.555142
-          ],
-          [
-            -46.642532,
-            -23.555026
-          ],
-          [
-            -46.642733,
-            -23.554823
+            -46.644671,
+            -23.550844
           ]
         ]
       },
@@ -4402,6 +4906,26 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
         ]
       },
       {
+        "osmId": "96124450",
+        "streetName": "Avenida Radial Leste-Oeste",
+        "highway": "trunk",
+        "isPrimaryCorridor": false,
+        "coordinates": [
+          [
+            -46.637302,
+            -23.556253
+          ],
+          [
+            -46.635719,
+            -23.556501
+          ],
+          [
+            -46.634539,
+            -23.556654
+          ]
+        ]
+      },
+      {
         "osmId": "96124518",
         "streetName": "Avenida Radial Leste-Oeste",
         "highway": "trunk",
@@ -4418,6 +4942,26 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
           [
             -46.637861,
             -23.556023
+          ]
+        ]
+      },
+      {
+        "osmId": "96124528",
+        "streetName": "Viaduto Jaceguai",
+        "highway": "trunk",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.637904,
+            -23.556141
+          ],
+          [
+            -46.637589,
+            -23.5562
+          ],
+          [
+            -46.637302,
+            -23.556253
           ]
         ]
       },
@@ -4502,6 +5046,26 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
           [
             -46.636382,
             -23.556686
+          ]
+        ]
+      },
+      {
+        "osmId": "168667915",
+        "streetName": "Avenida Radial Leste-Oeste",
+        "highway": "trunk",
+        "isPrimaryCorridor": false,
+        "coordinates": [
+          [
+            -46.632243,
+            -23.556383
+          ],
+          [
+            -46.632912,
+            -23.556419
+          ],
+          [
+            -46.633301,
+            -23.556439
           ]
         ]
       },
@@ -4630,6 +5194,22 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
           [
             -46.638776,
             -23.562027
+          ]
+        ]
+      },
+      {
+        "osmId": "196799737",
+        "streetName": "Avenida da Liberdade",
+        "highway": "primary",
+        "isPrimaryCorridor": false,
+        "coordinates": [
+          [
+            -46.634701,
+            -23.552999
+          ],
+          [
+            -46.634643,
+            -23.552883
           ]
         ]
       },
@@ -4766,6 +5346,394 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
         ]
       },
       {
+        "osmId": "231281389",
+        "streetName": "Avenida da Liberdade",
+        "highway": "primary",
+        "isPrimaryCorridor": false,
+        "coordinates": [
+          [
+            -46.635905,
+            -23.555452
+          ],
+          [
+            -46.635854,
+            -23.55535
+          ],
+          [
+            -46.635522,
+            -23.554686
+          ],
+          [
+            -46.63543,
+            -23.554496
+          ],
+          [
+            -46.635351,
+            -23.554335
+          ]
+        ]
+      },
+      {
+        "osmId": "237169406",
+        "streetName": "Avenida da Liberdade",
+        "highway": "primary",
+        "isPrimaryCorridor": false,
+        "coordinates": [
+          [
+            -46.63485,
+            -23.553309
+          ],
+          [
+            -46.634752,
+            -23.553105
+          ],
+          [
+            -46.634701,
+            -23.552999
+          ]
+        ]
+      },
+      {
+        "osmId": "241926086",
+        "streetName": "Avenida Radial Leste-Oeste",
+        "highway": "trunk",
+        "isPrimaryCorridor": false,
+        "coordinates": [
+          [
+            -46.633301,
+            -23.556439
+          ],
+          [
+            -46.633951,
+            -23.556474
+          ],
+          [
+            -46.634424,
+            -23.55649
+          ],
+          [
+            -46.635069,
+            -23.556467
+          ],
+          [
+            -46.635582,
+            -23.556405
+          ],
+          [
+            -46.635885,
+            -23.55635
+          ],
+          [
+            -46.635944,
+            -23.556339
+          ]
+        ]
+      },
+      {
+        "osmId": "252274186",
+        "streetName": "Avenida Vinte e Três de Maio",
+        "highway": "trunk",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.638256,
+            -23.55821
+          ],
+          [
+            -46.637924,
+            -23.557385
+          ],
+          [
+            -46.637553,
+            -23.55646
+          ]
+        ]
+      },
+      {
+        "osmId": "252274187",
+        "streetName": "Avenida Vinte e Três de Maio",
+        "highway": "trunk",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.637233,
+            -23.555692
+          ],
+          [
+            -46.636996,
+            -23.555077
+          ],
+          [
+            -46.636751,
+            -23.554388
+          ],
+          [
+            -46.636641,
+            -23.554008
+          ],
+          [
+            -46.636577,
+            -23.553647
+          ],
+          [
+            -46.636538,
+            -23.553306
+          ],
+          [
+            -46.636548,
+            -23.552999
+          ],
+          [
+            -46.63656,
+            -23.552925
+          ],
+          [
+            -46.636587,
+            -23.552771
+          ],
+          [
+            -46.636732,
+            -23.552321
+          ],
+          [
+            -46.636843,
+            -23.552088
+          ],
+          [
+            -46.636911,
+            -23.55195
+          ],
+          [
+            -46.637021,
+            -23.551768
+          ],
+          [
+            -46.637202,
+            -23.5515
+          ],
+          [
+            -46.637504,
+            -23.551104
+          ],
+          [
+            -46.637854,
+            -23.550622
+          ],
+          [
+            -46.638074,
+            -23.550298
+          ]
+        ]
+      },
+      {
+        "osmId": "255845156",
+        "streetName": "Avenida Nove de Julho",
+        "highway": "primary",
+        "isPrimaryCorridor": false,
+        "coordinates": [
+          [
+            -46.642369,
+            -23.549678
+          ],
+          [
+            -46.642426,
+            -23.549707
+          ],
+          [
+            -46.642477,
+            -23.549733
+          ],
+          [
+            -46.642677,
+            -23.549835
+          ],
+          [
+            -46.643227,
+            -23.550097
+          ],
+          [
+            -46.644006,
+            -23.550447
+          ],
+          [
+            -46.644264,
+            -23.550557
+          ],
+          [
+            -46.644341,
+            -23.55059
+          ]
+        ]
+      },
+      {
+        "osmId": "273593640",
+        "streetName": "Avenida Vinte e Três de Maio",
+        "highway": "trunk",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.637499,
+            -23.55134
+          ],
+          [
+            -46.637157,
+            -23.55179
+          ],
+          [
+            -46.63705,
+            -23.551969
+          ],
+          [
+            -46.636965,
+            -23.552154
+          ],
+          [
+            -46.636899,
+            -23.552317
+          ],
+          [
+            -46.636867,
+            -23.55243
+          ],
+          [
+            -46.636789,
+            -23.552748
+          ],
+          [
+            -46.636757,
+            -23.553068
+          ],
+          [
+            -46.636751,
+            -23.553391
+          ],
+          [
+            -46.636824,
+            -23.553799
+          ],
+          [
+            -46.636948,
+            -23.554234
+          ],
+          [
+            -46.637013,
+            -23.554451
+          ],
+          [
+            -46.637157,
+            -23.554821
+          ]
+        ]
+      },
+      {
+        "osmId": "290026187",
+        "streetName": "Avenida da Liberdade",
+        "highway": "primary",
+        "isPrimaryCorridor": false,
+        "coordinates": [
+          [
+            -46.635519,
+            -23.554371
+          ],
+          [
+            -46.635557,
+            -23.554444
+          ],
+          [
+            -46.635666,
+            -23.554656
+          ],
+          [
+            -46.635977,
+            -23.555311
+          ],
+          [
+            -46.636031,
+            -23.555425
+          ]
+        ]
+      },
+      {
+        "osmId": "312285778",
+        "streetName": "Avenida da Liberdade",
+        "highway": "primary",
+        "isPrimaryCorridor": false,
+        "coordinates": [
+          [
+            -46.63484,
+            -23.553045
+          ],
+          [
+            -46.634898,
+            -23.55316
+          ]
+        ]
+      },
+      {
+        "osmId": "321139487",
+        "streetName": "Avenida Vinte e Três de Maio",
+        "highway": "trunk",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.638617,
+            -23.54963
+          ],
+          [
+            -46.638447,
+            -23.549922
+          ],
+          [
+            -46.638154,
+            -23.550419
+          ],
+          [
+            -46.638003,
+            -23.550626
+          ],
+          [
+            -46.637499,
+            -23.55134
+          ]
+        ]
+      },
+      {
+        "osmId": "338999840",
+        "streetName": "Avenida da Liberdade",
+        "highway": "primary",
+        "isPrimaryCorridor": false,
+        "coordinates": [
+          [
+            -46.634411,
+            -23.55239
+          ],
+          [
+            -46.634379,
+            -23.552323
+          ],
+          [
+            -46.634313,
+            -23.552184
+          ]
+        ]
+      },
+      {
+        "osmId": "424637888",
+        "streetName": "Avenida da Liberdade",
+        "highway": "primary",
+        "isPrimaryCorridor": false,
+        "coordinates": [
+          [
+            -46.634313,
+            -23.552184
+          ],
+          [
+            -46.634254,
+            -23.552057
+          ]
+        ]
+      },
+      {
         "osmId": "424637889",
         "streetName": "Avenida da Liberdade",
         "highway": "primary",
@@ -4794,86 +5762,86 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
         ]
       },
       {
-        "osmId": "425923712",
-        "streetName": "Avenida Nove de Julho",
+        "osmId": "425850165",
+        "streetName": "Viaduto Nove de Julho",
         "highway": "secondary",
         "isPrimaryCorridor": false,
         "coordinates": [
           [
-            -46.64955,
-            -23.555373
+            -46.642277,
+            -23.549901
           ],
           [
-            -46.649616,
-            -23.555406
+            -46.642256,
+            -23.549993
+          ],
+          [
+            -46.642161,
+            -23.550424
+          ],
+          [
+            -46.642148,
+            -23.550486
+          ],
+          [
+            -46.642112,
+            -23.550554
           ]
         ]
       },
       {
-        "osmId": "425923713",
-        "streetName": "Avenida Nove de Julho",
+        "osmId": "425850168",
+        "streetName": "Viaduto Nove de Julho",
         "highway": "secondary",
         "isPrimaryCorridor": false,
         "coordinates": [
           [
-            -46.64945,
-            -23.555617
+            -46.64215,
+            -23.549874
           ],
           [
-            -46.649379,
-            -23.555553
+            -46.642149,
+            -23.54988
+          ],
+          [
+            -46.642011,
+            -23.550379
+          ],
+          [
+            -46.641975,
+            -23.550498
           ]
         ]
       },
       {
-        "osmId": "425934932",
-        "streetName": "Rua Jaceguaí",
-        "highway": "residential",
+        "osmId": "435973656",
+        "streetName": "Viaduto Jaceguai",
+        "highway": "trunk",
         "isPrimaryCorridor": true,
         "coordinates": [
           [
-            -46.642968,
-            -23.554592
+            -46.638168,
+            -23.556092
           ],
           [
-            -46.643081,
-            -23.554517
+            -46.637904,
+            -23.556141
           ]
         ]
       },
       {
-        "osmId": "425934934",
-        "streetName": "Rua Jaceguaí",
-        "highway": "residential",
-        "isPrimaryCorridor": true,
-        "coordinates": [
-          [
-            -46.642733,
-            -23.554823
-          ],
-          [
-            -46.642879,
-            -23.554676
-          ],
-          [
-            -46.642968,
-            -23.554592
-          ]
-        ]
-      },
-      {
-        "osmId": "435973650",
+        "osmId": "435973658",
         "streetName": "Avenida Radial Leste-Oeste",
         "highway": "trunk",
         "isPrimaryCorridor": false,
         "coordinates": [
           [
-            -46.645787,
-            -23.552242
+            -46.632818,
+            -23.556605
           ],
           [
-            -46.646057,
-            -23.55155
+            -46.631966,
+            -23.556552
           ]
         ]
       },
@@ -4902,46 +5870,270 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
         ]
       },
       {
-        "osmId": "437192721",
-        "streetName": "Avenida Nove de Julho",
+        "osmId": "456287380",
+        "streetName": "Viaduto Jaceguai",
         "highway": "secondary",
-        "isPrimaryCorridor": false,
+        "isPrimaryCorridor": true,
         "coordinates": [
           [
-            -46.650327,
-            -23.55586
+            -46.639675,
+            -23.55598
           ],
           [
-            -46.650439,
-            -23.555973
+            -46.639604,
+            -23.555846
           ],
           [
-            -46.650482,
-            -23.556013
+            -46.639532,
+            -23.555712
           ],
           [
-            -46.650518,
-            -23.556041
-          ],
-          [
-            -46.650591,
-            -23.556092
+            -46.639494,
+            -23.555641
           ]
         ]
       },
       {
-        "osmId": "524255617",
+        "osmId": "456291852",
         "streetName": "Avenida Radial Leste-Oeste",
         "highway": "trunk",
         "isPrimaryCorridor": false,
         "coordinates": [
           [
-            -46.646104,
-            -23.551773
+            -46.634539,
+            -23.556654
           ],
           [
-            -46.645905,
-            -23.552272
+            -46.633262,
+            -23.556626
+          ]
+        ]
+      },
+      {
+        "osmId": "456291853",
+        "streetName": "Avenida Radial Leste-Oeste",
+        "highway": "trunk",
+        "isPrimaryCorridor": false,
+        "coordinates": [
+          [
+            -46.633262,
+            -23.556626
+          ],
+          [
+            -46.632818,
+            -23.556605
+          ]
+        ]
+      },
+      {
+        "osmId": "524220662",
+        "streetName": "Avenida Vinte e Três de Maio",
+        "highway": "trunk",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.637477,
+            -23.55551
+          ],
+          [
+            -46.637601,
+            -23.555849
+          ]
+        ]
+      },
+      {
+        "osmId": "524259146",
+        "streetName": "Avenida Vinte e Três de Maio",
+        "highway": "trunk",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.637601,
+            -23.555849
+          ],
+          [
+            -46.637818,
+            -23.556415
+          ]
+        ]
+      },
+      {
+        "osmId": "524259147",
+        "streetName": "Avenida Vinte e Três de Maio",
+        "highway": "trunk",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.638825,
+            -23.558831
+          ],
+          [
+            -46.639023,
+            -23.559235
+          ],
+          [
+            -46.639123,
+            -23.559407
+          ],
+          [
+            -46.639247,
+            -23.559592
+          ],
+          [
+            -46.639394,
+            -23.559799
+          ],
+          [
+            -46.639567,
+            -23.560067
+          ],
+          [
+            -46.639717,
+            -23.560316
+          ]
+        ]
+      },
+      {
+        "osmId": "524259148",
+        "streetName": "Avenida Vinte e Três de Maio",
+        "highway": "trunk",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.637326,
+            -23.555895
+          ],
+          [
+            -46.637299,
+            -23.555827
+          ],
+          [
+            -46.637233,
+            -23.555692
+          ]
+        ]
+      },
+      {
+        "osmId": "524259149",
+        "streetName": "Avenida Vinte e Três de Maio",
+        "highway": "trunk",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.637553,
+            -23.55646
+          ],
+          [
+            -46.637326,
+            -23.555895
+          ]
+        ]
+      },
+      {
+        "osmId": "524259563",
+        "streetName": "Avenida Vinte e Três de Maio",
+        "highway": "trunk",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.640293,
+            -23.562468
+          ],
+          [
+            -46.640367,
+            -23.563026
+          ]
+        ]
+      },
+      {
+        "osmId": "524259568",
+        "streetName": "Avenida Vinte e Três de Maio",
+        "highway": "trunk",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.639974,
+            -23.562509
+          ],
+          [
+            -46.639951,
+            -23.562295
+          ],
+          [
+            -46.639935,
+            -23.562104
+          ],
+          [
+            -46.639873,
+            -23.561629
+          ],
+          [
+            -46.639818,
+            -23.561345
+          ],
+          [
+            -46.639715,
+            -23.560999
+          ],
+          [
+            -46.639634,
+            -23.560771
+          ],
+          [
+            -46.639471,
+            -23.560409
+          ],
+          [
+            -46.639262,
+            -23.560045
+          ],
+          [
+            -46.639017,
+            -23.559689
+          ],
+          [
+            -46.638795,
+            -23.559366
+          ],
+          [
+            -46.638597,
+            -23.559053
+          ]
+        ]
+      },
+      {
+        "osmId": "524259577",
+        "streetName": "Avenida Vinte e Três de Maio",
+        "highway": "trunk",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.640058,
+            -23.563074
+          ],
+          [
+            -46.639974,
+            -23.562509
+          ]
+        ]
+      },
+      {
+        "osmId": "524487872",
+        "streetName": "Avenida Vinte e Três de Maio",
+        "highway": "trunk",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.638597,
+            -23.559053
+          ],
+          [
+            -46.638573,
+            -23.558994
+          ],
+          [
+            -46.638256,
+            -23.55821
           ]
         ]
       },
@@ -4962,150 +6154,146 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
         ]
       },
       {
+        "osmId": "565539527",
+        "streetName": "Avenida Nove de Julho",
+        "highway": "primary",
+        "isPrimaryCorridor": false,
+        "coordinates": [
+          [
+            -46.644258,
+            -23.550671
+          ],
+          [
+            -46.643858,
+            -23.550504
+          ],
+          [
+            -46.643445,
+            -23.550322
+          ],
+          [
+            -46.643254,
+            -23.550235
+          ],
+          [
+            -46.643128,
+            -23.55018
+          ],
+          [
+            -46.643005,
+            -23.550126
+          ],
+          [
+            -46.642794,
+            -23.550021
+          ],
+          [
+            -46.6426,
+            -23.549925
+          ],
+          [
+            -46.642399,
+            -23.549819
+          ],
+          [
+            -46.642119,
+            -23.549681
+          ],
+          [
+            -46.64201,
+            -23.549625
+          ]
+        ]
+      },
+      {
+        "osmId": "565539530",
+        "streetName": "Avenida Nove de Julho",
+        "highway": "primary",
+        "isPrimaryCorridor": false,
+        "coordinates": [
+          [
+            -46.644671,
+            -23.550844
+          ],
+          [
+            -46.644258,
+            -23.550671
+          ]
+        ]
+      },
+      {
+        "osmId": "565539534",
+        "streetName": "Avenida Nove de Julho",
+        "highway": "primary",
+        "isPrimaryCorridor": false,
+        "coordinates": [
+          [
+            -46.644341,
+            -23.55059
+          ],
+          [
+            -46.644736,
+            -23.550742
+          ]
+        ]
+      },
+      {
         "osmId": "565539538",
         "streetName": "Avenida Nove de Julho",
         "highway": "primary",
         "isPrimaryCorridor": false,
         "coordinates": [
           [
-            -46.646642,
-            -23.551403
+            -46.644736,
+            -23.550742
           ],
           [
-            -46.646764,
-            -23.551471
-          ],
-          [
-            -46.646922,
-            -23.55159
-          ],
-          [
-            -46.64706,
-            -23.551701
-          ],
-          [
-            -46.647209,
-            -23.551861
-          ],
-          [
-            -46.647261,
-            -23.55194
-          ],
-          [
-            -46.647303,
-            -23.551996
-          ],
-          [
-            -46.647381,
-            -23.552133
+            -46.644981,
+            -23.550837
           ]
         ]
       },
       {
-        "osmId": "576932606",
-        "streetName": "Avenida Nove de Julho",
-        "highway": "secondary",
+        "osmId": "755536600",
+        "streetName": "Avenida da Liberdade",
+        "highway": "primary",
         "isPrimaryCorridor": false,
         "coordinates": [
           [
-            -46.648853,
-            -23.554729
+            -46.634898,
+            -23.55316
           ],
           [
-            -46.648991,
-            -23.55489
+            -46.635519,
+            -23.554371
           ]
         ]
       },
       {
-        "osmId": "576932607",
-        "streetName": "Avenida Nove de Julho",
-        "highway": "secondary",
+        "osmId": "766784999",
+        "streetName": "Avenida da Liberdade",
+        "highway": "primary",
         "isPrimaryCorridor": false,
         "coordinates": [
           [
-            -46.648644,
-            -23.554845
+            -46.635351,
+            -23.554335
           ],
           [
-            -46.648596,
-            -23.554772
+            -46.6351,
+            -23.553821
           ],
           [
-            -46.648209,
-            -23.554101
+            -46.634901,
+            -23.553413
           ],
           [
-            -46.647502,
-            -23.552807
+            -46.63486,
+            -23.553331
           ],
           [
-            -46.647435,
-            -23.552683
-          ],
-          [
-            -46.647206,
-            -23.552227
-          ],
-          [
-            -46.647198,
-            -23.552139
-          ]
-        ]
-      },
-      {
-        "osmId": "576932609",
-        "streetName": "Avenida Nove de Julho",
-        "highway": "secondary",
-        "isPrimaryCorridor": false,
-        "coordinates": [
-          [
-            -46.648991,
-            -23.55489
-          ],
-          [
-            -46.649085,
-            -23.555
-          ],
-          [
-            -46.649327,
-            -23.555209
-          ],
-          [
-            -46.64955,
-            -23.555373
-          ]
-        ]
-      },
-      {
-        "osmId": "621526225",
-        "streetName": "Rua Jaceguaí",
-        "highway": "residential",
-        "isPrimaryCorridor": true,
-        "coordinates": [
-          [
-            -46.64018,
-            -23.555406
-          ],
-          [
-            -46.640242,
-            -23.555401
-          ],
-          [
-            -46.640336,
-            -23.555393
-          ],
-          [
-            -46.640623,
-            -23.555368
-          ],
-          [
-            -46.640894,
-            -23.555345
-          ],
-          [
-            -46.641172,
-            -23.555319
+            -46.63485,
+            -23.553309
           ]
         ]
       },
@@ -5122,6 +6310,22 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
           [
             -46.639403,
             -23.555749
+          ]
+        ]
+      },
+      {
+        "osmId": "880773160",
+        "streetName": "Avenida da Liberdade",
+        "highway": "primary",
+        "isPrimaryCorridor": false,
+        "coordinates": [
+          [
+            -46.634799,
+            -23.552963
+          ],
+          [
+            -46.63484,
+            -23.553045
           ]
         ]
       },
@@ -5162,46 +6366,110 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
         ]
       },
       {
-        "osmId": "935899209",
-        "streetName": "Avenida Nove de Julho",
-        "highway": "primary",
-        "isPrimaryCorridor": false,
+        "osmId": "943031362",
+        "streetName": "Avenida Vinte e Três de Maio",
+        "highway": "trunk",
+        "isPrimaryCorridor": true,
         "coordinates": [
           [
-            -46.647198,
-            -23.552139
+            -46.637818,
+            -23.556415
           ],
           [
-            -46.647116,
-            -23.552014
+            -46.637919,
+            -23.55666
+          ],
+          [
+            -46.63814,
+            -23.557162
+          ],
+          [
+            -46.638502,
+            -23.557987
           ]
         ]
       },
       {
-        "osmId": "936443720",
-        "streetName": "Avenida Nove de Julho",
-        "highway": "secondary",
+        "osmId": "943943780",
+        "streetName": "Avenida Vinte e Três de Maio",
+        "highway": "trunk",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.638502,
+            -23.557987
+          ],
+          [
+            -46.638825,
+            -23.558831
+          ]
+        ]
+      },
+      {
+        "osmId": "944411799",
+        "streetName": "Avenida Vinte e Três de Maio",
+        "highway": "trunk",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.639717,
+            -23.560316
+          ],
+          [
+            -46.639848,
+            -23.56054
+          ],
+          [
+            -46.639901,
+            -23.560666
+          ],
+          [
+            -46.640118,
+            -23.561357
+          ],
+          [
+            -46.640194,
+            -23.561697
+          ],
+          [
+            -46.640269,
+            -23.56221
+          ],
+          [
+            -46.640293,
+            -23.562468
+          ]
+        ]
+      },
+      {
+        "osmId": "945510041",
+        "streetName": "Avenida da Liberdade",
+        "highway": "primary",
         "isPrimaryCorridor": false,
         "coordinates": [
           [
-            -46.648496,
-            -23.554107
+            -46.634643,
+            -23.552883
           ],
           [
-            -46.64867,
-            -23.554409
+            -46.634411,
+            -23.55239
+          ]
+        ]
+      },
+      {
+        "osmId": "945510042",
+        "streetName": "Avenida da Liberdade",
+        "highway": "primary",
+        "isPrimaryCorridor": false,
+        "coordinates": [
+          [
+            -46.634742,
+            -23.552848
           ],
           [
-            -46.648769,
-            -23.554583
-          ],
-          [
-            -46.648819,
-            -23.554669
-          ],
-          [
-            -46.648853,
-            -23.554729
+            -46.634799,
+            -23.552963
           ]
         ]
       },
@@ -5224,1888 +6492,1746 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
             -23.558267
           ]
         ]
+      },
+      {
+        "osmId": "997426060",
+        "streetName": "Avenida Vinte e Três de Maio",
+        "highway": "trunk",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.637157,
+            -23.554821
+          ],
+          [
+            -46.637303,
+            -23.555191
+          ],
+          [
+            -46.637477,
+            -23.55551
+          ]
+        ]
       }
     ]
   },
   {
     "id": "marginal-tiete-lapa",
-    "name": "Marginal Tietê — Ponte das Bandeiras",
-    "corridorName": "Marginal Tietê",
-    "neighborhood": "Lapa / Ponte das Bandeiras",
-    "zone": "Zona Norte",
-    "latitude": -23.5162,
-    "longitude": -46.6285,
+    "name": "Marginal Tietê — Lapa / Ponte do Piqueri",
+    "corridorName": "Marginal Tietê (Lapa)",
+    "neighborhood": "Lapa / Piqueri",
+    "zone": "Zona Oeste",
+    "latitude": -23.509412,
+    "longitude": -46.703901,
     "camera": {
       "center": [
-        -46.6285,
-        -23.5162
+        -46.703901,
+        -23.509412
       ],
       "zoom": 15,
       "bearing": -8,
       "bounds": [
         [
-          -46.63558,
-          -23.522943
+          -46.711133,
+          -23.515384
         ],
         [
-          -46.621545,
-          -23.509426
+          -46.696501,
+          -23.506989
         ]
       ]
     },
     "aliases": [
       "MARGINAL TIETE",
-      "PONTE DAS BANDEIRAS",
-      "AVENIDA ASSIS CHATEAUBRIAND",
+      "PONTE DO PIQUERI",
+      "PONTE DA LAPA",
+      "AVENIDA EMBAIXADOR MACEDO SOARES",
       "AVENIDA OTAVIANO ALVES DE LIMA",
-      "AVENIDA PRESIDENTE CASTELO BRANCO"
+      "AVENIDA PRESIDENTE CASTELO BRANCO",
+      "AVENIDA ERMANO MARCHETTI"
     ],
     "roads": [
       {
-        "osmId": "4331480",
-        "streetName": "Avenida Santos Dumont",
-        "highway": "trunk",
-        "isPrimaryCorridor": false,
-        "coordinates": [
-          [
-            -46.630284,
-            -23.520014
-          ],
-          [
-            -46.630304,
-            -23.520498
-          ],
-          [
-            -46.630318,
-            -23.520651
-          ],
-          [
-            -46.630337,
-            -23.520822
-          ],
-          [
-            -46.630369,
-            -23.521062
-          ],
-          [
-            -46.630466,
-            -23.521577
-          ],
-          [
-            -46.630497,
-            -23.521749
-          ],
-          [
-            -46.630502,
-            -23.521769
-          ],
-          [
-            -46.630564,
-            -23.522041
-          ],
-          [
-            -46.630572,
-            -23.522078
-          ],
-          [
-            -46.630638,
-            -23.522398
-          ],
-          [
-            -46.630693,
-            -23.522698
-          ],
-          [
-            -46.630734,
-            -23.522943
-          ]
-        ]
-      },
-      {
-        "osmId": "4331533",
-        "streetName": "Avenida Santos Dumont",
-        "highway": "trunk_link",
-        "isPrimaryCorridor": false,
-        "coordinates": [
-          [
-            -46.630254,
-            -23.522558
-          ],
-          [
-            -46.630282,
-            -23.52253
-          ],
-          [
-            -46.630298,
-            -23.522485
-          ],
-          [
-            -46.630305,
-            -23.522424
-          ],
-          [
-            -46.630313,
-            -23.522252
-          ],
-          [
-            -46.630315,
-            -23.522032
-          ],
-          [
-            -46.630321,
-            -23.521883
-          ],
-          [
-            -46.630342,
-            -23.521786
-          ],
-          [
-            -46.630364,
-            -23.521723
-          ]
-        ]
-      },
-      {
-        "osmId": "4335750",
-        "streetName": "Avenida Assis Chateaubriand",
-        "highway": "trunk",
-        "isPrimaryCorridor": true,
-        "coordinates": [
-          [
-            -46.629769,
-            -23.518146
-          ],
-          [
-            -46.630211,
-            -23.518127
-          ]
-        ]
-      },
-      {
-        "osmId": "4335751",
-        "streetName": "Marginal Tietê (Expressa)",
-        "highway": "motorway",
-        "isPrimaryCorridor": true,
-        "coordinates": [
-          [
-            -46.630306,
-            -23.518594
-          ],
-          [
-            -46.630574,
-            -23.518603
-          ],
-          [
-            -46.630839,
-            -23.518617
-          ],
-          [
-            -46.631106,
-            -23.518633
-          ],
-          [
-            -46.631347,
-            -23.518632
-          ],
-          [
-            -46.631582,
-            -23.518621
-          ],
-          [
-            -46.632055,
-            -23.518578
-          ],
-          [
-            -46.63274,
-            -23.518496
-          ],
-          [
-            -46.633491,
-            -23.518442
-          ],
-          [
-            -46.634165,
-            -23.518387
-          ],
-          [
-            -46.634759,
-            -23.518355
-          ],
-          [
-            -46.635316,
-            -23.518323
-          ]
-        ]
-      },
-      {
-        "osmId": "4614877",
-        "streetName": "Marginal Tietê (Expressa)",
-        "highway": "motorway",
-        "isPrimaryCorridor": true,
-        "coordinates": [
-          [
-            -46.622013,
-            -23.518784
-          ],
-          [
-            -46.62242,
-            -23.518863
-          ],
-          [
-            -46.622862,
-            -23.518905
-          ],
-          [
-            -46.62329,
-            -23.518923
-          ],
-          [
-            -46.623811,
-            -23.518922
-          ],
-          [
-            -46.624973,
-            -23.518866
-          ]
-        ]
-      },
-      {
-        "osmId": "4614878",
-        "streetName": "Marginal Tietê (Expressa)",
-        "highway": "motorway",
-        "isPrimaryCorridor": true,
-        "coordinates": [
-          [
-            -46.629776,
-            -23.51944
-          ],
-          [
-            -46.6294,
-            -23.51948
-          ],
-          [
-            -46.62884,
-            -23.519525
-          ],
-          [
-            -46.628195,
-            -23.519567
-          ],
-          [
-            -46.627759,
-            -23.519605
-          ],
-          [
-            -46.627382,
-            -23.519632
-          ],
-          [
-            -46.626966,
-            -23.519668
-          ],
-          [
-            -46.626403,
-            -23.519701
-          ],
-          [
-            -46.625879,
-            -23.519726
-          ]
-        ]
-      },
-      {
-        "osmId": "8140927",
-        "streetName": "Avenida Santos Dumont",
-        "highway": "trunk",
-        "isPrimaryCorridor": false,
-        "coordinates": [
-          [
-            -46.629831,
-            -23.515348
-          ],
-          [
-            -46.62977,
-            -23.515446
-          ],
-          [
-            -46.629752,
-            -23.515499
-          ],
-          [
-            -46.62974,
-            -23.515559
-          ],
-          [
-            -46.629744,
-            -23.515716
-          ],
-          [
-            -46.629773,
-            -23.51595
-          ],
-          [
-            -46.629816,
-            -23.516201
-          ],
-          [
-            -46.62985,
-            -23.516414
-          ],
-          [
-            -46.62993,
-            -23.516975
-          ],
-          [
-            -46.630051,
-            -23.517878
-          ]
-        ]
-      },
-      {
-        "osmId": "15964549",
-        "streetName": "Avenida Santos Dumont",
-        "highway": "trunk",
-        "isPrimaryCorridor": false,
-        "coordinates": [
-          [
-            -46.629808,
-            -23.517469
-          ],
-          [
-            -46.629697,
-            -23.51679
-          ],
-          [
-            -46.629603,
-            -23.51622
-          ],
-          [
-            -46.629555,
-            -23.515899
-          ],
-          [
-            -46.629529,
-            -23.515746
-          ],
-          [
-            -46.62951,
-            -23.515682
-          ],
-          [
-            -46.629459,
-            -23.515572
-          ],
-          [
-            -46.629387,
-            -23.515491
-          ],
-          [
-            -46.629274,
-            -23.515399
-          ]
-        ]
-      },
-      {
-        "osmId": "15964626",
-        "streetName": "Ponte das Bandeiras",
-        "highway": "trunk",
-        "isPrimaryCorridor": true,
-        "coordinates": [
-          [
-            -46.630057,
-            -23.517933
-          ],
-          [
-            -46.630104,
-            -23.518357
-          ],
-          [
-            -46.630127,
-            -23.518528
-          ],
-          [
-            -46.630194,
-            -23.518994
-          ]
-        ]
-      },
-      {
-        "osmId": "16148297",
-        "streetName": "Avenida Santos Dumont",
+        "osmId": "15725252",
+        "streetName": "Avenida Ermano Marchetti",
         "highway": "primary",
         "isPrimaryCorridor": false,
         "coordinates": [
           [
-            -46.629008,
-            -23.51358
+            -46.703379,
+            -23.513502
           ],
           [
-            -46.629092,
-            -23.513424
+            -46.702905,
+            -23.51376
           ],
           [
-            -46.629116,
-            -23.513356
+            -46.702575,
+            -23.51394
           ],
           [
-            -46.629121,
-            -23.513325
+            -46.702515,
+            -23.513972
           ],
           [
-            -46.629128,
-            -23.513177
+            -46.702321,
+            -23.514066
           ],
           [
-            -46.629116,
+            -46.702174,
+            -23.514137
+          ],
+          [
+            -46.701824,
+            -23.51431
+          ],
+          [
+            -46.701604,
+            -23.514381
+          ],
+          [
+            -46.701408,
+            -23.514435
+          ],
+          [
+            -46.701339,
+            -23.514455
+          ],
+          [
+            -46.701278,
+            -23.514471
+          ],
+          [
+            -46.700521,
+            -23.514624
+          ],
+          [
+            -46.700418,
+            -23.514646
+          ],
+          [
+            -46.700268,
+            -23.514676
+          ],
+          [
+            -46.699928,
+            -23.514722
+          ]
+        ]
+      },
+      {
+        "osmId": "15725287",
+        "streetName": "Avenida Ermano Marchetti",
+        "highway": "primary",
+        "isPrimaryCorridor": false,
+        "coordinates": [
+          [
+            -46.705329,
+            -23.511596
+          ],
+          [
+            -46.70536,
+            -23.511269
+          ],
+          [
+            -46.705362,
+            -23.511244
+          ],
+          [
+            -46.705369,
+            -23.511154
+          ],
+          [
+            -46.705393,
+            -23.510864
+          ],
+          [
+            -46.705397,
+            -23.510829
+          ],
+          [
+            -46.705466,
+            -23.510192
+          ]
+        ]
+      },
+      {
+        "osmId": "39239840",
+        "streetName": "Ponte do Piqueri - Joelmir Bething",
+        "highway": "primary",
+        "isPrimaryCorridor": false,
+        "coordinates": [
+          [
+            -46.70551,
+            -23.509723
+          ],
+          [
+            -46.705628,
+            -23.508619
+          ],
+          [
+            -46.705741,
+            -23.507552
+          ]
+        ]
+      },
+      {
+        "osmId": "39239850",
+        "streetName": "Avenida Ermano Marchetti",
+        "highway": "primary",
+        "isPrimaryCorridor": false,
+        "coordinates": [
+          [
+            -46.705654,
+            -23.50974
+          ],
+          [
+            -46.70564,
+            -23.509949
+          ],
+          [
+            -46.705631,
+            -23.510188
+          ],
+          [
+            -46.705606,
+            -23.510636
+          ],
+          [
+            -46.705563,
+            -23.511064
+          ],
+          [
+            -46.70556,
+            -23.511092
+          ],
+          [
+            -46.705543,
+            -23.511252
+          ],
+          [
+            -46.705539,
+            -23.511285
+          ],
+          [
+            -46.705483,
+            -23.511694
+          ]
+        ]
+      },
+      {
+        "osmId": "129176450",
+        "streetName": "Ponte do Piqueri - Joelmir Bething",
+        "highway": "primary",
+        "isPrimaryCorridor": false,
+        "coordinates": [
+          [
+            -46.705862,
+            -23.507561
+          ],
+          [
+            -46.70576,
+            -23.508634
+          ],
+          [
+            -46.705654,
+            -23.50974
+          ]
+        ]
+      },
+      {
+        "osmId": "241191596",
+        "streetName": "Marginal Tietê (Central)",
+        "highway": "trunk",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.707723,
+            -23.50948
+          ],
+          [
+            -46.707069,
+            -23.509482
+          ],
+          [
+            -46.706178,
+            -23.509421
+          ],
+          [
+            -46.705816,
+            -23.509392
+          ]
+        ]
+      },
+      {
+        "osmId": "244993530",
+        "streetName": "Avenida Ermano Marchetti",
+        "highway": "primary",
+        "isPrimaryCorridor": false,
+        "coordinates": [
+          [
+            -46.696622,
+            -23.515231
+          ],
+          [
+            -46.697008,
+            -23.515156
+          ]
+        ]
+      },
+      {
+        "osmId": "244993531",
+        "streetName": "Avenida Ermano Marchetti",
+        "highway": "primary",
+        "isPrimaryCorridor": false,
+        "coordinates": [
+          [
+            -46.703317,
+            -23.513383
+          ],
+          [
+            -46.703419,
+            -23.513331
+          ],
+          [
+            -46.703452,
+            -23.513315
+          ],
+          [
+            -46.704062,
             -23.513023
           ],
           [
-            -46.629074,
-            -23.512748
+            -46.704416,
+            -23.512847
+          ],
+          [
+            -46.704715,
+            -23.51267
+          ],
+          [
+            -46.704882,
+            -23.512572
+          ],
+          [
+            -46.705036,
+            -23.512438
+          ],
+          [
+            -46.705139,
+            -23.512302
+          ],
+          [
+            -46.705226,
+            -23.512136
+          ],
+          [
+            -46.705268,
+            -23.512018
+          ],
+          [
+            -46.705303,
+            -23.511899
+          ],
+          [
+            -46.705319,
+            -23.511774
+          ],
+          [
+            -46.705329,
+            -23.511596
           ]
         ]
       },
       {
-        "osmId": "129869957",
-        "streetName": "Avenida Tiradentes",
-        "highway": "residential",
+        "osmId": "245066490",
+        "streetName": "Avenida Ermano Marchetti",
+        "highway": "primary",
         "isPrimaryCorridor": false,
         "coordinates": [
           [
-            -46.629507,
-            -23.522926
+            -46.69681,
+            -23.515343
           ],
           [
-            -46.629491,
-            -23.522822
-          ],
-          [
-            -46.629472,
-            -23.522706
-          ],
-          [
-            -46.629393,
-            -23.522075
-          ],
-          [
-            -46.629383,
-            -23.522
+            -46.696571,
+            -23.515384
           ]
         ]
       },
       {
-        "osmId": "170363945",
+        "osmId": "271879043",
         "streetName": "Marginal Tietê (Expressa)",
         "highway": "motorway",
         "isPrimaryCorridor": true,
         "coordinates": [
           [
-            -46.63558,
-            -23.519067
+            -46.711074,
+            -23.509072
           ],
           [
-            -46.634514,
-            -23.519144
+            -46.710437,
+            -23.509124
           ],
           [
-            -46.632913,
-            -23.519252
+            -46.709764,
+            -23.509172
+          ],
+          [
+            -46.708808,
+            -23.50925
+          ],
+          [
+            -46.70813,
+            -23.509294
+          ],
+          [
+            -46.707689,
+            -23.509311
+          ],
+          [
+            -46.707272,
+            -23.509307
+          ],
+          [
+            -46.707045,
+            -23.509301
+          ],
+          [
+            -46.706777,
+            -23.509285
+          ],
+          [
+            -46.705827,
+            -23.509211
           ]
         ]
       },
       {
-        "osmId": "231392371",
-        "streetName": "Avenida Santos Dumont",
-        "highway": "trunk",
-        "isPrimaryCorridor": false,
-        "coordinates": [
-          [
-            -46.630364,
-            -23.521723
-          ],
-          [
-            -46.630279,
-            -23.521153
-          ],
-          [
-            -46.630229,
-            -23.520821
-          ],
-          [
-            -46.630212,
-            -23.52066
-          ],
-          [
-            -46.630206,
-            -23.520591
-          ],
-          [
-            -46.630198,
-            -23.520445
-          ],
-          [
-            -46.63019,
-            -23.520335
-          ],
-          [
-            -46.630174,
-            -23.520005
-          ]
-        ]
-      },
-      {
-        "osmId": "237978406",
-        "streetName": "Avenida Assis Chateaubriand",
-        "highway": "trunk",
-        "isPrimaryCorridor": true,
-        "coordinates": [
-          [
-            -46.628089,
-            -23.518376
-          ],
-          [
-            -46.628301,
-            -23.518358
-          ],
-          [
-            -46.628487,
-            -23.51833
-          ],
-          [
-            -46.628851,
-            -23.518275
-          ]
-        ]
-      },
-      {
-        "osmId": "241057291",
-        "streetName": "Avenida Assis Chateaubriand (Central)",
-        "highway": "trunk_link",
-        "isPrimaryCorridor": true,
-        "coordinates": [
-          [
-            -46.628428,
-            -23.518475
-          ],
-          [
-            -46.629023,
-            -23.518377
-          ],
-          [
-            -46.629294,
-            -23.51834
-          ],
-          [
-            -46.629593,
-            -23.518298
-          ],
-          [
-            -46.62977,
-            -23.518275
-          ]
-        ]
-      },
-      {
-        "osmId": "241057733",
-        "streetName": "Avenida Assis Chateaubriand (Central)",
-        "highway": "trunk_link",
-        "isPrimaryCorridor": true,
-        "coordinates": [
-          [
-            -46.627242,
-            -23.518635
-          ],
-          [
-            -46.627315,
-            -23.518576
-          ],
-          [
-            -46.62752,
-            -23.51857
-          ],
-          [
-            -46.627637,
-            -23.518565
-          ],
-          [
-            -46.627759,
-            -23.51856
-          ],
-          [
-            -46.627972,
-            -23.518538
-          ],
-          [
-            -46.628161,
-            -23.518508
-          ],
-          [
-            -46.628428,
-            -23.518475
-          ]
-        ]
-      },
-      {
-        "osmId": "278036015",
-        "streetName": "Avenida Assis Chateaubriand",
-        "highway": "trunk",
-        "isPrimaryCorridor": true,
-        "coordinates": [
-          [
-            -46.630211,
-            -23.518127
-          ],
-          [
-            -46.630326,
-            -23.518129
-          ],
-          [
-            -46.630491,
-            -23.518147
-          ],
-          [
-            -46.630653,
-            -23.518179
-          ],
-          [
-            -46.630936,
-            -23.51826
-          ],
-          [
-            -46.631117,
-            -23.518308
-          ],
-          [
-            -46.631298,
-            -23.51834
-          ],
-          [
-            -46.631456,
-            -23.518356
-          ],
-          [
-            -46.631675,
-            -23.518352
-          ]
-        ]
-      },
-      {
-        "osmId": "278036016",
-        "streetName": "Avenida Assis Chateaubriand (Central)",
-        "highway": "trunk_link",
-        "isPrimaryCorridor": true,
-        "coordinates": [
-          [
-            -46.630283,
-            -23.518246
-          ],
-          [
-            -46.630468,
-            -23.518255
-          ],
-          [
-            -46.630591,
-            -23.518269
-          ],
-          [
-            -46.630712,
-            -23.518297
-          ],
-          [
-            -46.63093,
-            -23.518366
-          ],
-          [
-            -46.631065,
-            -23.518411
-          ],
-          [
-            -46.631146,
-            -23.518431
-          ],
-          [
-            -46.631266,
-            -23.518446
-          ],
-          [
-            -46.631388,
-            -23.518463
-          ],
-          [
-            -46.631516,
-            -23.518473
-          ],
-          [
-            -46.63164,
-            -23.518473
-          ],
-          [
-            -46.631744,
-            -23.518467
-          ],
-          [
-            -46.631964,
-            -23.518463
-          ]
-        ]
-      },
-      {
-        "osmId": "278036017",
-        "streetName": "Avenida Assis Chateaubriand (Central)",
-        "highway": "trunk_link",
-        "isPrimaryCorridor": true,
-        "coordinates": [
-          [
-            -46.62977,
-            -23.518275
-          ],
-          [
-            -46.630039,
-            -23.518262
-          ],
-          [
-            -46.630283,
-            -23.518246
-          ]
-        ]
-      },
-      {
-        "osmId": "278036020",
+        "osmId": "271879048",
         "streetName": "Marginal Tietê (Central)",
         "highway": "trunk",
         "isPrimaryCorridor": true,
         "coordinates": [
           [
-            -46.630295,
-            -23.518375
+            -46.710621,
+            -23.509235
           ],
           [
-            -46.630446,
-            -23.518361
-          ],
-          [
-            -46.630534,
-            -23.518357
-          ],
-          [
-            -46.630629,
-            -23.518364
-          ],
-          [
-            -46.6308,
-            -23.518389
-          ],
-          [
-            -46.630937,
-            -23.518426
-          ],
-          [
-            -46.631054,
-            -23.51846
-          ],
-          [
-            -46.631144,
-            -23.518481
-          ],
-          [
-            -46.631229,
-            -23.518495
-          ],
-          [
-            -46.631339,
-            -23.518508
-          ],
-          [
-            -46.631441,
-            -23.51851
-          ],
-          [
-            -46.631626,
-            -23.518515
-          ],
-          [
-            -46.631819,
-            -23.518505
-          ],
-          [
-            -46.631964,
-            -23.518463
+            -46.709719,
+            -23.5093
           ]
         ]
       },
       {
-        "osmId": "278036024",
+        "osmId": "271879056",
+        "streetName": "Avenida Embaixador Macedo Soares (Local)",
+        "highway": "trunk",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.710904,
+            -23.509357
+          ],
+          [
+            -46.710319,
+            -23.509411
+          ],
+          [
+            -46.709686,
+            -23.509469
+          ],
+          [
+            -46.709629,
+            -23.509476
+          ]
+        ]
+      },
+      {
+        "osmId": "272867396",
+        "streetName": "Marginal Tietê (Expressa)",
+        "highway": "motorway",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.696924,
+            -23.507421
+          ],
+          [
+            -46.697388,
+            -23.507449
+          ],
+          [
+            -46.698693,
+            -23.507566
+          ],
+          [
+            -46.699985,
+            -23.507677
+          ],
+          [
+            -46.701035,
+            -23.50775
+          ],
+          [
+            -46.703005,
+            -23.507914
+          ],
+          [
+            -46.704165,
+            -23.508037
+          ],
+          [
+            -46.705565,
+            -23.508175
+          ]
+        ]
+      },
+      {
+        "osmId": "272867400",
         "streetName": "Marginal Tietê (Central)",
         "highway": "trunk",
         "isPrimaryCorridor": true,
         "coordinates": [
           [
-            -46.629806,
-            -23.518435
+            -46.69661,
+            -23.507199
           ],
           [
-            -46.630295,
-            -23.518375
+            -46.697066,
+            -23.507215
+          ],
+          [
+            -46.697349,
+            -23.507229
+          ],
+          [
+            -46.698444,
+            -23.507319
+          ],
+          [
+            -46.698607,
+            -23.507335
+          ],
+          [
+            -46.69914,
+            -23.507373
+          ],
+          [
+            -46.699912,
+            -23.507464
+          ],
+          [
+            -46.701217,
+            -23.507614
+          ],
+          [
+            -46.701946,
+            -23.507681
+          ],
+          [
+            -46.702304,
+            -23.507698
           ]
         ]
       },
       {
-        "osmId": "278036025",
+        "osmId": "272867407",
+        "streetName": "Avenida Otaviano Alves de Lima",
+        "highway": "trunk",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.696967,
+            -23.506989
+          ],
+          [
+            -46.697091,
+            -23.506999
+          ],
+          [
+            -46.697957,
+            -23.507076
+          ],
+          [
+            -46.698469,
+            -23.507127
+          ],
+          [
+            -46.698755,
+            -23.507159
+          ],
+          [
+            -46.699798,
+            -23.507313
+          ]
+        ]
+      },
+      {
+        "osmId": "278752767",
+        "streetName": "Avenida Embaixador Macedo Soares (Local)",
+        "highway": "trunk",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.705799,
+            -23.509537
+          ],
+          [
+            -46.705374,
+            -23.509513
+          ]
+        ]
+      },
+      {
+        "osmId": "278752768",
+        "streetName": "Avenida Embaixador Macedo Soares (Local)",
+        "highway": "trunk",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.69867,
+            -23.50897
+          ],
+          [
+            -46.697819,
+            -23.508895
+          ],
+          [
+            -46.696608,
+            -23.508814
+          ]
+        ]
+      },
+      {
+        "osmId": "278752769",
+        "streetName": "Avenida Embaixador Macedo Soares (Central)",
+        "highway": "trunk",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.705816,
+            -23.509392
+          ],
+          [
+            -46.705429,
+            -23.509352
+          ]
+        ]
+      },
+      {
+        "osmId": "278752770",
+        "streetName": "Marginal Tietê(Central)",
+        "highway": "trunk",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.705429,
+            -23.509352
+          ],
+          [
+            -46.704971,
+            -23.509308
+          ],
+          [
+            -46.70304,
+            -23.509116
+          ],
+          [
+            -46.700248,
+            -23.508919
+          ],
+          [
+            -46.698352,
+            -23.508771
+          ],
+          [
+            -46.696726,
+            -23.508645
+          ],
+          [
+            -46.696501,
+            -23.50864
+          ]
+        ]
+      },
+      {
+        "osmId": "278752771",
         "streetName": "Marginal Tietê (Expressa)",
         "highway": "motorway",
         "isPrimaryCorridor": true,
         "coordinates": [
           [
-            -46.629867,
-            -23.518617
+            -46.705466,
+            -23.509182
           ],
           [
-            -46.630053,
-            -23.518609
+            -46.70497,
+            -23.509136
           ],
           [
-            -46.630194,
-            -23.518598
+            -46.70483,
+            -23.509124
           ],
           [
-            -46.630306,
-            -23.518594
+            -46.704428,
+            -23.509088
+          ],
+          [
+            -46.700778,
+            -23.508812
+          ],
+          [
+            -46.699556,
+            -23.508734
+          ],
+          [
+            -46.696678,
+            -23.508517
           ]
         ]
       },
       {
-        "osmId": "278036030",
+        "osmId": "278752772",
         "streetName": "Marginal Tietê (Expressa)",
         "highway": "motorway",
         "isPrimaryCorridor": true,
         "coordinates": [
           [
-            -46.63042,
-            -23.519385
+            -46.705827,
+            -23.509211
           ],
           [
-            -46.630215,
-            -23.519397
-          ],
-          [
-            -46.630078,
-            -23.519409
-          ],
-          [
-            -46.629776,
-            -23.51944
+            -46.705466,
+            -23.509182
           ]
         ]
       },
       {
-        "osmId": "278280218",
-        "streetName": "Marginal Tietê (Expressa)",
-        "highway": "motorway",
+        "osmId": "278752773",
+        "streetName": "Avenida Otaviano Alves de Lima",
+        "highway": "trunk",
         "isPrimaryCorridor": true,
         "coordinates": [
           [
-            -46.625065,
-            -23.519772
+            -46.705395,
+            -23.50783
           ],
           [
-            -46.624282,
-            -23.519833
-          ],
-          [
-            -46.623804,
-            -23.519854
-          ],
-          [
-            -46.623317,
-            -23.519859
-          ],
-          [
-            -46.62262,
-            -23.519784
+            -46.706073,
+            -23.507902
           ]
         ]
       },
       {
-        "osmId": "278280220",
-        "streetName": "Avenida Marginal Tietê (Expressa)",
-        "highway": "motorway",
+        "osmId": "278752774",
+        "streetName": "Avenida Otaviano Alves de Lima",
+        "highway": "trunk",
         "isPrimaryCorridor": true,
         "coordinates": [
           [
-            -46.625535,
-            -23.519743
+            -46.706534,
+            -23.507917
           ],
           [
-            -46.625216,
-            -23.519763
+            -46.707288,
+            -23.507977
+          ],
+          [
+            -46.707799,
+            -23.507971
+          ],
+          [
+            -46.708625,
+            -23.507926
+          ],
+          [
+            -46.709543,
+            -23.507838
+          ],
+          [
+            -46.711133,
+            -23.507666
           ]
         ]
       },
       {
-        "osmId": "278280233",
+        "osmId": "278752777",
         "streetName": "Marginal Tietê (Central)",
         "highway": "trunk",
         "isPrimaryCorridor": true,
         "coordinates": [
           [
-            -46.624975,
-            -23.518617
+            -46.70594,
+            -23.508074
           ],
           [
-            -46.625504,
-            -23.518579
+            -46.706142,
+            -23.508095
+          ],
+          [
+            -46.706395,
+            -23.508116
+          ],
+          [
+            -46.706785,
+            -23.508121
+          ],
+          [
+            -46.706926,
+            -23.508119
+          ],
+          [
+            -46.707107,
+            -23.508116
+          ],
+          [
+            -46.708088,
+            -23.508053
+          ],
+          [
+            -46.708335,
+            -23.508035
+          ],
+          [
+            -46.709016,
+            -23.507969
+          ],
+          [
+            -46.710062,
+            -23.507865
+          ],
+          [
+            -46.710657,
+            -23.507801
           ]
         ]
       },
       {
-        "osmId": "278280235",
+        "osmId": "278752778",
         "streetName": "Marginal Tietê (Central)",
         "highway": "trunk",
         "isPrimaryCorridor": true,
         "coordinates": [
           [
-            -46.625504,
-            -23.518579
+            -46.705609,
+            -23.508037
           ],
           [
-            -46.626247,
-            -23.518553
-          ],
-          [
-            -46.626368,
-            -23.518548
-          ],
-          [
-            -46.626524,
-            -23.518551
-          ],
-          [
-            -46.626747,
-            -23.518573
-          ],
-          [
-            -46.626946,
-            -23.518593
-          ],
-          [
-            -46.6271,
-            -23.518617
-          ],
-          [
-            -46.627242,
-            -23.518635
-          ],
-          [
-            -46.627368,
-            -23.518646
-          ],
-          [
-            -46.627644,
-            -23.518656
-          ],
-          [
-            -46.628149,
-            -23.518653
-          ],
-          [
-            -46.628471,
-            -23.518626
-          ],
-          [
-            -46.628936,
-            -23.518586
-          ],
-          [
-            -46.629327,
-            -23.518521
-          ],
-          [
-            -46.629688,
-            -23.518456
-          ],
-          [
-            -46.629806,
-            -23.518435
+            -46.70594,
+            -23.508074
           ]
         ]
       },
       {
-        "osmId": "278280237",
+        "osmId": "278752779",
         "streetName": "Marginal Tietê (Expressa)",
         "highway": "motorway",
         "isPrimaryCorridor": true,
         "coordinates": [
           [
-            -46.624973,
-            -23.518866
+            -46.705565,
+            -23.508175
           ],
           [
-            -46.625535,
-            -23.518842
+            -46.706029,
+            -23.508222
           ]
         ]
       },
       {
-        "osmId": "278280238",
+        "osmId": "278752780",
         "streetName": "Marginal Tietê (Expressa)",
         "highway": "motorway",
         "isPrimaryCorridor": true,
         "coordinates": [
           [
-            -46.625535,
-            -23.518842
+            -46.706029,
+            -23.508222
           ],
           [
-            -46.626007,
-            -23.518817
+            -46.706467,
+            -23.508258
           ],
           [
-            -46.62653,
-            -23.51879
+            -46.706842,
+            -23.50825
           ],
           [
-            -46.626886,
-            -23.51877
+            -46.707427,
+            -23.50823
           ],
           [
-            -46.62713,
-            -23.518755
+            -46.708322,
+            -23.50818
           ],
           [
-            -46.627535,
-            -23.518739
+            -46.709054,
+            -23.508124
           ],
           [
-            -46.628083,
-            -23.518717
-          ],
-          [
-            -46.628547,
-            -23.518696
-          ],
-          [
-            -46.62919,
-            -23.518661
-          ],
-          [
-            -46.629563,
-            -23.518639
-          ],
-          [
-            -46.629867,
-            -23.518617
+            -46.710308,
+            -23.508011
           ]
         ]
       },
       {
-        "osmId": "289959611",
-        "streetName": "Avenida Santos Dumont",
+        "osmId": "327440152",
+        "streetName": "Avenida Otaviano Alves de Lima",
+        "highway": "primary",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.706874,
+            -23.507202
+          ],
+          [
+            -46.706829,
+            -23.507138
+          ],
+          [
+            -46.706787,
+            -23.5071
+          ],
+          [
+            -46.706735,
+            -23.507067
+          ],
+          [
+            -46.706635,
+            -23.507037
+          ],
+          [
+            -46.706505,
+            -23.507024
+          ],
+          [
+            -46.706382,
+            -23.50703
+          ],
+          [
+            -46.706271,
+            -23.50706
+          ]
+        ]
+      },
+      {
+        "osmId": "451647306",
+        "streetName": "Avenida Otaviano Alves de Lima",
+        "highway": "primary",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.709312,
+            -23.507671
+          ],
+          [
+            -46.709206,
+            -23.507653
+          ],
+          [
+            -46.709045,
+            -23.507637
+          ]
+        ]
+      },
+      {
+        "osmId": "451647307",
+        "streetName": "Avenida Otaviano Alves de Lima",
+        "highway": "primary",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.706534,
+            -23.507917
+          ],
+          [
+            -46.706625,
+            -23.507887
+          ],
+          [
+            -46.706838,
+            -23.507878
+          ],
+          [
+            -46.707949,
+            -23.507805
+          ],
+          [
+            -46.708275,
+            -23.507786
+          ],
+          [
+            -46.708945,
+            -23.507738
+          ],
+          [
+            -46.709094,
+            -23.507714
+          ],
+          [
+            -46.709193,
+            -23.507694
+          ],
+          [
+            -46.709312,
+            -23.507671
+          ]
+        ]
+      },
+      {
+        "osmId": "451647308",
+        "streetName": "Avenida Otaviano Alves de Lima",
+        "highway": "primary",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.708159,
+            -23.507695
+          ],
+          [
+            -46.707666,
+            -23.507713
+          ],
+          [
+            -46.707547,
+            -23.507702
+          ],
+          [
+            -46.707467,
+            -23.507683
+          ],
+          [
+            -46.707359,
+            -23.507648
+          ],
+          [
+            -46.70727,
+            -23.507607
+          ],
+          [
+            -46.707184,
+            -23.507557
+          ],
+          [
+            -46.707067,
+            -23.507467
+          ],
+          [
+            -46.706918,
+            -23.507265
+          ],
+          [
+            -46.706874,
+            -23.507202
+          ]
+        ]
+      },
+      {
+        "osmId": "472146650",
+        "streetName": "Avenida Ermano Marchetti",
         "highway": "primary",
         "isPrimaryCorridor": false,
         "coordinates": [
           [
-            -46.62873,
-            -23.510348
+            -46.698542,
+            -23.514847
           ],
           [
-            -46.628671,
-            -23.509922
+            -46.698703,
+            -23.514818
           ],
           [
-            -46.628623,
-            -23.509661
+            -46.699124,
+            -23.514742
+          ],
+          [
+            -46.699224,
+            -23.514723
+          ],
+          [
+            -46.699674,
+            -23.514635
+          ],
+          [
+            -46.699773,
+            -23.514615
           ]
         ]
       },
       {
-        "osmId": "289959613",
-        "streetName": "Avenida Santos Dumont",
-        "highway": "primary",
-        "isPrimaryCorridor": false,
-        "coordinates": [
-          [
-            -46.628623,
-            -23.509661
-          ],
-          [
-            -46.628568,
-            -23.509426
-          ]
-        ]
-      },
-      {
-        "osmId": "320124118",
-        "streetName": "Ponte das Bandeiras",
+        "osmId": "574145186",
+        "streetName": "Avenida Otaviano Alves de Lima",
         "highway": "trunk",
         "isPrimaryCorridor": true,
         "coordinates": [
           [
-            -46.630173,
-            -23.519975
+            -46.705424,
+            -23.507991
           ],
           [
-            -46.630149,
-            -23.519641
-          ],
-          [
-            -46.630136,
-            -23.519507
-          ],
-          [
-            -46.630119,
-            -23.519373
-          ],
-          [
-            -46.630104,
-            -23.519269
+            -46.705609,
+            -23.508037
           ]
         ]
       },
       {
-        "osmId": "320124209",
-        "streetName": "Avenida Santos Dumont",
+        "osmId": "835387845",
+        "streetName": "Avenida Ermano Marchetti",
         "highway": "primary",
         "isPrimaryCorridor": false,
         "coordinates": [
           [
-            -46.628959,
-            -23.512046
+            -46.699928,
+            -23.514722
           ],
           [
-            -46.62893,
-            -23.511806
+            -46.6997,
+            -23.51478
           ],
           [
-            -46.628891,
-            -23.511543
+            -46.699412,
+            -23.514874
+          ],
+          [
+            -46.698834,
+            -23.515107
+          ],
+          [
+            -46.698792,
+            -23.515126
+          ],
+          [
+            -46.698595,
+            -23.515184
+          ],
+          [
+            -46.698447,
+            -23.515224
+          ],
+          [
+            -46.69837,
+            -23.515242
+          ],
+          [
+            -46.698221,
+            -23.515269
+          ],
+          [
+            -46.698019,
+            -23.515292
+          ],
+          [
+            -46.697888,
+            -23.515307
           ]
         ]
       },
       {
-        "osmId": "371895565",
-        "streetName": "Avenida Santos Dumont",
+        "osmId": "835387860",
+        "streetName": "Avenida Ermano Marchetti",
         "highway": "primary",
         "isPrimaryCorridor": false,
         "coordinates": [
           [
-            -46.628856,
-            -23.509577
+            -46.699773,
+            -23.514615
           ],
           [
-            -46.628874,
-            -23.509793
+            -46.699912,
+            -23.514587
           ],
           [
-            -46.629119,
-            -23.511424
-          ],
-          [
-            -46.629138,
-            -23.511529
-          ],
-          [
-            -46.629154,
-            -23.511639
+            -46.700315,
+            -23.514516
           ]
         ]
       },
       {
-        "osmId": "396962722",
-        "streetName": "Calçada Partilhada Ponte das Bandeiras",
-        "highway": "cycleway",
-        "isPrimaryCorridor": true,
-        "coordinates": [
-          [
-            -46.629471,
-            -23.515751
-          ],
-          [
-            -46.629571,
-            -23.516499
-          ],
-          [
-            -46.629699,
-            -23.517546
-          ],
-          [
-            -46.62969,
-            -23.517643
-          ],
-          [
-            -46.629678,
-            -23.51777
-          ],
-          [
-            -46.629713,
-            -23.51788
-          ],
-          [
-            -46.6298,
-            -23.517973
-          ]
-        ]
-      },
-      {
-        "osmId": "396962723",
-        "streetName": "Calçada Partilhada Ponte das Bandeiras",
-        "highway": "cycleway",
-        "isPrimaryCorridor": true,
-        "coordinates": [
-          [
-            -46.6298,
-            -23.517973
-          ],
-          [
-            -46.629984,
-            -23.518995
-          ],
-          [
-            -46.630028,
-            -23.519283
-          ],
-          [
-            -46.630055,
-            -23.519509
-          ],
-          [
-            -46.630063,
-            -23.519581
-          ],
-          [
-            -46.630047,
-            -23.519823
-          ],
-          [
-            -46.630036,
-            -23.520021
-          ]
-        ]
-      },
-      {
-        "osmId": "404091936",
-        "streetName": "Avenida Santos Dumont",
-        "highway": "secondary",
+        "osmId": "846462407",
+        "streetName": "Avenida Ermano Marchetti",
+        "highway": "primary",
         "isPrimaryCorridor": false,
         "coordinates": [
           [
-            -46.630306,
-            -23.522908
+            -46.697779,
+            -23.515309
           ],
           [
-            -46.630254,
-            -23.522558
+            -46.697678,
+            -23.515314
+          ],
+          [
+            -46.697274,
+            -23.515316
           ]
         ]
       },
       {
-        "osmId": "409285084",
-        "streetName": "Ciclovia Avenida Santos Dumont",
-        "highway": "cycleway",
+        "osmId": "909173109",
+        "streetName": "Avenida Ermano Marchetti",
+        "highway": "primary",
         "isPrimaryCorridor": false,
         "coordinates": [
           [
-            -46.628675,
-            -23.509483
+            -46.705483,
+            -23.511694
           ],
           [
-            -46.628679,
-            -23.509521
+            -46.705448,
+            -23.51186
           ],
           [
-            -46.628753,
-            -23.50956
+            -46.705419,
+            -23.511998
           ],
           [
-            -46.628801,
-            -23.509757
+            -46.705389,
+            -23.512115
           ],
           [
-            -46.628769,
-            -23.509986
+            -46.705327,
+            -23.512252
           ],
           [
-            -46.62885,
-            -23.510381
-          ],
-          [
-            -46.628877,
-            -23.510673
-          ],
-          [
-            -46.629002,
-            -23.511464
+            -46.705247,
+            -23.512396
           ]
         ]
       },
       {
-        "osmId": "423420329",
-        "streetName": "Avenida Santos Dumont",
-        "highway": "secondary",
-        "isPrimaryCorridor": false,
-        "coordinates": [
-          [
-            -46.630151,
-            -23.521852
-          ],
-          [
-            -46.630136,
-            -23.521713
-          ],
-          [
-            -46.630125,
-            -23.521584
-          ],
-          [
-            -46.630113,
-            -23.521474
-          ],
-          [
-            -46.630109,
-            -23.521415
-          ],
-          [
-            -46.630104,
-            -23.521373
-          ],
-          [
-            -46.630095,
-            -23.521331
-          ]
-        ]
-      },
-      {
-        "osmId": "453524119",
-        "streetName": "Calçada Partilhada Ponte das Bandeiras",
-        "highway": "cycleway",
+        "osmId": "909173111",
+        "streetName": "Avenida Otaviano Alves de Lima",
+        "highway": "primary",
         "isPrimaryCorridor": true,
         "coordinates": [
           [
-            -46.630036,
-            -23.520021
+            -46.706271,
+            -23.50706
           ],
           [
-            -46.629931,
-            -23.520344
+            -46.706157,
+            -23.507095
           ],
           [
-            -46.62994,
-            -23.520384
+            -46.706066,
+            -23.507138
+          ],
+          [
+            -46.705997,
+            -23.50719
+          ],
+          [
+            -46.705879,
+            -23.50738
           ]
         ]
       },
       {
-        "osmId": "453603857",
+        "osmId": "909173112",
+        "streetName": "Avenida Otaviano Alves de Lima",
+        "highway": "primary",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.709045,
+            -23.507637
+          ],
+          [
+            -46.708983,
+            -23.507641
+          ],
+          [
+            -46.708268,
+            -23.507688
+          ],
+          [
+            -46.708159,
+            -23.507695
+          ]
+        ]
+      },
+      {
+        "osmId": "909173139",
+        "streetName": "Avenida Otaviano Alves de Lima",
+        "highway": "trunk",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.706073,
+            -23.507902
+          ],
+          [
+            -46.706534,
+            -23.507917
+          ]
+        ]
+      },
+      {
+        "osmId": "909173141",
+        "streetName": "Avenida Ermano Marchetti",
+        "highway": "primary",
+        "isPrimaryCorridor": false,
+        "coordinates": [
+          [
+            -46.705466,
+            -23.510192
+          ],
+          [
+            -46.70551,
+            -23.509723
+          ]
+        ]
+      },
+      {
+        "osmId": "909173142",
+        "streetName": "Avenida Embaixador Macedo Soares (Local)",
+        "highway": "trunk",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.705374,
+            -23.509513
+          ],
+          [
+            -46.705174,
+            -23.5095
+          ]
+        ]
+      },
+      {
+        "osmId": "909173143",
+        "streetName": "Avenida Embaixador Macedo Soares (Local)",
+        "highway": "trunk",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.708053,
+            -23.509591
+          ],
+          [
+            -46.707251,
+            -23.50959
+          ],
+          [
+            -46.705799,
+            -23.509537
+          ]
+        ]
+      },
+      {
+        "osmId": "915799148",
+        "streetName": "Avenida Ermano Marchetti",
+        "highway": "primary",
+        "isPrimaryCorridor": false,
+        "coordinates": [
+          [
+            -46.697476,
+            -23.515064
+          ],
+          [
+            -46.697654,
+            -23.515026
+          ],
+          [
+            -46.697769,
+            -23.515001
+          ],
+          [
+            -46.697937,
+            -23.514971
+          ],
+          [
+            -46.69803,
+            -23.514952
+          ],
+          [
+            -46.698542,
+            -23.514847
+          ]
+        ]
+      },
+      {
+        "osmId": "915799150",
+        "streetName": "Avenida Ermano Marchetti",
+        "highway": "primary",
+        "isPrimaryCorridor": false,
+        "coordinates": [
+          [
+            -46.697274,
+            -23.515316
+          ],
+          [
+            -46.697195,
+            -23.515319
+          ],
+          [
+            -46.697144,
+            -23.51532
+          ],
+          [
+            -46.696986,
+            -23.515322
+          ],
+          [
+            -46.69681,
+            -23.515343
+          ]
+        ]
+      },
+      {
+        "osmId": "934386926",
+        "streetName": "Avenida Ermano Marchetti",
+        "highway": "primary",
+        "isPrimaryCorridor": false,
+        "coordinates": [
+          [
+            -46.697008,
+            -23.515156
+          ],
+          [
+            -46.697476,
+            -23.515064
+          ]
+        ]
+      },
+      {
+        "osmId": "934433482",
+        "streetName": "Avenida Ermano Marchetti",
+        "highway": "primary",
+        "isPrimaryCorridor": false,
+        "coordinates": [
+          [
+            -46.702495,
+            -23.513816
+          ],
+          [
+            -46.702791,
+            -23.51366
+          ],
+          [
+            -46.702816,
+            -23.513647
+          ],
+          [
+            -46.703317,
+            -23.513383
+          ]
+        ]
+      },
+      {
+        "osmId": "934433483",
+        "streetName": "Avenida Ermano Marchetti",
+        "highway": "primary",
+        "isPrimaryCorridor": false,
+        "coordinates": [
+          [
+            -46.700315,
+            -23.514516
+          ],
+          [
+            -46.700453,
+            -23.514493
+          ],
+          [
+            -46.700582,
+            -23.51447
+          ],
+          [
+            -46.700978,
+            -23.514392
+          ],
+          [
+            -46.701017,
+            -23.514384
+          ],
+          [
+            -46.701242,
+            -23.51433
+          ]
+        ]
+      },
+      {
+        "osmId": "934462668",
+        "streetName": "Avenida Embaixador Macedo Soares (Local)",
+        "highway": "trunk",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.705174,
+            -23.5095
+          ],
+          [
+            -46.704948,
+            -23.509485
+          ],
+          [
+            -46.703901,
+            -23.509412
+          ],
+          [
+            -46.702651,
+            -23.50929
+          ]
+        ]
+      },
+      {
+        "osmId": "934467164",
+        "streetName": "Avenida Embaixador Macedo Soares (Local)",
+        "highway": "trunk",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.702651,
+            -23.50929
+          ],
+          [
+            -46.701108,
+            -23.509189
+          ],
+          [
+            -46.700791,
+            -23.509165
+          ],
+          [
+            -46.699604,
+            -23.509062
+          ],
+          [
+            -46.699332,
+            -23.509038
+          ],
+          [
+            -46.69867,
+            -23.50897
+          ]
+        ]
+      },
+      {
+        "osmId": "935573832",
+        "streetName": "Avenida Ermano Marchetti",
+        "highway": "primary",
+        "isPrimaryCorridor": false,
+        "coordinates": [
+          [
+            -46.697888,
+            -23.515307
+          ],
+          [
+            -46.697779,
+            -23.515309
+          ]
+        ]
+      },
+      {
+        "osmId": "941542659",
+        "streetName": "Avenida Embaixador Macedo Soares (Local)",
+        "highway": "trunk",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.709629,
+            -23.509476
+          ],
+          [
+            -46.709142,
+            -23.50952
+          ],
+          [
+            -46.708456,
+            -23.509581
+          ]
+        ]
+      },
+      {
+        "osmId": "941553854",
+        "streetName": "Avenida Embaixador Macedo Soares (Local)",
+        "highway": "trunk",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.708456,
+            -23.509581
+          ],
+          [
+            -46.708053,
+            -23.509591
+          ]
+        ]
+      },
+      {
+        "osmId": "941608265",
         "streetName": "Marginal Tietê (Central)",
         "highway": "trunk",
         "isPrimaryCorridor": true,
         "coordinates": [
           [
-            -46.621545,
-            -23.518405
+            -46.702304,
+            -23.507698
           ],
           [
-            -46.62204,
-            -23.518546
+            -46.702865,
+            -23.507752
           ],
           [
-            -46.622588,
-            -23.518669
-          ],
-          [
-            -46.622824,
-            -23.518696
-          ],
-          [
-            -46.6231,
-            -23.518702
-          ],
-          [
-            -46.623656,
-            -23.518687
-          ],
-          [
-            -46.623982,
-            -23.518671
-          ],
-          [
-            -46.624975,
-            -23.518617
+            -46.705424,
+            -23.507991
           ]
         ]
       },
       {
-        "osmId": "572163174",
+        "osmId": "941608266",
+        "streetName": "Avenida Otaviano Alves de Lima",
+        "highway": "trunk",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.699798,
+            -23.507313
+          ],
+          [
+            -46.699998,
+            -23.507325
+          ],
+          [
+            -46.701922,
+            -23.507506
+          ],
+          [
+            -46.702314,
+            -23.507541
+          ],
+          [
+            -46.702562,
+            -23.507566
+          ],
+          [
+            -46.702729,
+            -23.507582
+          ],
+          [
+            -46.703351,
+            -23.50764
+          ],
+          [
+            -46.703502,
+            -23.507655
+          ],
+          [
+            -46.705395,
+            -23.50783
+          ]
+        ]
+      },
+      {
+        "osmId": "942326716",
         "streetName": "Marginal Tietê (Central)",
         "highway": "trunk",
         "isPrimaryCorridor": true,
         "coordinates": [
           [
-            -46.631964,
-            -23.518463
+            -46.709719,
+            -23.5093
           ],
           [
-            -46.632312,
-            -23.51843
+            -46.709085,
+            -23.509358
           ],
           [
-            -46.632803,
-            -23.518392
+            -46.70868,
+            -23.509403
           ],
           [
-            -46.633381,
-            -23.518323
+            -46.708072,
+            -23.509458
           ],
           [
-            -46.633905,
-            -23.518275
+            -46.707963,
+            -23.509466
           ],
           [
-            -46.634529,
-            -23.518223
+            -46.707874,
+            -23.509472
           ],
           [
-            -46.635155,
-            -23.518184
+            -46.707723,
+            -23.50948
           ]
         ]
       },
       {
-        "osmId": "572163175",
-        "streetName": "Avenida Assis Chateaubriand",
-        "highway": "trunk",
-        "isPrimaryCorridor": true,
-        "coordinates": [
-          [
-            -46.631675,
-            -23.518352
-          ],
-          [
-            -46.632781,
-            -23.518283
-          ],
-          [
-            -46.633426,
-            -23.518238
-          ],
-          [
-            -46.633866,
-            -23.518198
-          ],
-          [
-            -46.634244,
-            -23.518163
-          ],
-          [
-            -46.634624,
-            -23.518128
-          ],
-          [
-            -46.63494,
-            -23.518093
-          ],
-          [
-            -46.635254,
-            -23.518064
-          ],
-          [
-            -46.635567,
-            -23.518045
-          ]
-        ]
-      },
-      {
-        "osmId": "837035510",
-        "streetName": "Ponte das Bandeiras",
-        "highway": "trunk",
-        "isPrimaryCorridor": true,
-        "coordinates": [
-          [
-            -46.630051,
-            -23.517878
-          ],
-          [
-            -46.630057,
-            -23.517933
-          ]
-        ]
-      },
-      {
-        "osmId": "837042971",
-        "streetName": "Ponte das Bandeiras",
-        "highway": "trunk",
-        "isPrimaryCorridor": true,
-        "coordinates": [
-          [
-            -46.630174,
-            -23.520005
-          ],
-          [
-            -46.630173,
-            -23.519975
-          ]
-        ]
-      },
-      {
-        "osmId": "837042972",
-        "streetName": "Ponte das Bandeiras",
-        "highway": "trunk",
-        "isPrimaryCorridor": true,
-        "coordinates": [
-          [
-            -46.630282,
-            -23.519981
-          ],
-          [
-            -46.630284,
-            -23.520014
-          ]
-        ]
-      },
-      {
-        "osmId": "842291574",
-        "streetName": "Avenida Santos Dumont",
-        "highway": "secondary",
-        "isPrimaryCorridor": false,
-        "coordinates": [
-          [
-            -46.630254,
-            -23.522558
-          ],
-          [
-            -46.630225,
-            -23.522356
-          ],
-          [
-            -46.630195,
-            -23.522143
-          ],
-          [
-            -46.630151,
-            -23.521852
-          ]
-        ]
-      },
-      {
-        "osmId": "933373475",
-        "streetName": "Avenida Santos Dumont",
+        "osmId": "1055748475",
+        "streetName": "Avenida Ermano Marchetti",
         "highway": "primary",
         "isPrimaryCorridor": false,
         "coordinates": [
           [
-            -46.629202,
-            -23.511972
+            -46.705247,
+            -23.512396
           ],
           [
-            -46.629292,
-            -23.512524
+            -46.705182,
+            -23.512486
           ],
           [
-            -46.629389,
-            -23.513191
+            -46.705091,
+            -23.51259
           ],
           [
-            -46.629428,
-            -23.513299
+            -46.704973,
+            -23.512686
           ],
           [
-            -46.629471,
-            -23.513357
+            -46.704846,
+            -23.512767
           ],
           [
-            -46.629528,
-            -23.51341
+            -46.704579,
+            -23.512895
           ],
           [
-            -46.629575,
-            -23.513453
+            -46.703956,
+            -23.513212
           ],
           [
-            -46.629633,
-            -23.513504
+            -46.703514,
+            -23.513434
+          ],
+          [
+            -46.703379,
+            -23.513502
           ]
         ]
       },
       {
-        "osmId": "934342628",
-        "streetName": "Ponte das Bandeiras",
-        "highway": "trunk",
-        "isPrimaryCorridor": true,
-        "coordinates": [
-          [
-            -46.630062,
-            -23.519002
-          ],
-          [
-            -46.629992,
-            -23.518543
-          ],
-          [
-            -46.629917,
-            -23.518092
-          ],
-          [
-            -46.629893,
-            -23.51794
-          ]
-        ]
-      },
-      {
-        "osmId": "934342629",
-        "streetName": "Avenida Santos Dumont",
-        "highway": "trunk",
-        "isPrimaryCorridor": false,
-        "coordinates": [
-          [
-            -46.630471,
-            -23.522537
-          ],
-          [
-            -46.630408,
-            -23.522057
-          ],
-          [
-            -46.630364,
-            -23.521723
-          ]
-        ]
-      },
-      {
-        "osmId": "938169178",
-        "streetName": "Avenida Assis Chateaubriand",
-        "highway": "trunk",
-        "isPrimaryCorridor": true,
-        "coordinates": [
-          [
-            -46.627888,
-            -23.518394
-          ],
-          [
-            -46.627989,
-            -23.518385
-          ],
-          [
-            -46.628089,
-            -23.518376
-          ]
-        ]
-      },
-      {
-        "osmId": "941917754",
-        "streetName": "Marginal Tietê (Expressa)",
-        "highway": "motorway",
-        "isPrimaryCorridor": true,
-        "coordinates": [
-          [
-            -46.632913,
-            -23.519252
-          ],
-          [
-            -46.631774,
-            -23.519325
-          ],
-          [
-            -46.63042,
-            -23.519385
-          ]
-        ]
-      },
-      {
-        "osmId": "944015642",
-        "streetName": "Avenida Assis Chateaubriand",
-        "highway": "trunk",
-        "isPrimaryCorridor": true,
-        "coordinates": [
-          [
-            -46.628851,
-            -23.518275
-          ],
-          [
-            -46.629343,
-            -23.518196
-          ],
-          [
-            -46.629577,
-            -23.518168
-          ],
-          [
-            -46.629769,
-            -23.518146
-          ]
-        ]
-      },
-      {
-        "osmId": "944016181",
-        "streetName": "Ponte das Bandeiras",
-        "highway": "trunk",
-        "isPrimaryCorridor": true,
-        "coordinates": [
-          [
-            -46.630276,
-            -23.519654
-          ],
-          [
-            -46.630282,
-            -23.519981
-          ]
-        ]
-      },
-      {
-        "osmId": "970766035",
-        "streetName": "Avenida Santos Dumont",
+        "osmId": "1055748490",
+        "streetName": "Avenida Ermano Marchetti",
         "highway": "primary",
         "isPrimaryCorridor": false,
         "coordinates": [
           [
-            -46.629154,
-            -23.511639
+            -46.701242,
+            -23.51433
           ],
           [
-            -46.629202,
-            -23.511972
-          ]
-        ]
-      },
-      {
-        "osmId": "976786739",
-        "streetName": "Avenida Santos Dumont",
-        "highway": "primary",
-        "isPrimaryCorridor": false,
-        "coordinates": [
-          [
-            -46.629074,
-            -23.512748
+            -46.70135,
+            -23.514303
           ],
           [
-            -46.629014,
-            -23.512378
+            -46.701375,
+            -23.514297
           ],
           [
-            -46.628985,
-            -23.512199
+            -46.701644,
+            -23.514222
           ],
           [
-            -46.628959,
-            -23.512046
-          ]
-        ]
-      },
-      {
-        "osmId": "1066397503",
-        "streetName": "Avenida Marginal Tietê (Expressa)",
-        "highway": "motorway",
-        "isPrimaryCorridor": true,
-        "coordinates": [
-          [
-            -46.625216,
-            -23.519763
+            -46.702272,
+            -23.513933
           ],
           [
-            -46.625065,
-            -23.519772
-          ]
-        ]
-      },
-      {
-        "osmId": "1066397507",
-        "streetName": "Ponte das Bandeiras",
-        "highway": "trunk",
-        "isPrimaryCorridor": true,
-        "coordinates": [
-          [
-            -46.630104,
-            -23.519269
-          ],
-          [
-            -46.630062,
-            -23.519002
-          ]
-        ]
-      },
-      {
-        "osmId": "1066397508",
-        "streetName": "Ponte das Bandeiras",
-        "highway": "trunk",
-        "isPrimaryCorridor": true,
-        "coordinates": [
-          [
-            -46.630194,
-            -23.518994
-          ],
-          [
-            -46.630266,
-            -23.519506
-          ],
-          [
-            -46.630271,
-            -23.519575
-          ],
-          [
-            -46.630276,
-            -23.519654
-          ]
-        ]
-      },
-      {
-        "osmId": "1303520446",
-        "streetName": "Avenida Santos Dumont",
-        "highway": "primary",
-        "isPrimaryCorridor": false,
-        "coordinates": [
-          [
-            -46.628891,
-            -23.511543
-          ],
-          [
-            -46.628875,
-            -23.511432
-          ],
-          [
-            -46.628825,
-            -23.511031
-          ]
-        ]
-      },
-      {
-        "osmId": "1303520447",
-        "streetName": "Avenida Santos Dumont",
-        "highway": "primary",
-        "isPrimaryCorridor": false,
-        "coordinates": [
-          [
-            -46.628825,
-            -23.511031
-          ],
-          [
-            -46.62873,
-            -23.510348
-          ]
-        ]
-      },
-      {
-        "osmId": "1359862719",
-        "streetName": "Avenida Santos Dumont",
-        "highway": "trunk",
-        "isPrimaryCorridor": false,
-        "coordinates": [
-          [
-            -46.629893,
-            -23.51794
-          ],
-          [
-            -46.629863,
-            -23.517773
-          ],
-          [
-            -46.629838,
-            -23.517634
-          ],
-          [
-            -46.629819,
-            -23.517532
-          ],
-          [
-            -46.629808,
-            -23.517469
+            -46.702495,
+            -23.513816
           ]
         ]
       }
@@ -7117,23 +8243,23 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
     "corridorName": "Av. do Estado",
     "neighborhood": "Ipiranga / Vila Prudente",
     "zone": "Zona Sudeste",
-    "latitude": -23.5745,
-    "longitude": -46.6122,
+    "latitude": -23.5686,
+    "longitude": -46.607784,
     "camera": {
       "center": [
-        -46.6122,
-        -23.5745
+        -46.607784,
+        -23.5686
       ],
       "zoom": 15.1,
       "bearing": -12,
       "bounds": [
         [
-          -46.611642,
-          -23.577434
+          -46.612642,
+          -23.57538
         ],
         [
-          -46.604988,
-          -23.567722
+          -46.601938,
+          -23.561867
         ]
       ]
     },
@@ -7143,35 +8269,55 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
     ],
     "roads": [
       {
-        "osmId": "35797656",
+        "osmId": "35265741",
         "streetName": "Avenida Dom Pedro I",
         "highway": "primary",
         "isPrimaryCorridor": false,
         "coordinates": [
           [
-            -46.610383,
-            -23.577111
+            -46.611787,
+            -23.564718
           ],
           [
-            -46.610395,
-            -23.576968
+            -46.611775,
+            -23.564804
+          ]
+        ]
+      },
+      {
+        "osmId": "35797467",
+        "streetName": "Avenida do Estado",
+        "highway": "primary",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.612642,
+            -23.561867
           ],
           [
-            -46.610439,
-            -23.576476
+            -46.612572,
+            -23.562064
           ],
           [
-            -46.610448,
-            -23.576379
+            -46.612458,
+            -23.562405
           ],
           [
-            -46.610472,
-            -23.576124
+            -46.612391,
+            -23.562598
           ],
           [
-            -46.610523,
-            -23.575556
-          ],
+            -46.612237,
+            -23.563123
+          ]
+        ]
+      },
+      {
+        "osmId": "35797656",
+        "streetName": "Avenida Dom Pedro I",
+        "highway": "primary",
+        "isPrimaryCorridor": false,
+        "coordinates": [
           [
             -46.610553,
             -23.575224
@@ -7207,38 +8353,6 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
           [
             -46.610752,
             -23.573096
-          ]
-        ]
-      },
-      {
-        "osmId": "35797698",
-        "streetName": "Avenida Dom Pedro I",
-        "highway": "primary",
-        "isPrimaryCorridor": false,
-        "coordinates": [
-          [
-            -46.610584,
-            -23.576761
-          ],
-          [
-            -46.61057,
-            -23.576941
-          ],
-          [
-            -46.610495,
-            -23.577168
-          ],
-          [
-            -46.610464,
-            -23.577257
-          ],
-          [
-            -46.610444,
-            -23.577306
-          ],
-          [
-            -46.61039,
-            -23.577434
           ]
         ]
       },
@@ -7283,30 +8397,214 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
         ]
       },
       {
-        "osmId": "183374341",
+        "osmId": "183090706",
+        "streetName": "Avenida do Estado",
+        "highway": "trunk",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.603297,
+            -23.574481
+          ],
+          [
+            -46.603261,
+            -23.574518
+          ],
+          [
+            -46.603152,
+            -23.574627
+          ],
+          [
+            -46.60295,
+            -23.574844
+          ],
+          [
+            -46.602775,
+            -23.575029
+          ],
+          [
+            -46.602729,
+            -23.575082
+          ]
+        ]
+      },
+      {
+        "osmId": "183374339",
         "streetName": "Avenida Dom Pedro I",
         "highway": "primary",
         "isPrimaryCorridor": false,
         "coordinates": [
           [
-            -46.610383,
-            -23.577111
+            -46.611525,
+            -23.565634
           ],
           [
-            -46.610432,
-            -23.577046
+            -46.61155,
+            -23.565447
           ],
           [
-            -46.610468,
-            -23.576977
+            -46.611553,
+            -23.565422
           ],
           [
-            -46.610488,
-            -23.57689
+            -46.611631,
+            -23.564845
+          ]
+        ]
+      },
+      {
+        "osmId": "211051259",
+        "streetName": "Avenida do Estado",
+        "highway": "trunk",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.604116,
+            -23.573528
           ],
           [
-            -46.610538,
-            -23.57654
+            -46.604058,
+            -23.573601
+          ],
+          [
+            -46.604026,
+            -23.573649
+          ],
+          [
+            -46.603903,
+            -23.573805
+          ],
+          [
+            -46.60384,
+            -23.573884
+          ],
+          [
+            -46.603669,
+            -23.57409
+          ],
+          [
+            -46.603297,
+            -23.574481
+          ]
+        ]
+      },
+      {
+        "osmId": "227324138",
+        "streetName": "Avenida do Estado",
+        "highway": "trunk",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.611163,
+            -23.564617
+          ],
+          [
+            -46.610812,
+            -23.565249
+          ],
+          [
+            -46.610556,
+            -23.565685
+          ],
+          [
+            -46.610357,
+            -23.566071
+          ],
+          [
+            -46.610247,
+            -23.566285
+          ],
+          [
+            -46.609973,
+            -23.56676
+          ],
+          [
+            -46.609635,
+            -23.567391
+          ]
+        ]
+      },
+      {
+        "osmId": "235497096",
+        "streetName": "Avenida do Estado",
+        "highway": "trunk",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.605704,
+            -23.570269
+          ],
+          [
+            -46.605298,
+            -23.570516
+          ],
+          [
+            -46.605189,
+            -23.570585
+          ],
+          [
+            -46.605023,
+            -23.570689
+          ],
+          [
+            -46.604846,
+            -23.570815
+          ],
+          [
+            -46.604734,
+            -23.570937
+          ],
+          [
+            -46.604564,
+            -23.57116
+          ],
+          [
+            -46.604495,
+            -23.571275
+          ],
+          [
+            -46.604442,
+            -23.571399
+          ],
+          [
+            -46.604391,
+            -23.571578
+          ],
+          [
+            -46.604354,
+            -23.571818
+          ],
+          [
+            -46.604335,
+            -23.572044
+          ],
+          [
+            -46.604319,
+            -23.57232
+          ],
+          [
+            -46.604282,
+            -23.572894
+          ],
+          [
+            -46.604272,
+            -23.573005
+          ],
+          [
+            -46.604258,
+            -23.573159
+          ],
+          [
+            -46.604214,
+            -23.573321
+          ],
+          [
+            -46.604147,
+            -23.573476
+          ],
+          [
+            -46.604116,
+            -23.573528
           ]
         ]
       },
@@ -7316,6 +8614,14 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
         "highway": "trunk",
         "isPrimaryCorridor": true,
         "coordinates": [
+          [
+            -46.609635,
+            -23.567391
+          ],
+          [
+            -46.609483,
+            -23.567648
+          ],
           [
             -46.609358,
             -23.56786
@@ -7339,6 +8645,42 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
           [
             -46.608562,
             -23.568704
+          ]
+        ]
+      },
+      {
+        "osmId": "237048414",
+        "streetName": "Avenida Dom Pedro I",
+        "highway": "primary",
+        "isPrimaryCorridor": false,
+        "coordinates": [
+          [
+            -46.611891,
+            -23.564711
+          ],
+          [
+            -46.611892,
+            -23.564759
+          ],
+          [
+            -46.611897,
+            -23.56484
+          ],
+          [
+            -46.611886,
+            -23.564966
+          ],
+          [
+            -46.611843,
+            -23.565447
+          ],
+          [
+            -46.611827,
+            -23.565626
+          ],
+          [
+            -46.611819,
+            -23.565752
           ]
         ]
       },
@@ -7397,6 +8739,98 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
         "isPrimaryCorridor": true,
         "coordinates": [
           [
+            -46.601938,
+            -23.575273
+          ],
+          [
+            -46.602809,
+            -23.574378
+          ],
+          [
+            -46.602849,
+            -23.574337
+          ],
+          [
+            -46.602856,
+            -23.57433
+          ],
+          [
+            -46.603436,
+            -23.573726
+          ],
+          [
+            -46.603527,
+            -23.573617
+          ],
+          [
+            -46.603612,
+            -23.573505
+          ],
+          [
+            -46.603695,
+            -23.573357
+          ],
+          [
+            -46.603797,
+            -23.573115
+          ],
+          [
+            -46.603834,
+            -23.573004
+          ],
+          [
+            -46.603868,
+            -23.572812
+          ],
+          [
+            -46.603889,
+            -23.572646
+          ],
+          [
+            -46.603914,
+            -23.572325
+          ],
+          [
+            -46.603941,
+            -23.571951
+          ],
+          [
+            -46.603973,
+            -23.571682
+          ],
+          [
+            -46.604004,
+            -23.571463
+          ],
+          [
+            -46.604049,
+            -23.571327
+          ],
+          [
+            -46.604067,
+            -23.571274
+          ],
+          [
+            -46.604149,
+            -23.571071
+          ],
+          [
+            -46.604232,
+            -23.57091
+          ],
+          [
+            -46.604378,
+            -23.570704
+          ],
+          [
+            -46.604559,
+            -23.570513
+          ],
+          [
+            -46.604755,
+            -23.57035
+          ],
+          [
             -46.604988,
             -23.57019
           ],
@@ -7423,83 +8857,11 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
         ]
       },
       {
-        "osmId": "377630746",
-        "streetName": "Avenida Dom Pedro I - Pista Lateral",
-        "highway": "primary",
-        "isPrimaryCorridor": false,
-        "coordinates": [
-          [
-            -46.610669,
-            -23.576728
-          ],
-          [
-            -46.610664,
-            -23.576797
-          ],
-          [
-            -46.610664,
-            -23.576844
-          ],
-          [
-            -46.610664,
-            -23.576901
-          ],
-          [
-            -46.610666,
-            -23.57693
-          ],
-          [
-            -46.61067,
-            -23.576959
-          ],
-          [
-            -46.610679,
-            -23.576997
-          ],
-          [
-            -46.610687,
-            -23.577021
-          ],
-          [
-            -46.6107,
-            -23.577051
-          ],
-          [
-            -46.610725,
-            -23.57709
-          ],
-          [
-            -46.610755,
-            -23.577122
-          ],
-          [
-            -46.610785,
-            -23.577148
-          ],
-          [
-            -46.61091,
-            -23.577243
-          ],
-          [
-            -46.611133,
-            -23.577418
-          ]
-        ]
-      },
-      {
         "osmId": "377630748",
         "streetName": "Avenida Dom Pedro I",
         "highway": "primary",
         "isPrimaryCorridor": false,
         "coordinates": [
-          [
-            -46.610538,
-            -23.57654
-          ],
-          [
-            -46.610547,
-            -23.576388
-          ],
           [
             -46.610685,
             -23.574877
@@ -7655,26 +9017,6 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
           [
             -46.610821,
             -23.57538
-          ],
-          [
-            -46.610772,
-            -23.575771
-          ],
-          [
-            -46.610758,
-            -23.575912
-          ],
-          [
-            -46.610732,
-            -23.576157
-          ],
-          [
-            -46.610703,
-            -23.57643
-          ],
-          [
-            -46.610684,
-            -23.57661
           ]
         ]
       },
@@ -7699,11 +9041,175 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
         ]
       },
       {
+        "osmId": "416450829",
+        "streetName": "Avenida Dom Pedro I",
+        "highway": "primary",
+        "isPrimaryCorridor": false,
+        "coordinates": [
+          [
+            -46.611641,
+            -23.564767
+          ],
+          [
+            -46.611663,
+            -23.564672
+          ],
+          [
+            -46.611684,
+            -23.56456
+          ]
+        ]
+      },
+      {
+        "osmId": "416450831",
+        "streetName": "Avenida Dom Pedro I",
+        "highway": "primary",
+        "isPrimaryCorridor": false,
+        "coordinates": [
+          [
+            -46.611775,
+            -23.564804
+          ],
+          [
+            -46.611759,
+            -23.564949
+          ],
+          [
+            -46.611707,
+            -23.565435
+          ],
+          [
+            -46.6117,
+            -23.565494
+          ],
+          [
+            -46.611697,
+            -23.565521
+          ]
+        ]
+      },
+      {
+        "osmId": "416453603",
+        "streetName": "Avenida do Estado",
+        "highway": "trunk",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.612523,
+            -23.561933
+          ],
+          [
+            -46.612206,
+            -23.562742
+          ],
+          [
+            -46.611786,
+            -23.563599
+          ]
+        ]
+      },
+      {
+        "osmId": "416453604",
+        "streetName": "Avenida do Estado",
+        "highway": "trunk",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.611443,
+            -23.564212
+          ],
+          [
+            -46.611217,
+            -23.564541
+          ],
+          [
+            -46.611163,
+            -23.564617
+          ]
+        ]
+      },
+      {
+        "osmId": "417294360",
+        "streetName": "Avenida Dom Pedro I",
+        "highway": "primary",
+        "isPrimaryCorridor": false,
+        "coordinates": [
+          [
+            -46.611547,
+            -23.564742
+          ],
+          [
+            -46.611598,
+            -23.564649
+          ],
+          [
+            -46.611684,
+            -23.56456
+          ]
+        ]
+      },
+      {
+        "osmId": "553371730",
+        "streetName": "Avenida Dom Pedro I",
+        "highway": "primary",
+        "isPrimaryCorridor": false,
+        "coordinates": [
+          [
+            -46.611677,
+            -23.565737
+          ],
+          [
+            -46.611663,
+            -23.565845
+          ]
+        ]
+      },
+      {
         "osmId": "553371732",
         "streetName": "Avenida Dom Pedro I",
         "highway": "primary",
         "isPrimaryCorridor": false,
         "coordinates": [
+          [
+            -46.611819,
+            -23.565752
+          ],
+          [
+            -46.61181,
+            -23.565859
+          ],
+          [
+            -46.611805,
+            -23.565905
+          ],
+          [
+            -46.611779,
+            -23.566242
+          ],
+          [
+            -46.611762,
+            -23.566409
+          ],
+          [
+            -46.611749,
+            -23.56654
+          ],
+          [
+            -46.611747,
+            -23.566567
+          ],
+          [
+            -46.611724,
+            -23.566814
+          ],
+          [
+            -46.611679,
+            -23.567311
+          ],
+          [
+            -46.611648,
+            -23.567655
+          ],
           [
             -46.611642,
             -23.567722
@@ -7720,6 +9226,34 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
         "highway": "primary",
         "isPrimaryCorridor": false,
         "coordinates": [
+          [
+            -46.611663,
+            -23.565845
+          ],
+          [
+            -46.611659,
+            -23.565892
+          ],
+          [
+            -46.611633,
+            -23.566229
+          ],
+          [
+            -46.611632,
+            -23.566241
+          ],
+          [
+            -46.611618,
+            -23.566394
+          ],
+          [
+            -46.611603,
+            -23.566552
+          ],
+          [
+            -46.611501,
+            -23.567642
+          ],
           [
             -46.611489,
             -23.567766
@@ -7759,18 +9293,6 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
           [
             -46.61072,
             -23.575371
-          ],
-          [
-            -46.610631,
-            -23.576277
-          ],
-          [
-            -46.610616,
-            -23.576425
-          ],
-          [
-            -46.6106,
-            -23.57657
           ]
         ]
       },
@@ -7895,38 +9417,154 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
           [
             -46.611188,
             -23.567801
+          ],
+          [
+            -46.611293,
+            -23.566497
+          ],
+          [
+            -46.611444,
+            -23.565146
+          ],
+          [
+            -46.611505,
+            -23.564886
+          ],
+          [
+            -46.611547,
+            -23.564742
           ]
         ]
       },
       {
-        "osmId": "942944633",
+        "osmId": "569473915",
+        "streetName": "Avenida do Estado",
+        "highway": "trunk",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.610944,
+            -23.564202
+          ],
+          [
+            -46.611079,
+            -23.564059
+          ],
+          [
+            -46.611316,
+            -23.563637
+          ],
+          [
+            -46.611381,
+            -23.563518
+          ]
+        ]
+      },
+      {
+        "osmId": "615015087",
+        "streetName": "Avenida do Estado",
+        "highway": "trunk",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.611765,
+            -23.563642
+          ],
+          [
+            -46.611748,
+            -23.563676
+          ],
+          [
+            -46.611714,
+            -23.563744
+          ]
+        ]
+      },
+      {
+        "osmId": "846462402",
         "streetName": "Avenida Dom Pedro I",
         "highway": "primary",
         "isPrimaryCorridor": false,
         "coordinates": [
           [
-            -46.610684,
-            -23.57661
+            -46.611931,
+            -23.56417
           ],
           [
-            -46.610669,
-            -23.576728
+            -46.611806,
+            -23.564649
           ]
         ]
       },
       {
-        "osmId": "942960369",
+        "osmId": "846462404",
         "streetName": "Avenida Dom Pedro I",
         "highway": "primary",
         "isPrimaryCorridor": false,
         "coordinates": [
           [
-            -46.6106,
-            -23.57657
+            -46.611931,
+            -23.56417
           ],
           [
-            -46.610584,
-            -23.576761
+            -46.611917,
+            -23.564461
+          ],
+          [
+            -46.611915,
+            -23.564491
+          ],
+          [
+            -46.611891,
+            -23.564711
+          ]
+        ]
+      },
+      {
+        "osmId": "909155213",
+        "streetName": "Avenida do Estado",
+        "highway": "primary",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.610944,
+            -23.564202
+          ],
+          [
+            -46.610959,
+            -23.564111
+          ],
+          [
+            -46.610993,
+            -23.564015
+          ],
+          [
+            -46.611143,
+            -23.563762
+          ],
+          [
+            -46.611234,
+            -23.563599
+          ],
+          [
+            -46.611299,
+            -23.563471
+          ]
+        ]
+      },
+      {
+        "osmId": "944395360",
+        "streetName": "Avenida Dom Pedro I",
+        "highway": "primary",
+        "isPrimaryCorridor": false,
+        "coordinates": [
+          [
+            -46.611391,
+            -23.567001
+          ],
+          [
+            -46.611454,
+            -23.566296
           ]
         ]
       },
@@ -7943,6 +9581,10 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
           [
             -46.611319,
             -23.567804
+          ],
+          [
+            -46.611391,
+            -23.567001
           ]
         ]
       },
@@ -7959,6 +9601,102 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
           [
             -46.611308,
             -23.568004
+          ]
+        ]
+      },
+      {
+        "osmId": "944396895",
+        "streetName": "Avenida Dom Pedro I",
+        "highway": "primary",
+        "isPrimaryCorridor": false,
+        "coordinates": [
+          [
+            -46.611631,
+            -23.564845
+          ],
+          [
+            -46.611641,
+            -23.564767
+          ]
+        ]
+      },
+      {
+        "osmId": "944399652",
+        "streetName": "Avenida do Estado",
+        "highway": "primary",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.611299,
+            -23.563471
+          ],
+          [
+            -46.611711,
+            -23.562717
+          ]
+        ]
+      },
+      {
+        "osmId": "945273863",
+        "streetName": "Avenida do Estado",
+        "highway": "trunk",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.611381,
+            -23.563518
+          ],
+          [
+            -46.611397,
+            -23.563489
+          ],
+          [
+            -46.61193,
+            -23.562539
+          ],
+          [
+            -46.612197,
+            -23.562038
+          ]
+        ]
+      },
+      {
+        "osmId": "945273864",
+        "streetName": "Avenida do Estado",
+        "highway": "trunk",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.61079,
+            -23.564442
+          ],
+          [
+            -46.610854,
+            -23.564339
+          ],
+          [
+            -46.610931,
+            -23.564226
+          ],
+          [
+            -46.610944,
+            -23.564202
+          ]
+        ]
+      },
+      {
+        "osmId": "945561097",
+        "streetName": "Avenida do Estado",
+        "highway": "trunk",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.611714,
+            -23.563744
+          ],
+          [
+            -46.611443,
+            -23.564212
           ]
         ]
       },
@@ -8031,6 +9769,58 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
           [
             -46.608891,
             -23.567756
+          ],
+          [
+            -46.608981,
+            -23.567631
+          ],
+          [
+            -46.609499,
+            -23.566709
+          ],
+          [
+            -46.60985,
+            -23.566077
+          ],
+          [
+            -46.610017,
+            -23.565775
+          ],
+          [
+            -46.61079,
+            -23.564442
+          ]
+        ]
+      },
+      {
+        "osmId": "1031681191",
+        "streetName": "Avenida Dom Pedro I",
+        "highway": "primary",
+        "isPrimaryCorridor": false,
+        "coordinates": [
+          [
+            -46.611806,
+            -23.564649
+          ],
+          [
+            -46.611787,
+            -23.564718
+          ]
+        ]
+      },
+      {
+        "osmId": "1031681194",
+        "streetName": "Avenida do Estado",
+        "highway": "trunk",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.611786,
+            -23.563599
+          ],
+          [
+            -46.611765,
+            -23.563642
           ]
         ]
       },
@@ -8051,6 +9841,66 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
         ]
       },
       {
+        "osmId": "1080789236",
+        "streetName": "Avenida do Estado",
+        "highway": "primary",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.611711,
+            -23.562717
+          ],
+          [
+            -46.612002,
+            -23.562193
+          ],
+          [
+            -46.61206,
+            -23.562088
+          ]
+        ]
+      },
+      {
+        "osmId": "1358397394",
+        "streetName": "Avenida Dom Pedro I",
+        "highway": "primary",
+        "isPrimaryCorridor": false,
+        "coordinates": [
+          [
+            -46.611454,
+            -23.566296
+          ],
+          [
+            -46.611473,
+            -23.566102
+          ],
+          [
+            -46.611525,
+            -23.565634
+          ]
+        ]
+      },
+      {
+        "osmId": "1358397396",
+        "streetName": "Avenida Dom Pedro I",
+        "highway": "primary",
+        "isPrimaryCorridor": false,
+        "coordinates": [
+          [
+            -46.611697,
+            -23.565521
+          ],
+          [
+            -46.611687,
+            -23.565617
+          ],
+          [
+            -46.611677,
+            -23.565737
+          ]
+        ]
+      },
+      {
         "osmId": "1358431522",
         "streetName": "Avenida Dom Pedro I",
         "highway": "primary",
@@ -8065,126 +9915,6 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
             -23.567926
           ]
         ]
-      },
-      {
-        "osmId": "1358434233",
-        "streetName": "Ciclofaixa como canteiro central Av. Dom Pedro I",
-        "highway": "cycleway",
-        "isPrimaryCorridor": false,
-        "coordinates": [
-          [
-            -46.61135,
-            -23.568417
-          ],
-          [
-            -46.611326,
-            -23.568654
-          ],
-          [
-            -46.611295,
-            -23.568956
-          ],
-          [
-            -46.611251,
-            -23.569423
-          ],
-          [
-            -46.611159,
-            -23.570415
-          ],
-          [
-            -46.611154,
-            -23.570466
-          ],
-          [
-            -46.611149,
-            -23.570509
-          ],
-          [
-            -46.611096,
-            -23.571087
-          ],
-          [
-            -46.610916,
-            -23.572966
-          ]
-        ]
-      },
-      {
-        "osmId": "1358434234",
-        "streetName": "Ciclofaixa como canteiro central Av. Dom Pedro I",
-        "highway": "cycleway",
-        "isPrimaryCorridor": false,
-        "coordinates": [
-          [
-            -46.610894,
-            -23.573171
-          ],
-          [
-            -46.610748,
-            -23.574705
-          ],
-          [
-            -46.610741,
-            -23.574747
-          ],
-          [
-            -46.61074,
-            -23.574784
-          ],
-          [
-            -46.610669,
-            -23.575584
-          ],
-          [
-            -46.610581,
-            -23.576463
-          ]
-        ]
-      },
-      {
-        "osmId": "1358434235",
-        "streetName": "Ciclofaixa como canteiro central Av. Dom Pedro I",
-        "highway": "cycleway",
-        "isPrimaryCorridor": false,
-        "coordinates": [
-          [
-            -46.610916,
-            -23.572966
-          ],
-          [
-            -46.610905,
-            -23.573022
-          ],
-          [
-            -46.610899,
-            -23.573106
-          ],
-          [
-            -46.610894,
-            -23.573171
-          ]
-        ]
-      },
-      {
-        "osmId": "1358434237",
-        "streetName": "Ciclofaixa como canteiro central Av. Dom Pedro I",
-        "highway": "cycleway",
-        "isPrimaryCorridor": false,
-        "coordinates": [
-          [
-            -46.610581,
-            -23.576463
-          ],
-          [
-            -46.610574,
-            -23.576557
-          ],
-          [
-            -46.610565,
-            -23.576661
-          ]
-        ]
       }
     ]
   },
@@ -8194,23 +9924,23 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
     "corridorName": "Av. Radial Leste",
     "neighborhood": "Mooca / Tatuapé",
     "zone": "Zona Leste",
-    "latitude": -23.5415,
-    "longitude": -46.5758,
+    "latitude": -23.542179,
+    "longitude": -46.582008,
     "camera": {
       "center": [
-        -46.5758,
-        -23.5415
+        -46.582008,
+        -23.542179
       ],
       "zoom": 15.1,
       "bearing": 4,
       "bounds": [
         [
-          -46.583149,
-          -23.548179
+          -46.589389,
+          -23.548926
         ],
         [
-          -46.568919,
-          -23.535256
+          -46.574783,
+          -23.535385
         ]
       ]
     },
@@ -8223,38 +9953,98 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
     ],
     "roads": [
       {
-        "osmId": "38937645",
-        "streetName": "Ciclovia Radial Leste (Caminho Verde)",
-        "highway": "cycleway",
+        "osmId": "13858041",
+        "streetName": "Avenida Alcântara Machado",
+        "highway": "tertiary",
         "isPrimaryCorridor": true,
         "coordinates": [
           [
-            -46.569406,
-            -23.53891
+            -46.587781,
+            -23.543326
           ],
           [
-            -46.571919,
-            -23.539368
+            -46.58805,
+            -23.54331
           ],
           [
-            -46.572423,
-            -23.539513
+            -46.588278,
+            -23.543302
           ],
           [
-            -46.572508,
-            -23.539538
+            -46.588523,
+            -23.543304
           ],
           [
-            -46.574181,
-            -23.540105
+            -46.588717,
+            -23.543316
           ],
           [
-            -46.574702,
-            -23.54027
+            -46.588875,
+            -23.543337
           ],
           [
-            -46.575351,
-            -23.540406
+            -46.589079,
+            -23.543371
+          ],
+          [
+            -46.589367,
+            -23.543425
+          ]
+        ]
+      },
+      {
+        "osmId": "38710209",
+        "streetName": "Avenida Alcântara Machado",
+        "highway": "trunk",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.582008,
+            -23.542179
+          ],
+          [
+            -46.583342,
+            -23.542464
+          ],
+          [
+            -46.583581,
+            -23.542509
+          ],
+          [
+            -46.586554,
+            -23.543078
+          ],
+          [
+            -46.58699,
+            -23.54316
+          ],
+          [
+            -46.587157,
+            -23.543192
+          ]
+        ]
+      },
+      {
+        "osmId": "231041705",
+        "streetName": "Avenida Salim Farah Maluf",
+        "highway": "trunk",
+        "isPrimaryCorridor": false,
+        "coordinates": [
+          [
+            -46.578769,
+            -23.548754
+          ],
+          [
+            -46.578855,
+            -23.548369
+          ],
+          [
+            -46.578864,
+            -23.548328
+          ],
+          [
+            -46.578993,
+            -23.547764
           ]
         ]
       },
@@ -8295,27 +10085,63 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
         ]
       },
       {
-        "osmId": "234426156",
-        "streetName": "Rua Melo Freire",
-        "highway": "trunk",
-        "isPrimaryCorridor": false,
-        "coordinates": [
-          [
-            -46.569017,
-            -23.538897
-          ],
-          [
-            -46.571059,
-            -23.539266
-          ]
-        ]
-      },
-      {
         "osmId": "241052414",
         "streetName": "Avenida Alcântara Machado",
         "highway": "trunk",
         "isPrimaryCorridor": true,
         "coordinates": [
+          [
+            -46.587035,
+            -23.543327
+          ],
+          [
+            -46.586946,
+            -23.543309
+          ],
+          [
+            -46.586885,
+            -23.543297
+          ],
+          [
+            -46.586523,
+            -23.543228
+          ],
+          [
+            -46.586042,
+            -23.543137
+          ],
+          [
+            -46.585625,
+            -23.543054
+          ],
+          [
+            -46.584865,
+            -23.542904
+          ],
+          [
+            -46.584645,
+            -23.54286
+          ],
+          [
+            -46.584632,
+            -23.542858
+          ],
+          [
+            -46.584504,
+            -23.542833
+          ],
+          [
+            -46.584337,
+            -23.542802
+          ],
+          [
+            -46.584019,
+            -23.542742
+          ],
+          [
+            -46.583536,
+            -23.542655
+          ],
           [
             -46.583149,
             -23.542586
@@ -8323,34 +10149,6 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
           [
             -46.582549,
             -23.542465
-          ]
-        ]
-      },
-      {
-        "osmId": "241052441",
-        "streetName": "Rua Melo Freire",
-        "highway": "trunk",
-        "isPrimaryCorridor": false,
-        "coordinates": [
-          [
-            -46.573254,
-            -23.540006
-          ],
-          [
-            -46.572371,
-            -23.539709
-          ],
-          [
-            -46.57231,
-            -23.539688
-          ],
-          [
-            -46.571894,
-            -23.539579
-          ],
-          [
-            -46.571494,
-            -23.539485
           ]
         ]
       },
@@ -8395,6 +10193,22 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
           [
             -46.575536,
             -23.540694
+          ]
+        ]
+      },
+      {
+        "osmId": "245629333",
+        "streetName": "Avenida Alcântara Machado",
+        "highway": "trunk",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.587157,
+            -23.543192
+          ],
+          [
+            -46.587781,
+            -23.543326
           ]
         ]
       },
@@ -8455,18 +10269,38 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
           [
             -46.582608,
             -23.53556
+          ]
+        ]
+      },
+      {
+        "osmId": "271863019",
+        "streetName": "Avenida Alcântara Machado",
+        "highway": "trunk",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.589389,
+            -23.543786
           ],
           [
-            -46.582657,
-            -23.535366
+            -46.589355,
+            -23.543779
           ],
           [
-            -46.582663,
-            -23.535342
+            -46.589262,
+            -23.54376
           ],
           [
-            -46.582685,
-            -23.535256
+            -46.588363,
+            -23.543586
+          ],
+          [
+            -46.58777,
+            -23.543471
+          ],
+          [
+            -46.587619,
+            -23.543439
           ]
         ]
       },
@@ -8523,14 +10357,6 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
           [
             -46.582768,
             -23.535386
-          ],
-          [
-            -46.582774,
-            -23.535362
-          ],
-          [
-            -46.582797,
-            -23.535272
           ]
         ]
       },
@@ -8584,10 +10410,6 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
         "highway": "trunk",
         "isPrimaryCorridor": false,
         "coordinates": [
-          [
-            -46.582925,
-            -23.535291
-          ],
           [
             -46.5829,
             -23.535385
@@ -8669,10 +10491,6 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
         "isPrimaryCorridor": false,
         "coordinates": [
           [
-            -46.583048,
-            -23.535308
-          ],
-          [
             -46.583023,
             -23.535408
           ],
@@ -8727,6 +10545,22 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
           [
             -46.58095,
             -23.542006
+          ]
+        ]
+      },
+      {
+        "osmId": "463171543",
+        "streetName": "Avenida Salim Farah Maluf (pista Central)",
+        "highway": "trunk",
+        "isPrimaryCorridor": false,
+        "coordinates": [
+          [
+            -46.578909,
+            -23.548926
+          ],
+          [
+            -46.579087,
+            -23.548179
           ]
         ]
       },
@@ -8793,14 +10627,6 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
         "isPrimaryCorridor": false,
         "coordinates": [
           [
-            -46.57243,
-            -23.539588
-          ],
-          [
-            -46.574371,
-            -23.540251
-          ],
-          [
             -46.574783,
             -23.540378
           ],
@@ -8815,66 +10641,6 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
           [
             -46.577649,
             -23.540937
-          ]
-        ]
-      },
-      {
-        "osmId": "781483757",
-        "streetName": "Rua Melo Freire",
-        "highway": "trunk",
-        "isPrimaryCorridor": false,
-        "coordinates": [
-          [
-            -46.571494,
-            -23.539485
-          ],
-          [
-            -46.571304,
-            -23.539456
-          ]
-        ]
-      },
-      {
-        "osmId": "781483758",
-        "streetName": "Rua Melo Freire",
-        "highway": "trunk",
-        "isPrimaryCorridor": false,
-        "coordinates": [
-          [
-            -46.571304,
-            -23.539456
-          ],
-          [
-            -46.571218,
-            -23.539439
-          ],
-          [
-            -46.570418,
-            -23.539309
-          ],
-          [
-            -46.56956,
-            -23.53916
-          ],
-          [
-            -46.568919,
-            -23.539039
-          ]
-        ]
-      },
-      {
-        "osmId": "781483760",
-        "streetName": "Rua Melo Freire",
-        "highway": "trunk",
-        "isPrimaryCorridor": false,
-        "coordinates": [
-          [
-            -46.571059,
-            -23.539266
-          ],
-          [
-            -46.571813,
-            -23.539425
           ]
         ]
       },
@@ -8899,6 +10665,22 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
           [
             -46.579639,
             -23.541686
+          ]
+        ]
+      },
+      {
+        "osmId": "934784501",
+        "streetName": "Avenida Salim Farah Maluf",
+        "highway": "trunk",
+        "isPrimaryCorridor": false,
+        "coordinates": [
+          [
+            -46.579541,
+            -23.547883
+          ],
+          [
+            -46.579483,
+            -23.548154
           ]
         ]
       },
@@ -8975,14 +10757,6 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
           [
             -46.574828,
             -23.540539
-          ],
-          [
-            -46.574168,
-            -23.54032
-          ],
-          [
-            -46.573254,
-            -23.540006
           ]
         ]
       },
@@ -9071,22 +10845,6 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
         ]
       },
       {
-        "osmId": "940862057",
-        "streetName": "Rua Melo Freire",
-        "highway": "trunk",
-        "isPrimaryCorridor": false,
-        "coordinates": [
-          [
-            -46.571813,
-            -23.539425
-          ],
-          [
-            -46.57243,
-            -23.539588
-          ]
-        ]
-      },
-      {
         "osmId": "940862067",
         "streetName": "Avenida Alcântara Machado",
         "highway": "trunk",
@@ -9131,6 +10889,22 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
         ]
       },
       {
+        "osmId": "944019773",
+        "streetName": "Avenida Salim Farah Maluf",
+        "highway": "trunk",
+        "isPrimaryCorridor": false,
+        "coordinates": [
+          [
+            -46.579483,
+            -23.548154
+          ],
+          [
+            -46.579353,
+            -23.548647
+          ]
+        ]
+      },
+      {
         "osmId": "944815352",
         "streetName": "Avenida Salim Farah Maluf",
         "highway": "trunk",
@@ -9147,6 +10921,22 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
           [
             -46.580862,
             -23.542315
+          ]
+        ]
+      },
+      {
+        "osmId": "944868875",
+        "streetName": "Avenida Alcântara Machado",
+        "highway": "trunk",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.587619,
+            -23.543439
+          ],
+          [
+            -46.587035,
+            -23.543327
           ]
         ]
       },
@@ -9243,6 +11033,22 @@ export const CURATED_OOH_GEOMETRIES: readonly OohAsset[] = [
           [
             -46.582008,
             -23.542179
+          ]
+        ]
+      },
+      {
+        "osmId": "980673863",
+        "streetName": "Avenida Alcântara Machado",
+        "highway": "trunk",
+        "isPrimaryCorridor": true,
+        "coordinates": [
+          [
+            -46.587781,
+            -23.543326
+          ],
+          [
+            -46.58923,
+            -23.543602
           ]
         ]
       }

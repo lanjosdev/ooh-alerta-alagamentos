@@ -66,9 +66,9 @@ const CURATED_ASSET_SEEDS: CuratedAssetSeed[] = [
     corridorName: 'Av. Jornalista Roberto Marinho',
     neighborhood: 'Brooklin / Campo Belo',
     zone: 'Zona Sul',
-    latitude: -23.6217,
-    longitude: -46.6869,
-    camera: { center: [-46.6869, -23.6217], zoom: 15.2, bearing: 12 },
+    latitude: -23.61808,
+    longitude: -46.683831,
+    camera: { center: [-46.683831, -23.61808], zoom: 15.2, bearing: 12 },
     aliases: [
       'AVENIDA JORNALISTA ROBERTO MARINHO',
       'AVENIDA ROBERTO MARINHO',
@@ -83,9 +83,9 @@ const CURATED_ASSET_SEEDS: CuratedAssetSeed[] = [
     corridorName: 'Marginal Pinheiros',
     neighborhood: 'Pinheiros / Cidade Jardim',
     zone: 'Zona Oeste',
-    latitude: -23.5885,
-    longitude: -46.6975,
-    camera: { center: [-46.6975, -23.5885], zoom: 15.0, bearing: -14 },
+    latitude: -23.589168,
+    longitude: -46.692788,
+    camera: { center: [-46.692788, -23.589168], zoom: 15.0, bearing: -14 },
     aliases: [
       'MARGINAL PINHEIROS',
       'AVENIDA DAS NACOES UNIDAS',
@@ -100,9 +100,9 @@ const CURATED_ASSET_SEEDS: CuratedAssetSeed[] = [
     corridorName: 'Av. Washington Luís',
     neighborhood: 'Campo Belo',
     zone: 'Zona Sul',
-    latitude: -23.6261,
-    longitude: -46.6564,
-    camera: { center: [-46.6564, -23.6261], zoom: 15.2, bearing: 8 },
+    latitude: -23.625784,
+    longitude: -46.661881,
+    camera: { center: [-46.661881, -23.625784], zoom: 15.2, bearing: 8 },
     aliases: [
       'AVENIDA WASHINGTON LUIS',
       'AEROPORTO DE CONGONHAS',
@@ -117,35 +117,37 @@ const CURATED_ASSET_SEEDS: CuratedAssetSeed[] = [
     corridorName: 'Av. 23 de Maio / Viaduto Jaceguaí',
     neighborhood: 'Centro / Bela Vista',
     zone: 'Centro',
-    latitude: -23.5582,
-    longitude: -46.6433,
-    camera: { center: [-46.6433, -23.5582], zoom: 15.3, bearing: 0 },
+    latitude: -23.556415,
+    longitude: -46.637818,
+    camera: { center: [-46.637818, -23.556415], zoom: 15.3, bearing: 0 },
     aliases: [
       'AVENIDA 23 DE MAIO',
       'AVENIDA VINTE E TRES DE MAIO',
       'VIADUTO JACEGUAI',
     ],
-    overpassNameRegex: '23 de Maio|Jaceguaí|Nove de Julho|Radial Leste|Liberdade',
-    primaryStreetRegex: /23 de maio|jacegua[ií]/i,
+    overpassNameRegex: '23 de Maio|Vinte e Três de Maio|Vinte e Tres de Maio|Jaceguaí|Jaceguai|Nove de Julho|Radial Leste|Liberdade',
+    primaryStreetRegex: /23 de maio|vinte e tr[eê]s de maio|jacegua[ií]/i,
   },
   {
     id: 'marginal-tiete-lapa',
-    name: 'Marginal Tietê — Ponte das Bandeiras',
-    corridorName: 'Marginal Tietê',
-    neighborhood: 'Lapa / Ponte das Bandeiras',
-    zone: 'Zona Norte',
-    latitude: -23.5162,
-    longitude: -46.6285,
-    camera: { center: [-46.6285, -23.5162], zoom: 15.0, bearing: -8 },
+    name: 'Marginal Tietê — Lapa / Ponte do Piqueri',
+    corridorName: 'Marginal Tietê (Lapa)',
+    neighborhood: 'Lapa / Piqueri',
+    zone: 'Zona Oeste',
+    latitude: -23.509412,
+    longitude: -46.703901,
+    camera: { center: [-46.703901, -23.509412], zoom: 15.0, bearing: -8 },
     aliases: [
       'MARGINAL TIETE',
-      'PONTE DAS BANDEIRAS',
-      'AVENIDA ASSIS CHATEAUBRIAND',
+      'PONTE DO PIQUERI',
+      'PONTE DA LAPA',
+      'AVENIDA EMBAIXADOR MACEDO SOARES',
       'AVENIDA OTAVIANO ALVES DE LIMA',
       'AVENIDA PRESIDENTE CASTELO BRANCO',
+      'AVENIDA ERMANO MARCHETTI',
     ],
-    overpassNameRegex: 'Bandeiras|Assis Chateaubriand|Otaviano Alves|Marginal Tietê|Santos Dumont|Tiradentes',
-    primaryStreetRegex: /bandeiras|assis chateaubriand|otaviano alves|marginal tiet[eê]/i,
+    overpassNameRegex: 'Marginal Tietê|Margina Tietê|Embaixador Macedo Soares|Otaviano Alves|Castelo Branco|Ponte do Piqueri|Ermano Marchetti',
+    primaryStreetRegex: /marginal? tiet[eê]|embaixador macedo soares|otaviano alves|castelo branco/i,
   },
   {
     id: 'av-do-estado',
@@ -153,9 +155,9 @@ const CURATED_ASSET_SEEDS: CuratedAssetSeed[] = [
     corridorName: 'Av. do Estado',
     neighborhood: 'Ipiranga / Vila Prudente',
     zone: 'Zona Sudeste',
-    latitude: -23.5745,
-    longitude: -46.6122,
-    camera: { center: [-46.6122, -23.5745], zoom: 15.1, bearing: -12 },
+    latitude: -23.5686,
+    longitude: -46.607784,
+    camera: { center: [-46.607784, -23.5686], zoom: 15.1, bearing: -12 },
     aliases: ['AVENIDA DO ESTADO', 'VIADUTO GRANDE SAO PAULO'],
     overpassNameRegex: 'do Estado|Dom Pedro|Paes de Barros|Almirante Delamare|Junta Patriótica',
     primaryStreetRegex: /do estado|grande s[aã]o paulo/i,
@@ -166,9 +168,9 @@ const CURATED_ASSET_SEEDS: CuratedAssetSeed[] = [
     corridorName: 'Av. Radial Leste',
     neighborhood: 'Mooca / Tatuapé',
     zone: 'Zona Leste',
-    latitude: -23.5415,
-    longitude: -46.5758,
-    camera: { center: [-46.5758, -23.5415], zoom: 15.1, bearing: 4 },
+    latitude: -23.542179,
+    longitude: -46.582008,
+    camera: { center: [-46.582008, -23.542179], zoom: 15.1, bearing: 4 },
     aliases: [
       'AVENIDA RADIAL LESTE',
       'RADIAL LESTE',
@@ -207,64 +209,76 @@ async function fetchAssetFromOverpass(
   seed: CuratedAssetSeed,
   urls: string[],
 ): Promise<CuratedRoadSnapshot[]> {
-  const query = `[out:json][timeout:12];way(around:800,${seed.latitude},${seed.longitude})["name"~"${seed.overpassNameRegex}",i]["highway"];out tags geom;`
+  const minLon = seed.camera.center[0] - BBOX_HALF_DELTA_LON
+  const maxLon = seed.camera.center[0] + BBOX_HALF_DELTA_LON
+  const minLat = seed.camera.center[1] - BBOX_HALF_DELTA_LAT
+  const maxLat = seed.camera.center[1] + BBOX_HALF_DELTA_LAT
+  const query = `[out:json][timeout:25];way(${minLat.toFixed(6)},${minLon.toFixed(6)},${maxLat.toFixed(6)},${maxLon.toFixed(6)})["highway"~"^(motorway|trunk|primary|secondary|tertiary|unclassified)(_link)?$"]["name"];out tags geom;`
   const body = new URLSearchParams({ data: query }).toString()
+  const nameFilterRegex = new RegExp(seed.overpassNameRegex, 'i')
 
   let lastError: unknown = null
 
-  for (const mirrorUrl of urls) {
-    try {
-      const response = await fetch(mirrorUrl, {
-        method: 'POST',
-        headers: {
-          'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
-        },
-        body,
-        signal: AbortSignal.timeout(15_000),
-      })
+  for (let attempt = 1; attempt <= 2; attempt++) {
+    if (attempt > 1) {
+      await new Promise((resolve) => setTimeout(resolve, 2_500))
+    }
 
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status} em ${mirrorUrl}`)
-      }
-
-      const payload = (await response.json()) as OverpassResponse
-      const minLon = seed.camera.center[0] - BBOX_HALF_DELTA_LON
-      const maxLon = seed.camera.center[0] + BBOX_HALF_DELTA_LON
-      const minLat = seed.camera.center[1] - BBOX_HALF_DELTA_LAT
-      const maxLat = seed.camera.center[1] + BBOX_HALF_DELTA_LAT
-
-      const roads: CuratedRoadSnapshot[] = []
-      for (const element of payload.elements) {
-        if (element.type !== 'way' || !element.geometry || element.geometry.length < 2) {
-          continue
-        }
-
-        const rawCoords = element.geometry.map(
-          (node): [number, number] => [node.lon, node.lat],
-        )
-        const clipped = clipCoordinatesToBbox(rawCoords, minLon, minLat, maxLon, maxLat)
-        if (clipped.length < 2) {
-          continue
-        }
-
-        const streetName = element.tags?.name?.trim() || seed.corridorName
-        roads.push({
-          osmId: String(element.id),
-          streetName,
-          highway: element.tags?.highway?.trim() || 'primary',
-          isPrimaryCorridor: seed.primaryStreetRegex.test(
-            streetName.normalize('NFD').replace(/\p{Diacritic}/gu, ''),
-          ),
-          coordinates: clipped,
+    for (const mirrorUrl of urls) {
+      try {
+        const response = await fetch(mirrorUrl, {
+          method: 'POST',
+          headers: {
+            'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
+            'user-agent': 'ooh-alerta-alagamentos/0.1',
+          },
+          body,
+          signal: AbortSignal.timeout(30_000),
         })
-      }
 
-      if (roads.length > 0) {
-        return roads
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status} em ${mirrorUrl}`)
+        }
+
+        const payload = (await response.json()) as OverpassResponse
+
+        const roads: CuratedRoadSnapshot[] = []
+        for (const element of payload.elements) {
+          if (element.type !== 'way' || !element.geometry || element.geometry.length < 2) {
+            continue
+          }
+
+          const streetName = element.tags?.name?.trim() || ''
+          if (!streetName || !nameFilterRegex.test(streetName)) {
+            continue
+          }
+
+          const rawCoords = element.geometry.map(
+            (node): [number, number] => [node.lon, node.lat],
+          )
+          const clipped = clipCoordinatesToBbox(rawCoords, minLon, minLat, maxLon, maxLat)
+          if (clipped.length < 2) {
+            continue
+          }
+
+          roads.push({
+            osmId: String(element.id),
+            streetName,
+            highway: element.tags?.highway?.trim() || 'primary',
+            isPrimaryCorridor: seed.primaryStreetRegex.test(
+              streetName.normalize('NFD').replace(/\p{Diacritic}/gu, ''),
+            ),
+            coordinates: clipped,
+          })
+        }
+
+        if (roads.length > 0) {
+          return roads
+        }
+      } catch (error) {
+        lastError = error
+        console.warn(`Aviso ao consultar ${seed.id} (tentativa ${attempt}) em ${mirrorUrl}:`, error)
       }
-    } catch (error) {
-      lastError = error
-      console.warn(`Aviso ao consultar ${seed.id} em ${mirrorUrl}:`, error)
     }
   }
 
@@ -335,7 +349,7 @@ async function main(): Promise<void> {
     })
 
     console.log(`  -> ${roads.length} trechos OSM capturados para ${seed.id}`)
-    await new Promise((resolve) => setTimeout(resolve, 1_000))
+    await new Promise((resolve) => setTimeout(resolve, 2_000))
   }
 
   const currentDir = path.dirname(fileURLToPath(import.meta.url))
