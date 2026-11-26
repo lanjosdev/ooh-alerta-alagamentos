@@ -228,4 +228,47 @@ describe('MonitoringPage unified 2-route dashboard', () => {
       await screen.findByLabelText(/Peça DOOH 9:16 — Av\. Jornalista Roberto Marinho/i),
     ).toBeInTheDocument()
   })
+
+  it('keeps previous preview visible with Atualizando cena da via pill while switching points', async () => {
+    const user = userEvent.setup()
+
+    vi.mocked(sourcesService.getHealth).mockResolvedValue(mockHealthDataDisabled)
+    vi.mocked(sourcesService.getSourcesStatus).mockResolvedValue(mockSourcesStatus)
+    vi.mocked(alertsService.getCityOverview).mockResolvedValue(mockCityOverview)
+    vi.mocked(playerService.getAssets).mockResolvedValue(mockPlayerAssetsData)
+
+    const deferred: { resolve: ((value: typeof mockPlayerSceneNormal) => void) | null } = {
+      resolve: null,
+    }
+    vi.mocked(playerService.getScene)
+      .mockResolvedValueOnce(mockPlayerSceneCritical)
+      .mockImplementationOnce(
+        () =>
+          new Promise((resolve) => {
+            deferred.resolve = resolve
+          }),
+      )
+
+    renderMonitoringPage()
+
+    expect(
+      await screen.findByLabelText(/Peça DOOH 9:16 — Av\. Jornalista Roberto Marinho/i),
+    ).toBeInTheDocument()
+
+    await user.click(
+      screen.getByRole('button', { name: /Av\. Alcântara Machado \(Radial Leste\)/i }),
+    )
+
+    expect(await screen.findByText('Atualizando cena da via...')).toBeInTheDocument()
+    expect(
+      screen.getByLabelText(/Peça DOOH 9:16 — Av\. Jornalista Roberto Marinho/i),
+    ).toBeInTheDocument()
+
+    deferred.resolve?.(mockPlayerSceneNormal)
+
+    expect(
+      await screen.findByLabelText(/Peça DOOH 9:16 — Av\. Alcântara Machado/i),
+    ).toBeInTheDocument()
+    expect(screen.queryByText('Atualizando cena da via...')).not.toBeInTheDocument()
+  })
 })

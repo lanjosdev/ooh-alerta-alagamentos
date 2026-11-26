@@ -3,6 +3,7 @@ import {
   Code2,
   Copy,
   ExternalLink,
+  Loader2,
   Maximize2,
   MonitorPlay,
   Palette,
@@ -47,6 +48,7 @@ export interface PointInspectorStageProps {
   scenario: ScenarioQueryParams
   scene: PlayerSceneData | null
   isSceneLoading: boolean
+  isSceneUpdating?: boolean
   sceneError: unknown
   onRetryScene: () => void
   brandConfig: PlayerBrandConfig
@@ -77,6 +79,7 @@ export function PointInspectorStage({
   scenario,
   scene,
   isSceneLoading,
+  isSceneUpdating = false,
   sceneError,
   onRetryScene,
   brandConfig,
@@ -402,8 +405,20 @@ export function PointInspectorStage({
                 </Button>
               </div>
             ) : (
-              <div className="mx-auto max-w-[390px]">
-                <PlayerCanvas scene={scene} format="portrait" brandConfig={brandConfig} />
+              <div className="relative mx-auto max-w-[390px]">
+                {isSceneUpdating ? (
+                  <div
+                    role="status"
+                    aria-live="polite"
+                    className="pointer-events-none absolute top-3 left-1/2 z-20 inline-flex -translate-x-1/2 items-center gap-1.5 rounded-full border border-border bg-card/95 px-3 py-1 text-[11px] font-semibold text-foreground shadow-md backdrop-blur-xs"
+                  >
+                    <Loader2 className="h-3 w-3 animate-spin text-primary" aria-hidden="true" />
+                    <span>Atualizando cena da via...</span>
+                  </div>
+                ) : null}
+                <div className={cn(isSceneUpdating ? 'opacity-75 transition-opacity' : undefined)}>
+                  <PlayerCanvas scene={scene} format="portrait" brandConfig={brandConfig} />
+                </div>
               </div>
             )}
           </TabsContent>

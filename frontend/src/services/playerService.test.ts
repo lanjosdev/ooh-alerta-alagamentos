@@ -157,6 +157,7 @@ describe('playerService', () => {
 
     expect(getSpy).toHaveBeenNthCalledWith(1, '/player/scene', {
       params: { assetId: 'av-roberto-marinho' },
+      timeout: 22000,
     })
     expect(playerSceneSchema.safeParse(assetScene).success).toBe(true)
 
@@ -167,6 +168,7 @@ describe('playerService', () => {
 
     expect(getSpy).toHaveBeenNthCalledWith(2, '/player/scene', {
       params: { lat: -23.5614, lon: -46.6559, date: '2025-01-24', time: '20:30' },
+      timeout: 22000,
     })
     expect(playerSceneSchema.safeParse(coordsScene).success).toBe(true)
   })

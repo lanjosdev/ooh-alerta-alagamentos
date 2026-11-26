@@ -223,6 +223,7 @@ export function MonitoringPage() {
             scenario={scenario}
             scene={sceneQuery.data ?? null}
             isSceneLoading={sceneQuery.isPending}
+            isSceneUpdating={sceneQuery.isFetching && !sceneQuery.isPending}
             sceneError={sceneQuery.error}
             onRetryScene={() => void sceneQuery.refetch()}
             brandConfig={brandConfig}

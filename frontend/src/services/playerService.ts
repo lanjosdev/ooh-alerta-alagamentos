@@ -9,6 +9,8 @@ import type {
   PlayerTarget,
 } from '@/types/player'
 
+const PLAYER_SCENE_MIN_TIMEOUT_MS = 22_000
+
 function compactPlayerScenarioParams(scenario?: ScenarioQueryParams): Record<string, string> {
   const params: Record<string, string> = {}
 
@@ -53,8 +55,10 @@ export const playerService = Object.freeze({
         ? { assetId: target.assetId, ...scenarioParams }
         : { lat: target.lat, lon: target.lon, ...scenarioParams }
 
+    const timeout = Math.max(getValidatedEnv().VITE_API_TIMEOUT_MS, PLAYER_SCENE_MIN_TIMEOUT_MS)
     const response = await apiClient.get<ApiResponse<PlayerSceneData>>('/player/scene', {
       params,
+      timeout,
     })
     return unwrapApiResponse(response)
   },
