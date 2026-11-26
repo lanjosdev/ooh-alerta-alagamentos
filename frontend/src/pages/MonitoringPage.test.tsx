@@ -271,4 +271,52 @@ describe('MonitoringPage unified 2-route dashboard', () => {
     ).toBeInTheDocument()
     expect(screen.queryByText('Atualizando cena da via...')).not.toBeInTheDocument()
   })
+
+  it('uses vector-tile street label as Preview OOH fallback when backend returns generic region name', async () => {
+    vi.mocked(sourcesService.getHealth).mockResolvedValue(mockHealthDataDisabled)
+    vi.mocked(sourcesService.getSourcesStatus).mockResolvedValue(mockSourcesStatus)
+    vi.mocked(alertsService.getCityOverview).mockResolvedValue(mockCityOverview)
+    vi.mocked(playerService.getAssets).mockResolvedValue(mockPlayerAssetsData)
+
+    const genericFallbackScene = {
+      ...mockPlayerSceneCoordinates,
+      decision: {
+        ...mockPlayerSceneCoordinates.decision,
+        location: {
+          ...mockPlayerSceneCoordinates.decision.location,
+          name: 'São Paulo — próximo a Mooca',
+        },
+      },
+      editorial: {
+        ...mockPlayerSceneCoordinates.editorial,
+        corridorName: 'São Paulo — próximo a Mooca',
+      },
+    }
+
+    vi.mocked(playerService.getScene)
+      .mockResolvedValueOnce(mockPlayerSceneCritical)
+      .mockResolvedValueOnce(genericFallbackScene)
+
+    renderMonitoringPage()
+
+    expect(
+      await screen.findByLabelText(/Peça DOOH 9:16 — Av\. Jornalista Roberto Marinho/i),
+    ).toBeInTheDocument()
+
+    const map = maplibreMockState.maps[0]
+    map.queryRenderedFeatures.mockReturnValueOnce([
+      {
+        layer: { id: 'highway-name-major' },
+        sourceLayer: 'transportation_name',
+        properties: { name: 'Viaduto Alcântara Machado' },
+      },
+    ])
+
+    maplibreMockState.triggerMapClick({ lng: -46.605, lat: -23.548 }, { x: 120, y: 140 })
+
+    expect(
+      await screen.findByLabelText(/Peça DOOH 9:16 — Viaduto Alcântara Machado/i),
+    ).toBeInTheDocument()
+    expect(screen.queryByText('São Paulo — próximo a Mooca')).not.toBeInTheDocument()
+  })
 })

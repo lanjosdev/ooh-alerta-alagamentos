@@ -93,6 +93,63 @@ function buildHoverTooltipContent(info: MarkerTooltipInfo): HTMLDivElement {
   return container
 }
 
+function extractStreetNameAtClickPoint(
+  map: MapLibreMap,
+  point: { x: number; y: number },
+): string | undefined {
+  if (typeof map.queryRenderedFeatures !== 'function') {
+    return undefined
+  }
+
+  let features: ReturnType<MapLibreMap['queryRenderedFeatures']>
+  try {
+    features = map.queryRenderedFeatures([
+      [point.x - 14, point.y - 14],
+      [point.x + 14, point.y + 14],
+    ])
+  } catch {
+    return undefined
+  }
+
+  for (const feature of features) {
+    const layerId = (feature.layer?.id ?? '').toLowerCase()
+    const sourceLayer = (feature.sourceLayer ?? '').toLowerCase()
+    const isRoadFeature =
+      sourceLayer === 'transportation_name' ||
+      sourceLayer === 'transportation' ||
+      /highway|road|street|transport/i.test(layerId)
+
+    if (!isRoadFeature) {
+      continue
+    }
+
+    const properties = feature.properties as Record<string, unknown> | undefined
+    if (!properties) {
+      continue
+    }
+
+    const rawCandidate =
+      typeof properties['name:pt'] === 'string'
+        ? properties['name:pt']
+        : typeof properties.name === 'string'
+          ? properties.name
+          : typeof properties['name:latin'] === 'string'
+            ? properties['name:latin']
+            : null
+
+    if (!rawCandidate) {
+      continue
+    }
+
+    const trimmed = rawCandidate.trim()
+    if (trimmed.length >= 3 && !/^via sem nome$/i.test(trimmed)) {
+      return trimmed
+    }
+  }
+
+  return undefined
+}
+
 function buildMarkerElement({
   label,
   pillLabel,
@@ -217,9 +274,11 @@ export function ExplorerMapPanel({
 
     map.on('click', (event) => {
       hoverPopup.remove()
+      const streetLabel = event.point ? extractStreetNameAtClickPoint(map, event.point) : undefined
       onSelectCoordinatesRef.current({
         lat: Number(event.lngLat.lat.toFixed(6)),
         lon: Number(event.lngLat.lng.toFixed(6)),
+        ...(streetLabel ? { label: streetLabel } : {}),
       })
     })
 

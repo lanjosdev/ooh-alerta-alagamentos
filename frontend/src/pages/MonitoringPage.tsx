@@ -76,6 +76,50 @@ export function MonitoringPage() {
 
   const sceneQuery = usePlayerScene(effectivePlayerTarget, scenario)
 
+  const effectiveScene = useMemo(() => {
+    if (!sceneQuery.data) {
+      return null
+    }
+
+    const isGenericCorridorName =
+      sceneQuery.data.editorial.corridorName === sceneQuery.data.decision.location.name
+
+    if (
+      !sceneQuery.isPlaceholderData &&
+      sceneQuery.data.targetKind === 'coordinates' &&
+      isGenericCorridorName &&
+      effectivePlayerTarget?.kind === 'coordinates' &&
+      effectivePlayerTarget.label
+    ) {
+      return {
+        ...sceneQuery.data,
+        editorial: {
+          ...sceneQuery.data.editorial,
+          corridorName: effectivePlayerTarget.label,
+        },
+      }
+    }
+
+    return sceneQuery.data
+  }, [effectivePlayerTarget, sceneQuery.data, sceneQuery.isPlaceholderData])
+
+  const explorerSelectedTarget: PlayerTarget | null = useMemo(() => {
+    if (
+      effectivePlayerTarget?.kind === 'coordinates' &&
+      !effectivePlayerTarget.label &&
+      !sceneQuery.isPlaceholderData &&
+      sceneQuery.data?.targetKind === 'coordinates' &&
+      sceneQuery.data.editorial.corridorName !== sceneQuery.data.decision.location.name
+    ) {
+      return {
+        ...effectivePlayerTarget,
+        label: sceneQuery.data.editorial.corridorName,
+      }
+    }
+
+    return effectivePlayerTarget
+  }, [effectivePlayerTarget, sceneQuery.data, sceneQuery.isPlaceholderData])
+
   const effectiveAlertTarget: AlertTarget | null = useMemo(() => {
     if (selectedRegionId && effectivePlayerTarget?.kind === 'coordinates') {
       return { kind: 'region', regionId: selectedRegionId }
@@ -204,7 +248,7 @@ export function MonitoringPage() {
             totalAssetsCount={allAssets.length}
             regions={filteredRegions}
             totalRegionsCount={allRegions.length || 12}
-            selectedTarget={effectivePlayerTarget}
+            selectedTarget={explorerSelectedTarget}
             selectedRegionId={selectedRegionId}
             zoneFilter={zoneFilter}
             onChangeZoneFilter={setZoneFilter}
@@ -221,7 +265,7 @@ export function MonitoringPage() {
             playerTarget={effectivePlayerTarget}
             alertTarget={effectiveAlertTarget}
             scenario={scenario}
-            scene={sceneQuery.data ?? null}
+            scene={effectiveScene}
             isSceneLoading={sceneQuery.isPending}
             isSceneUpdating={sceneQuery.isFetching && !sceneQuery.isPending}
             sceneError={sceneQuery.error}

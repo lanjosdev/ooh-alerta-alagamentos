@@ -16,6 +16,7 @@ export interface MockMapInstance {
   getCenter: ReturnType<typeof vi.fn>
   getZoom: ReturnType<typeof vi.fn>
   getContainer: ReturnType<typeof vi.fn>
+  queryRenderedFeatures: ReturnType<typeof vi.fn>
   triggerRepaint: ReturnType<typeof vi.fn>
 }
 
@@ -48,7 +49,9 @@ export const maplibreMockState = {
   overlays: [] as MockOverlayInstance[],
   markers: [] as MockMarkerInstance[],
   popups: [] as MockPopupInstance[],
-  clickHandlers: [] as Array<(event: { lngLat: { lng: number; lat: number } }) => void>,
+  clickHandlers: [] as Array<
+    (event: { lngLat: { lng: number; lat: number }; point: { x: number; y: number } }) => void
+  >,
   loadHandlers: [] as Array<() => void>,
   overlayPropsHistory: [] as Array<Record<string, unknown>>,
   reset() {
@@ -60,9 +63,12 @@ export const maplibreMockState = {
     this.loadHandlers = []
     this.overlayPropsHistory = []
   },
-  triggerMapClick(lngLat: { lng: number; lat: number }) {
+  triggerMapClick(
+    lngLat: { lng: number; lat: number },
+    point: { x: number; y: number } = { x: 100, y: 100 },
+  ) {
     for (const handler of this.clickHandlers) {
-      handler({ lngLat })
+      handler({ lngLat, point })
     }
   },
   triggerMapLoad() {
@@ -83,7 +89,10 @@ export function createMapLibreModuleMock() {
     on = vi.fn((eventName: string, handler: (...args: unknown[]) => void) => {
       if (eventName === 'click') {
         maplibreMockState.clickHandlers.push(
-          handler as (event: { lngLat: { lng: number; lat: number } }) => void,
+          handler as (event: {
+            lngLat: { lng: number; lat: number }
+            point: { x: number; y: number }
+          }) => void,
         )
       }
       if (eventName === 'load') {
@@ -105,6 +114,7 @@ export function createMapLibreModuleMock() {
     getCenter = vi.fn(() => ({ lng: -46.6333, lat: -23.5505 }))
     getZoom = vi.fn(() => 11.2)
     getContainer = vi.fn(() => this.container)
+    queryRenderedFeatures = vi.fn(() => [])
     triggerRepaint = vi.fn()
   }
 

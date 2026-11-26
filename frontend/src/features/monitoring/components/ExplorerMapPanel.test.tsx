@@ -240,4 +240,26 @@ describe('ExplorerMapPanel', () => {
     expect(customPopup?.textContent).toContain('Avenida Paulista')
     expect(customPopup?.textContent).toContain('-23.5614, -46.6559')
   })
+
+  it('extracts street name from vector tiles via queryRenderedFeatures on free click', () => {
+    const onSelectCoordinates = vi.fn()
+    renderExplorerPanel({ onSelectCoordinates })
+
+    const map = maplibreMockState.maps[0]
+    map.queryRenderedFeatures.mockReturnValueOnce([
+      {
+        layer: { id: 'highway-name-major' },
+        sourceLayer: 'transportation_name',
+        properties: { name: 'Viaduto Alcântara Machado' },
+      },
+    ])
+
+    maplibreMockState.triggerMapClick({ lng: -46.605, lat: -23.548 }, { x: 120, y: 140 })
+
+    expect(onSelectCoordinates).toHaveBeenCalledWith({
+      lat: -23.548,
+      lon: -46.605,
+      label: 'Viaduto Alcântara Machado',
+    })
+  })
 })
