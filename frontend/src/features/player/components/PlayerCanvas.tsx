@@ -99,6 +99,10 @@ export function PlayerCanvas({
   const accentVars = buildPlayerAccentCssVars(safeBrand.accent)
   const severityMeta = getSeverityMeta(scene.decision.severityLevel)
   const isNormal = scene.decision.severityLevel === 0
+  const targetPin = {
+    coordinates: scene.camera.center,
+    label: scene.targetKind === 'asset' ? 'VOCÊ ESTÁ AQUI' : 'PONTO ALVO',
+  }
 
   if (format === 'landscape') {
     return (
@@ -177,6 +181,7 @@ export function PlayerCanvas({
             roads={scene.roads}
             severityLevel={scene.decision.severityLevel}
             format="landscape"
+            targetPin={targetPin}
           />
           <TelemetryBadgeCard scene={scene} />
         </div>
@@ -234,6 +239,7 @@ export function PlayerCanvas({
           roads={scene.roads}
           severityLevel={scene.decision.severityLevel}
           format="portrait"
+          targetPin={targetPin}
         />
         <TelemetryBadgeCard scene={scene} compact />
       </div>

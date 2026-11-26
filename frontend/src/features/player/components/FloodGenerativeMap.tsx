@@ -1,7 +1,7 @@
 import { Layer, LayerExtension } from '@deck.gl/core'
 import { PathLayer } from '@deck.gl/layers'
 import { MapboxOverlay } from '@deck.gl/mapbox'
-import { Map as MapLibreMap } from 'maplibre-gl'
+import { Map as MapLibreMap, Marker } from 'maplibre-gl'
 import { useEffect, useMemo, useRef } from 'react'
 import {
   createPlayerBwStyle,
@@ -167,12 +167,42 @@ function buildFloodLayers(
   ]
 }
 
+export interface PlayerTargetPin {
+  coordinates: [number, number]
+  label: string
+}
+
 export interface FloodGenerativeMapProps {
   camera: PlayerCamera
   roads: RoadFloodFeatureCollection
   severityLevel: SeverityLevel
   format: PlayerFormat
+  targetPin?: PlayerTargetPin
   className?: string
+}
+
+function buildPlayerTargetPinElement(label: string): HTMLDivElement {
+  const root = document.createElement('div')
+  root.className = 'player-target-pin-root'
+  root.setAttribute('role', 'img')
+  root.setAttribute('aria-label', label)
+
+  const pin = document.createElement('div')
+  pin.className = 'player-target-pin'
+
+  const dot = document.createElement('span')
+  dot.className = 'player-target-pin__dot'
+  dot.setAttribute('aria-hidden', 'true')
+
+  const badge = document.createElement('span')
+  badge.className = 'player-target-pin__label'
+  badge.textContent = label
+
+  pin.appendChild(dot)
+  pin.appendChild(badge)
+  root.appendChild(pin)
+
+  return root
 }
 
 export function FloodGenerativeMap({
@@ -180,12 +210,18 @@ export function FloodGenerativeMap({
   roads,
   severityLevel,
   format,
+  targetPin,
   className,
 }: FloodGenerativeMapProps) {
   const containerRef = useRef<HTMLDivElement | null>(null)
   const mapRef = useRef<MapLibreMap | null>(null)
   const overlayRef = useRef<MapboxOverlay | null>(null)
+  const targetMarkerRef = useRef<Marker | null>(null)
   const rafIdRef = useRef<number | null>(null)
+
+  const targetLon = targetPin?.coordinates[0]
+  const targetLat = targetPin?.coordinates[1]
+  const targetLabel = targetPin?.label
 
   const activeFloodFeatures = useMemo(
     () => roads.features.filter((feature) => feature.properties.riskIntensity > 0),
@@ -228,6 +264,8 @@ export function FloodGenerativeMap({
         rafIdRef.current = null
       }
       resizeObserver.disconnect()
+      targetMarkerRef.current?.remove()
+      targetMarkerRef.current = null
       try {
         map.removeControl(overlay)
       } catch {
@@ -241,6 +279,25 @@ export function FloodGenerativeMap({
     // Inicialização única do contexto WebGL; câmera e camadas são atualizadas nos efeitos abaixo.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  useEffect(() => {
+    const map = mapRef.current
+    if (!map) {
+      return
+    }
+
+    targetMarkerRef.current?.remove()
+    targetMarkerRef.current = null
+
+    if (targetLon !== undefined && targetLat !== undefined && targetLabel) {
+      targetMarkerRef.current = new Marker({
+        element: buildPlayerTargetPinElement(targetLabel),
+        anchor: 'center',
+      })
+        .setLngLat([targetLon, targetLat])
+        .addTo(map)
+    }
+  }, [targetLat, targetLabel, targetLon])
 
   useEffect(() => {
     const map = mapRef.current

@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import {
+  mockPlayerSceneCoordinates,
   mockPlayerSceneCritical,
   mockPlayerSceneHistorical,
   mockPlayerSceneNormal,
@@ -43,6 +44,7 @@ describe('PlayerCanvas', () => {
     expect(screen.getByText('Via com bloqueio por alagamento')).toBeInTheDocument()
     expect(screen.getByText('- TEMPO REAL -')).toBeInTheDocument()
     expect(screen.getByText('ATUALIZADO AGORA')).toBeInTheDocument()
+    expect(screen.getByText('VOCÊ ESTÁ AQUI')).toBeInTheDocument()
   })
 
   it('renders 16:9 landscape split horizontal with historical REPLAY seal and normal state note', () => {
@@ -72,5 +74,17 @@ describe('PlayerCanvas', () => {
     expect(
       screen.getByText('Em produção, este ponto exibirá a campanha normal.'),
     ).toBeInTheDocument()
+  })
+
+  it('renders PONTO ALVO label in free-coordinate scenes', () => {
+    render(
+      <PlayerCanvas
+        scene={mockPlayerSceneCoordinates}
+        format="portrait"
+        brandConfig={{ brand: 'Alerta OOH', tag: 'Monitoramento Urbano', accent: '0057FF' }}
+      />,
+    )
+
+    expect(screen.getByText('PONTO ALVO')).toBeInTheDocument()
   })
 })

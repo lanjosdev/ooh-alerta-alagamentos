@@ -1,5 +1,5 @@
 import { LocateFixed, MapPin, Search, X } from 'lucide-react'
-import { Map as MapLibreMap, Marker } from 'maplibre-gl'
+import { Map as MapLibreMap, Marker, NavigationControl } from 'maplibre-gl'
 import { useEffect, useRef, useState } from 'react'
 import { EmptyState } from '@/components/patterns/EmptyState'
 import { QueryErrorAlert } from '@/components/patterns/QueryErrorAlert'
@@ -42,26 +42,55 @@ export interface ExplorerMapPanelProps {
   onSelectCoordinates: (coords: { lat: number; lon: number; label?: string }) => void
 }
 
-function buildMarkerElement(
-  label: string,
-  severityClassName: string,
-  isSelected: boolean,
-  onClick: () => void,
-): HTMLButtonElement {
-  const button = document.createElement('button')
-  button.type = 'button'
-  button.className = cn(
-    'ooh-map-marker cursor-pointer',
+interface MarkerElements {
+  root: HTMLButtonElement
+  dot: HTMLSpanElement
+}
+
+interface BuildMarkerOptions {
+  label: string
+  severityClassName: string
+  isSelected: boolean
+  isCustom?: boolean
+  onClick?: () => void
+}
+
+function buildMarkerElement({
+  label,
+  severityClassName,
+  isSelected,
+  isCustom = false,
+  onClick,
+}: BuildMarkerOptions): MarkerElements {
+  const root = document.createElement('button')
+  root.type = 'button'
+  root.className = cn(
+    'ooh-map-marker-root',
+    isSelected ? 'ooh-map-marker-root--selected' : undefined,
+    isCustom ? 'ooh-map-marker-root--custom' : undefined,
+  )
+  root.setAttribute('aria-label', label)
+  root.title = label
+  if (isCustom) {
+    root.tabIndex = -1
+  }
+  if (onClick) {
+    root.addEventListener('click', (event) => {
+      event.stopPropagation()
+      onClick()
+    })
+  }
+
+  const dot = document.createElement('span')
+  dot.setAttribute('aria-hidden', 'true')
+  dot.className = cn(
+    'ooh-map-marker',
     severityClassName,
     isSelected ? 'ooh-map-marker--selected' : undefined,
   )
-  button.setAttribute('aria-label', label)
-  button.title = label
-  button.addEventListener('click', (event) => {
-    event.stopPropagation()
-    onClick()
-  })
-  return button
+  root.appendChild(dot)
+
+  return { root, dot }
 }
 
 export function ExplorerMapPanel({
@@ -83,7 +112,10 @@ export function ExplorerMapPanel({
 }: ExplorerMapPanelProps) {
   const mapContainerRef = useRef<HTMLDivElement | null>(null)
   const mapRef = useRef<MapLibreMap | null>(null)
-  const markersRef = useRef<Marker[]>([])
+  const baseMarkersRef = useRef<
+    Map<string, { marker: Marker; root: HTMLButtonElement; dot: HTMLSpanElement }>
+  >(new Map())
+  const customMarkerRef = useRef<Marker | null>(null)
   const onSelectCoordinatesRef = useRef(onSelectCoordinates)
   const onSelectAssetRef = useRef(onSelectAsset)
   const onSelectRegionRef = useRef(onSelectRegion)
@@ -106,6 +138,7 @@ export function ExplorerMapPanel({
       return
     }
 
+    const baseMarkers = baseMarkersRef.current
     const map = new MapLibreMap({
       container,
       style: EXPLORER_MAP_STYLE_URL,
@@ -113,6 +146,8 @@ export function ExplorerMapPanel({
       zoom: SP_DEFAULT_ZOOM,
       attributionControl: false,
     })
+
+    map.addControl(new NavigationControl({ showCompass: false }), 'top-right')
 
     map.on('click', (event) => {
       onSelectCoordinatesRef.current({
@@ -130,10 +165,12 @@ export function ExplorerMapPanel({
 
     return () => {
       resizeObserver.disconnect()
-      for (const marker of markersRef.current) {
-        marker.remove()
+      for (const entry of baseMarkers.values()) {
+        entry.marker.remove()
       }
-      markersRef.current = []
+      baseMarkers.clear()
+      customMarkerRef.current?.remove()
+      customMarkerRef.current = null
       map.remove()
       mapRef.current = null
     }
@@ -145,56 +182,80 @@ export function ExplorerMapPanel({
       return
     }
 
-    for (const marker of markersRef.current) {
-      marker.remove()
+    for (const entry of baseMarkersRef.current.values()) {
+      entry.marker.remove()
     }
-    markersRef.current = []
+    baseMarkersRef.current.clear()
 
     if (activeLayer === 'assets') {
       for (const asset of assets) {
         const meta = getSeverityMeta(asset.severityLevel)
-        const isSelected =
-          selectedTarget?.kind === 'asset' && selectedTarget.assetId === asset.id
-        const element = buildMarkerElement(
-          `${asset.corridorName} (${meta.label})`,
-          meta.markerClassName,
-          isSelected,
-          () => onSelectAssetRef.current(asset.id),
-        )
-        const marker = new Marker({ element })
+        const { root, dot } = buildMarkerElement({
+          label: `${asset.corridorName} (${meta.label})`,
+          severityClassName: meta.markerClassName,
+          isSelected: false,
+          onClick: () => onSelectAssetRef.current(asset.id),
+        })
+        const marker = new Marker({ element: root, anchor: 'center' })
           .setLngLat([asset.longitude, asset.latitude])
           .addTo(map)
-        markersRef.current.push(marker)
+        baseMarkersRef.current.set(asset.id, { marker, root, dot })
       }
     } else {
       for (const region of regions) {
         const meta = getSeverityMeta(region.severityLevel)
-        const isSelected = selectedRegionId === region.location.id
-        const element = buildMarkerElement(
-          `${region.location.name} (${meta.label})`,
-          meta.markerClassName,
-          isSelected,
-          () => onSelectRegionRef.current(region),
-        )
-        const marker = new Marker({ element })
+        const { root, dot } = buildMarkerElement({
+          label: `${region.location.name} (${meta.label})`,
+          severityClassName: meta.markerClassName,
+          isSelected: false,
+          onClick: () => onSelectRegionRef.current(region),
+        })
+        const marker = new Marker({ element: root, anchor: 'center' })
           .setLngLat([region.location.longitude, region.location.latitude])
           .addTo(map)
-        markersRef.current.push(marker)
+        baseMarkersRef.current.set(region.location.id, { marker, root, dot })
       }
     }
+  }, [activeLayer, assets, regions])
 
-    if (selectedTarget?.kind === 'coordinates') {
-      const customElement = buildMarkerElement(
-        selectedTarget.label ??
+  useEffect(() => {
+    const map = mapRef.current
+    if (!map) {
+      return
+    }
+
+    const selectedBaseId =
+      activeLayer === 'assets'
+        ? selectedTarget?.kind === 'asset'
+          ? selectedTarget.assetId
+          : null
+        : selectedRegionId
+
+    for (const [id, entry] of baseMarkersRef.current.entries()) {
+      const isSelected = selectedBaseId === id
+      entry.root.classList.toggle('ooh-map-marker-root--selected', isSelected)
+      entry.dot.classList.toggle('ooh-map-marker--selected', isSelected)
+    }
+
+    customMarkerRef.current?.remove()
+    customMarkerRef.current = null
+
+    const shouldShowCustomMarker =
+      selectedTarget?.kind === 'coordinates' &&
+      !(activeLayer === 'regions' && selectedRegionId !== null)
+
+    if (shouldShowCustomMarker && selectedTarget.kind === 'coordinates') {
+      const { root } = buildMarkerElement({
+        label:
+          selectedTarget.label ??
           `Ponto selecionado (${selectedTarget.lat.toFixed(4)}, ${selectedTarget.lon.toFixed(4)})`,
-        'ooh-map-marker--custom',
-        true,
-        () => {},
-      )
-      const customMarker = new Marker({ element: customElement })
+        severityClassName: 'ooh-map-marker--custom',
+        isSelected: true,
+        isCustom: true,
+      })
+      customMarkerRef.current = new Marker({ element: root, anchor: 'center' })
         .setLngLat([selectedTarget.lon, selectedTarget.lat])
         .addTo(map)
-      markersRef.current.push(customMarker)
     }
   }, [activeLayer, assets, regions, selectedRegionId, selectedTarget])
 
@@ -417,7 +478,7 @@ export function ExplorerMapPanel({
           </button>
         </div>
 
-        <div className="absolute top-3 right-3 z-10">
+        <div className="absolute top-3 right-13 z-10">
           <Button
             type="button"
             size="sm"

@@ -20,6 +20,7 @@ export interface MockMapInstance {
 }
 
 export interface MockMarkerInstance {
+  options?: { element?: HTMLElement; anchor?: string }
   setLngLat: ReturnType<typeof vi.fn>
   addTo: ReturnType<typeof vi.fn>
   remove: ReturnType<typeof vi.fn>
@@ -106,8 +107,10 @@ export function createMapLibreModuleMock() {
   })
 
   class MockMarker {
+    options?: { element?: HTMLElement; anchor?: string }
     private element: HTMLElement
-    constructor(options?: { element?: HTMLElement }) {
+    constructor(options?: { element?: HTMLElement; anchor?: string }) {
+      this.options = options
       this.element = options?.element ?? document.createElement('div')
     }
     setLngLat = vi.fn(() => this)
@@ -126,7 +129,7 @@ export function createMapLibreModuleMock() {
 
   const MarkerConstructor = vi.fn(function (
     this: unknown,
-    options?: { element?: HTMLElement },
+    options?: { element?: HTMLElement; anchor?: string },
   ): MockMarkerInstance {
     const marker = new MockMarker(options)
     maplibreMockState.markers.push(marker)

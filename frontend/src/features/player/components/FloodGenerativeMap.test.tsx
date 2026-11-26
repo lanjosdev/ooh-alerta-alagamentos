@@ -63,4 +63,32 @@ describe('FloodGenerativeMap', () => {
     const latestProps = maplibreMockState.overlayPropsHistory.at(-1) as { layers?: unknown[] }
     expect(latestProps.layers).toEqual([])
   })
+
+  it('mounts discrete targetPin marker at center and removes it on unmount', () => {
+    const { container, unmount } = render(
+      <FloodGenerativeMap
+        camera={mockPlayerSceneCritical.camera}
+        roads={mockPlayerSceneCritical.roads}
+        severityLevel={3}
+        format="portrait"
+        targetPin={{
+          coordinates: mockPlayerSceneCritical.camera.center,
+          label: 'VOCÊ ESTÁ AQUI',
+        }}
+      />,
+    )
+
+    expect(maplibreMockState.markers).toHaveLength(1)
+    const targetMarker = maplibreMockState.markers[0]
+    expect(targetMarker.options?.anchor).toBe('center')
+    expect(targetMarker.setLngLat).toHaveBeenCalledWith(mockPlayerSceneCritical.camera.center)
+
+    const root = container.querySelector('.player-target-pin-root')
+    expect(root).not.toBeNull()
+    expect(root?.querySelector('.player-target-pin__dot')).not.toBeNull()
+    expect(screen.getByText('VOCÊ ESTÁ AQUI')).toBeInTheDocument()
+
+    unmount()
+    expect(targetMarker.remove).toHaveBeenCalled()
+  })
 })

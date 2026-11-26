@@ -157,6 +157,36 @@
   }
 }
 
+.ooh-map-marker-root {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  outline: none;
+}
+
+.ooh-map-marker-root:focus-visible .ooh-map-marker {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.ooh-map-marker-root:hover .ooh-map-marker {
+  transform: scale(1.12);
+}
+
+.ooh-map-marker-root--selected {
+  z-index: 2;
+}
+
+.ooh-map-marker-root--custom {
+  z-index: 3;
+  pointer-events: none;
+  cursor: default;
+}
+
 .ooh-map-marker {
   position: relative;
   display: flex;
@@ -168,10 +198,6 @@
   border: 2.5px solid var(--card);
   box-shadow: 0 3px 10px oklch(0.195 0.02 257.417 / 0.28);
   transition: transform 150ms ease, box-shadow 150ms ease;
-}
-
-.ooh-map-marker:hover {
-  transform: scale(1.1);
 }
 
 .ooh-map-marker--0 {
@@ -218,6 +244,7 @@
   inset: -6px;
   border-radius: 9999px;
   border: 2px solid var(--ring);
+  pointer-events: none;
   animation: ooh-marker-pulse 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
 }
 
@@ -231,4 +258,66 @@
     transform: scale(1.45);
     opacity: 0;
   }
+}
+
+.player-target-pin-root {
+  pointer-events: none;
+  z-index: 2;
+}
+
+.player-target-pin {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 12px;
+  height: 12px;
+}
+
+.player-target-pin::after {
+  content: '';
+  position: absolute;
+  inset: -5px;
+  border-radius: 9999px;
+  border: 1.5px solid var(--player-accent);
+  opacity: 0.6;
+  pointer-events: none;
+  animation: ooh-marker-pulse 2.2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .player-target-pin::after {
+    animation: none;
+  }
+}
+
+.player-target-pin__dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 9999px;
+  background-color: var(--player-accent);
+  border: 2px solid var(--player-paper);
+  box-shadow:
+    0 0 0 3px var(--player-accent-soft),
+    0 2px 6px oklch(0.16 0.015 256 / 0.35);
+}
+
+.player-target-pin__label {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  padding: 2px 6px;
+  border-radius: 9999px;
+  background-color: var(--player-telemetry-bg);
+  color: var(--player-ink);
+  border: 1px solid var(--player-rule);
+  font-size: 9px;
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  box-shadow: 0 2px 6px oklch(0.16 0.015 256 / 0.16);
+  backdrop-filter: blur(4px);
 }

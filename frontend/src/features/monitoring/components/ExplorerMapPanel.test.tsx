@@ -124,4 +124,74 @@ describe('ExplorerMapPanel', () => {
       lon: -46.6559,
     })
   })
+
+  it('uses isolated root wrapper with anchor center, adds NavigationControl, and keeps visual classes on inner span', () => {
+    renderExplorerPanel()
+
+    const map = maplibreMockState.maps[0]
+    expect(map.addControl).toHaveBeenCalledWith(expect.any(Object), 'top-right')
+
+    const assetButton = screen.getByRole('button', { name: /Av\. Jornalista Roberto Marinho/i })
+    expect(assetButton).toHaveClass('ooh-map-marker-root', 'ooh-map-marker-root--selected')
+    expect(assetButton).not.toHaveClass('ooh-map-marker')
+
+    const innerDot = assetButton.querySelector('span')
+    expect(innerDot).not.toBeNull()
+    expect(innerDot).toHaveClass('ooh-map-marker', 'ooh-map-marker--selected')
+
+    expect(maplibreMockState.markers.length).toBeGreaterThan(0)
+    for (const marker of maplibreMockState.markers) {
+      expect(marker.options?.anchor).toBe('center')
+    }
+  })
+
+  it('suppresses duplicate custom pin in Regiões SP mode when a region is selected, and shows it on free coordinate selection', () => {
+    const selectedRegion = mockCityOverview.regions[0]
+    const { container, rerender } = renderExplorerPanel({
+      activeLayer: 'regions',
+      selectedRegionId: selectedRegion.location.id,
+      selectedTarget: {
+        kind: 'coordinates',
+        lat: selectedRegion.location.latitude,
+        lon: selectedRegion.location.longitude,
+        label: selectedRegion.location.name,
+      },
+    })
+
+    expect(container.querySelector('.ooh-map-marker--custom')).toBeNull()
+
+    const client = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    })
+    rerender(
+      <QueryClientProvider client={client}>
+        <ExplorerMapPanel
+          activeLayer="assets"
+          onChangeLayer={vi.fn()}
+          assets={mockPlayerAssetsData.assets}
+          totalAssetsCount={7}
+          regions={mockCityOverview.regions}
+          totalRegionsCount={12}
+          selectedTarget={{ kind: 'coordinates', lat: -23.5614, lon: -46.6559 }}
+          selectedRegionId={null}
+          zoneFilter="Todas"
+          onChangeZoneFilter={vi.fn()}
+          severityFilter="all"
+          onChangeSeverityFilter={vi.fn()}
+          onSelectAsset={vi.fn()}
+          onSelectRegion={vi.fn()}
+          onSelectCoordinates={vi.fn()}
+        />
+      </QueryClientProvider>,
+    )
+
+    const customButton = container.querySelector('.ooh-map-marker-root--custom')
+    expect(customButton).not.toBeNull()
+    expect(customButton?.querySelector('.ooh-map-marker--custom')).not.toBeNull()
+
+    const customMarker = maplibreMockState.markers.find(
+      (marker) => marker.options?.element === customButton,
+    )
+    expect(customMarker?.setLngLat).toHaveBeenCalledWith([-46.6559, -23.5614])
+  })
 })
