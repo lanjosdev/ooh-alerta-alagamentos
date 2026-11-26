@@ -265,7 +265,7 @@ Orquestra a cena completa pronta para o Player Criativo DOOH (`PlayerSceneData`)
 - **Query params:**
   - **Alvo (XOR obrigatório):** informe `assetId` (ex.: `av-roberto-marinho`) **ou** o par completo `lat` + `lon`. Informar ambos ou omitir ambos retorna **`400 Bad Request`**. Se `assetId` não existir no catálogo, retorna **`404 Not Found`**.
   - **Temporais / Simulação (opcionais):** `date` (`YYYY-MM-DD`), `time` (`HH:MM`), `cgeDate` (`DD/MM/AAAA`), `simulate`.
-- **Degradação graciosa:** em consultas por coordenadas (`lat`/`lon`), caso todos os mirrors do Overpass ou o GeoSampa WFS falhem, o endpoint ainda responde **`200 OK`** com `roads.features: []` (ou `geoSampaZonesCount: 0`) e `sources.roadGeometry.status = "error"` (`sources.floodSusceptibility.status = "error"`). Fora da Capital SP (`ibgeCode !== "3550308"`), `sources.floodSusceptibility.status` é `"skipped"`.
+- **Resolução do corredor e degradação graciosa:** em consultas por coordenadas (`lat`/`lon`), `editorial.corridorName` é preenchido automaticamente com a via nomeada mais próxima retornada pelo Overpass (`<= 150 m`, fallback para `decision.location.name`). Os mirrors do Overpass são consultados em paralelo com orçamento máximo de `8 s` e cooldown negativo de `30 s`; caso falhem (ou o GeoSampa WFS falhe), o endpoint ainda responde **`200 OK`** com `roads.features: []` (ou `geoSampaZonesCount: 0`) e `sources.roadGeometry.status = "error"` (`sources.floodSusceptibility.status = "error"`). Fora da Capital SP (`ibgeCode !== "3550308"`), `sources.floodSusceptibility.status` é `"skipped"`.
 - **Exemplo resumido de Resposta `200 OK`:**
   ```json
   {
@@ -298,7 +298,7 @@ Orquestra a cena completa pronta para o Player Criativo DOOH (`PlayerSceneData`)
         "telemetryStatusPill": "REPLAY HISTÓRICO"
       },
       "camera": {
-        "center": [-46.6869, -23.6217],
+        "center": [-46.683831, -23.61808],
         "zoom": 15.2,
         "bearing": 12,
         "bounds": [[-46.6942, -23.6284], [-46.6795, -23.6149]]

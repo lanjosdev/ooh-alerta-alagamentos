@@ -24,7 +24,7 @@ flowchart LR
         FP["ForecastProviderPort<br/>(open-meteo + historical-forecast-api / archive-api)"]
         AP["OfficialAlertsPort<br/>(INMET IBGE + GeoJSON Point-in-Polygon)"]
         FM["FloodingMonitorPort<br/>(CGE-SP Capital + janela horária histórica)"]
-        RG["RoadGeometryPort<br/>(Overpass API mirrors + orçamento 10s)"]
+        RG["RoadGeometryPort<br/>(Overpass API mirrors paralelos + 8s + cooldown 30s)"]
         FS["FloodSusceptibilityPort<br/>(GeoSampa WFS mancha_inundacao_25)"]
         GC["GeocodingPort<br/>(Nominatim BR-SP + fila serial 1,1s)"]
         CACHE["MemoryCache TTL + Stale Fallback"]
@@ -61,9 +61,9 @@ flowchart LR
 - **Execução condicional:** fora da Capital SP, `floodingMonitor` assume `status: "skipped"`.
 
 ### 2.4 Camada Geoespacial para o Player DOOH (`RoadGeometry`, `GeoSampa WFS`, `Nominatim`)
-- **Catálogo Curado (`OohAssetRepository`):** os 7 corredores OOH icônicos da PoC possuem geometrias reais extraídas do OpenStreetMap (`curated-ooh-geometries.ts`, validadas com Zod e com atribuição ODbL), garantindo carregamento instantâneo e determinístico (`provider: "osm-curated-snapshot"`).
-- **Clique Livre (`OverpassRoadGeometryProvider`):** consulta mirrors configuráveis em `OVERPASS_URLS` via `POST`, com orçamento total de `10 s` (`4,5 s` por mirror) e expansão progressiva de raio (`300 m` → `450 m`). Sujeito às restrições da instância pública na fase PoC; cache TTL de `86400 s`.
-- **Suscetibilidade Municipal (`GeoSampaWfsProvider`):** consulta WFS 2.0.0 da PMSP (`geoportal:mancha_inundacao_25`, fallback `geoportal:area_inundavel`) com `bbox=${minLat},${minLon},${maxLat},${maxLon},urn:ogc:def:crs:EPSG::4326` (ordem de eixos EPSG::4326 obrigatória no WFS 2.0.0) e timeout de `5 s`. Em `match-road-risk.ts`, aplica buffer de `20 m` (`@turf/buffer`) antes de `@turf/boolean-intersects` para capturar interseções com polígonos pequenos (~86 m²). Executado apenas na Capital SP (`status: "skipped"` fora de SP).
+- **Catálogo Curado (`OohAssetRepository`):** os 7 corredores OOH icônicos da PoC possuem coordenadas ancoradas diretamente sobre as pistas reais no OpenStreetMap (`<= 30 m` dos segmentos carroçáveis primários, excluindo `cycleway`/`platform`), incluindo `Marginal Tietê — Lapa / Ponte do Piqueri` (`Zona Oeste`), em `curated-ooh-geometries.ts` (validado com Zod e atribuição ODbL), garantindo carregamento instantâneo e determinístico (`provider: "osm-curated-snapshot"`).
+- **Clique Livre (`OverpassRoadGeometryProvider` + `GetPlayerSceneService`):** dispara os mirrors configuráveis em `OVERPASS_URLS` **em paralelo** via `Promise.any` + `AbortController` (o mirror mais rápido vence e aborta os demais), com orçamento total de `8 s` (`6,5 s` por tentativa, `[timeout:6]`), expansão progressiva de raio (`300 m` → `450 m`), cache TTL de `86400 s` e **cooldown negativo de `30 s`** após falha total (evitando travamentos em cliques consecutivos, mantendo acertos em cache). No modo de coordenadas, resolve automaticamente a via nomeada mais próxima (`<= 150 m`) para `editorial.corridorName`.
+- **Suscetibilidade Municipal (`GeoSampaWfsProvider`):** consulta WFS 2.0.0 da PMSP (`geoportal:mancha_inundacao_25`, fallback `geoportal:area_inundavel`) com `bbox=${minLat},${minLon},${maxLat},${maxLon},urn:ogc:def:crs:EPSG::4326` (ordem de eixos EPSG::4326 obrigatória no WFS 2.0.0) e timeout de `5 s`, executada **em paralelo** com `GetLocationAlertService` e `OverpassRoadGeometryProvider` quando a coordenada pertence à Capital SP (`status: "skipped"` fora de SP). Em `match-road-risk.ts`, aplica buffer de `20 m` (`@turf/buffer`) antes de `@turf/boolean-intersects` para capturar interseções com polígonos pequenos (~86 m²).
 - **Geocodificação (`NominatimGeocodingProvider`):** busca textual restrita a `BR-SP` (*viewbox* RMSP) com `User-Agent` dedicado, fila serial interna de `>= 1100 ms` entre chamadas e cache TTL de `86400 s`.
 
 ---

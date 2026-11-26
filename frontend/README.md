@@ -14,12 +14,13 @@ Aplicação web SPA (React 19 + Vite 8 + TypeScript Strict + Tailwind CSS v4 + T
     - `Simular`: menu (`Normal`, `Atenção`, `Alerta`, `Crítico`) habilitado automaticamente conforme `GET /v1/health` (`capabilities.simulation`).
   - **Saúde Consolidada das Fontes:** pill com popover detalhado (`Open-Meteo`, `Open-Meteo Histórico`, `INMET`, `CGE-SP`, `Overpass OSM`, `GeoSampa WFS`, `Nominatim`) exibindo status, latência, chaves em cache e `lastErrorMessage` quando degradado.
 - **Mapa Explorador (`ExplorerMapPanel` — esquerda ~60–65%):**
-  - `MapLibre GL JS` (`^5`) com estilo `OpenFreeMap positron`, maximizando a área útil sem chips inferiores.
-  - **Toggle discreto flutuante:** alterna entre **`Pontos OOH (7)`** (corredores curados com geometria OSM embarcada) e **`Regiões SP (12)`**.
+  - `MapLibre GL JS` (`^5`) com estilo `OpenFreeMap positron`, controles de zoom (`NavigationControl` `+`/`-`) e botão `Centralizar SP`.
+  - **Toggle discreto flutuante:** alterna entre **`Pontos OOH (7)`** (corredores curados com geometria OSM embarcada e ancorados nas pistas reais) e **`Regiões SP (12)`**.
+  - **Interação de marcadores:** tooltip instantâneo no hover (`Popup` com nome, bairro/zona, severidade e score) + **micro-pill fixa** acima do pin selecionado + barra de rodapé (`CardFooter`) com **legenda de severidade com contagens dinâmicas**, símbolo de `Clique livre` e aviso `Limpar filtros` quando nenhum item corresponder aos filtros.
   - **Busca Nominatim no submit:** consulta `GET /v1/player/geocode?q=` apenas ao pressionar Enter ou clicar em `Buscar` (nunca em `onChange`).
-  - **Clique livre no mapa** (via Overpass API + GeoSampa WFS) e filtros rápidos por `Zona` e `Em Alerta`.
+  - **Clique livre no mapa** (via Overpass API + GeoSampa WFS) com captura instantânea do nome da via nos tiles vetoriais (`queryRenderedFeatures`) e filtros rápidos por `Zona` e `Em Alerta`.
 - **Palco do Player DOOH (`PointInspectorStage` — direita ~35–40%, aberto por padrão):**
-  - **Aba `Preview OOH`:** renderiza `PlayerCanvas` + `FloodGenerativeMap` (`MapLibre GL JS` P&B minimalista sobre `planet` + `@deck.gl/mapbox` `interleaved: true` com `FloodFlowExtension` animada a 60fps via uniform `uTime`). Suporta:
+  - **Aba `Preview OOH`:** renderiza `PlayerCanvas` + `FloodGenerativeMap` (`MapLibre GL JS` P&B em **vias vazadas por traço arquitetônico** `casing + fill branco` com pontes separadas e rótulos viários acima do `@deck.gl/mapbox` `interleaved: true` via `beforeId: 'road-name-minor'`) + **pin contextual discreto** (`VOCÊ ESTÁ AQUI` nos 7 ativos OOH / `PONTO ALVO` no clique livre). Mantém o preview anterior visível durante trocas de ponto (`keepPreviousData` + pill `Atualizando cena da via...`), com piso de timeout de `22000 ms` em `/player/scene` e retry inteligente. Suporta:
     - **`9:16` Vertical** (inline) e **`16:9` Split Horizontal** (`38%` editorial / `62%` mapa generativo) em palco expandido modal (desmontando o inline para economizar contextos WebGL).
     - **Personalização White-label PT-BR:** nome da marca (`<= 40` chars), subtítulo/tag (`<= 30` chars) e cor de destaque `--player-accent` (`^[0-9a-fA-F]{6}$`).
     - Botões **`Copiar URL`** e **`Player Limpo`** apontando para a rota canônica.
