@@ -3,9 +3,8 @@ import { Map as MapLibreMap, Marker, NavigationControl, Popup } from 'maplibre-g
 import { useEffect, useRef, useState } from 'react'
 import { EmptyState } from '@/components/patterns/EmptyState'
 import { QueryErrorAlert } from '@/components/patterns/QueryErrorAlert'
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { getSeverityMeta } from '@/features/monitoring/utils/severity'
 import {
@@ -16,11 +15,12 @@ import {
 import { useAddressSearch } from '@/features/player/hooks/useAddressSearch'
 import { EXPLORER_MAP_STYLE_URL } from '@/features/player/styles/mapStyles'
 import { cn } from '@/lib/utils'
-import type { OohAlertDecision } from '@/types/alerts'
+import type { OohAlertDecision, SeverityLevel } from '@/types/alerts'
 import type { GeocodingCandidate, PlayerAssetSummary, PlayerTarget } from '@/types/player'
 
 const SP_CENTER: [number, number] = [-46.6333, -23.5505]
 const SP_DEFAULT_ZOOM = 11.2
+const SEVERITY_LEGEND_LEVELS: readonly SeverityLevel[] = [0, 1, 2, 3]
 
 export type ExplorerLayerMode = 'assets' | 'regions'
 
@@ -486,6 +486,17 @@ export function ExplorerMapPanel({
     })
   }
 
+  const visibleItems = activeLayer === 'assets' ? assets : regions
+  const severityCounts: Record<SeverityLevel, number> = { 0: 0, 1: 0, 2: 0, 3: 0 }
+  for (const item of visibleItems) {
+    severityCounts[item.severityLevel] += 1
+  }
+  const hasActiveFilters = zoneFilter !== 'Todas' || severityFilter !== 'all'
+  const handleClearFilters = () => {
+    onChangeZoneFilter('Todas')
+    onChangeSeverityFilter('all')
+  }
+
   return (
     <Card className="overflow-visible">
       <CardHeader className="rounded-t-xl border-b border-border bg-card px-4 py-3">
@@ -628,7 +639,7 @@ export function ExplorerMapPanel({
         </div>
       </CardHeader>
 
-      <CardContent className="relative overflow-hidden rounded-b-xl p-0">
+      <CardContent className="relative overflow-hidden p-0">
         <div
           ref={mapContainerRef}
           data-testid="explorer-map-canvas"
@@ -668,7 +679,7 @@ export function ExplorerMapPanel({
           </button>
         </div>
 
-        <div className="absolute top-3 right-13 z-10">
+        <div className="absolute top-2.5 right-14 z-10">
           <Button
             type="button"
             size="sm"
@@ -681,17 +692,76 @@ export function ExplorerMapPanel({
           </Button>
         </div>
 
-        <div className="pointer-events-none absolute right-3 bottom-3 z-10 hidden items-center gap-1.5 rounded-lg border border-border bg-card/90 px-2.5 py-1 text-[10px] text-muted-foreground shadow-xs backdrop-blur-xs sm:inline-flex">
-          <Badge variant="outline" className="px-1.5 py-0 text-[10px]">
-            Clique livre
-          </Badge>
-          <span>Clique em qualquer via de SP para gerar cena via Overpass</span>
-        </div>
+        {visibleItems.length === 0 && hasActiveFilters ? (
+          <div
+            role="status"
+            aria-live="polite"
+            className="absolute top-1/2 left-1/2 z-20 inline-flex -translate-x-1/2 -translate-y-1/2 items-center gap-2 rounded-full border border-border bg-card/95 px-3.5 py-1.5 text-xs shadow-md backdrop-blur-xs"
+          >
+            <span className="font-medium text-foreground">
+              Nenhum ponto corresponde aos filtros atuais
+            </span>
+            <button
+              type="button"
+              onClick={handleClearFilters}
+              className="font-semibold text-primary hover:underline focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+            >
+              Limpar filtros
+            </button>
+          </div>
+        ) : null}
 
         <div className="pointer-events-none absolute bottom-3 left-3 z-10 rounded bg-card/90 px-2 py-0.5 text-[10px] font-medium text-muted-foreground shadow-xs">
           © OpenStreetMap • OpenFreeMap
         </div>
       </CardContent>
+
+      <CardFooter className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 rounded-b-xl bg-muted/30 px-4 py-2.5 text-[11px]">
+        <div
+          role="region"
+          aria-label="Legenda de severidade do mapa"
+          className="flex flex-wrap items-center gap-x-3 gap-y-1"
+        >
+          {SEVERITY_LEGEND_LEVELS.map((level) => {
+            const meta = getSeverityMeta(level)
+            const count = severityCounts[level]
+            return (
+              <span
+                key={level}
+                className={cn(
+                  'inline-flex items-center gap-1.5',
+                  count > 0 ? 'font-semibold text-foreground' : 'text-muted-foreground',
+                )}
+              >
+                <span
+                  className={cn(
+                    'h-2.5 w-2.5 shrink-0 rounded-full border border-card shadow-2xs',
+                    meta.dotClassName,
+                  )}
+                  aria-hidden="true"
+                />
+                <span>
+                  {meta.label} ({count})
+                </span>
+              </span>
+            )
+          })}
+
+          <span className="inline-flex items-center gap-1.5 border-l border-border pl-3 font-medium text-foreground">
+            <span
+              className="flex h-3 w-3 shrink-0 items-center justify-center rounded-full border border-card bg-primary shadow-2xs"
+              aria-hidden="true"
+            >
+              <span className="h-1 w-1 rounded-full bg-card" />
+            </span>
+            <span>Clique livre</span>
+          </span>
+        </div>
+
+        <span className="text-muted-foreground">
+          Clique em qualquer via de SP para gerar cena
+        </span>
+      </CardFooter>
     </Card>
   )
 }

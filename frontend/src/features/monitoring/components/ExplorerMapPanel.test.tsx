@@ -262,4 +262,54 @@ describe('ExplorerMapPanel', () => {
       label: 'Viaduto Alcântara Machado',
     })
   })
+
+  it('renders severity legend with live counts and shows clear-filters banner when filters hide all items', async () => {
+    const user = userEvent.setup()
+    const onChangeZoneFilter = vi.fn()
+    const onChangeSeverityFilter = vi.fn()
+
+    const { rerender } = renderExplorerPanel({
+      onChangeZoneFilter,
+      onChangeSeverityFilter,
+    })
+
+    const legend = screen.getByRole('region', { name: 'Legenda de severidade do mapa' })
+    expect(legend).toHaveTextContent('Normal (1)')
+    expect(legend).toHaveTextContent('Atenção (0)')
+    expect(legend).toHaveTextContent('Alerta (1)')
+    expect(legend).toHaveTextContent('Crítico (1)')
+    expect(legend).toHaveTextContent('Clique livre')
+    expect(screen.queryByText('Nenhum ponto corresponde aos filtros atuais')).not.toBeInTheDocument()
+
+    const client = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    })
+    rerender(
+      <QueryClientProvider client={client}>
+        <ExplorerMapPanel
+          activeLayer="assets"
+          onChangeLayer={vi.fn()}
+          assets={[]}
+          totalAssetsCount={7}
+          regions={mockCityOverview.regions}
+          totalRegionsCount={12}
+          selectedTarget={null}
+          selectedRegionId={null}
+          zoneFilter="Zona Norte"
+          onChangeZoneFilter={onChangeZoneFilter}
+          severityFilter="alerts_only"
+          onChangeSeverityFilter={onChangeSeverityFilter}
+          onSelectAsset={vi.fn()}
+          onSelectRegion={vi.fn()}
+          onSelectCoordinates={vi.fn()}
+        />
+      </QueryClientProvider>,
+    )
+
+    expect(screen.getByText('Nenhum ponto corresponde aos filtros atuais')).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Limpar filtros' }))
+
+    expect(onChangeZoneFilter).toHaveBeenCalledWith('Todas')
+    expect(onChangeSeverityFilter).toHaveBeenCalledWith('all')
+  })
 })
