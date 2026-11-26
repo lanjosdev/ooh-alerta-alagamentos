@@ -6,6 +6,7 @@ import { successResponseSchema } from './schemas/common.js'
 
 export interface HealthRoutesOptions {
   getSourcesStatusController: GetSourcesStatusController
+  enableSimulationParams: boolean
 }
 
 const sourceHealthSnapshotSchema = z.object({
@@ -31,6 +32,9 @@ export const healthRoutes: FastifyPluginAsyncZod<HealthRoutesOptions> = async (a
               status: z.literal('ok'),
               uptime: z.number(),
               timestamp: z.iso.datetime(),
+              capabilities: z.object({
+                simulation: z.boolean(),
+              }),
             }),
           ),
         },
@@ -42,6 +46,9 @@ export const healthRoutes: FastifyPluginAsyncZod<HealthRoutesOptions> = async (a
           status: 'ok' as const,
           uptime: process.uptime(),
           timestamp: new Date().toISOString(),
+          capabilities: {
+            simulation: options.enableSimulationParams,
+          },
         }),
       )
     },

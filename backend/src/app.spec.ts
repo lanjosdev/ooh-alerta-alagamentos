@@ -6,11 +6,17 @@ import type {
   FloodingPoint,
   StationRainfall,
 } from './providers/flooding-monitor-provider.js'
+import type {
+  FloodSusceptibilityPolygon,
+  FloodSusceptibilityProvider,
+} from './providers/flood-susceptibility-provider.js'
 import type { ForecastProvider } from './providers/forecast-provider.js'
+import type { GeocodingProvider } from './providers/geocoding-provider.js'
 import type {
   OfficialAlertsProvider,
   OfficialWeatherAlert,
 } from './providers/official-alerts-provider.js'
+import type { RoadGeometryProvider, RoadSegment } from './providers/road-geometry-provider.js'
 
 function createDeterministicProviders() {
   const forecastProvider: ForecastProvider = {
@@ -41,6 +47,25 @@ function createDeterministicProviders() {
           precipitationProbabilityPercent: 85,
           precipitationMm: 16,
           weatherCode: 95,
+        },
+      ],
+    })),
+    getHistoricalHourly: vi.fn(async (lat, lon, dateIso) => ({
+      provider: 'open-meteo-historical',
+      dateIso,
+      gridLatitude: Number((lat - 0.01).toFixed(4)),
+      gridLongitude: Number((lon - 0.01).toFixed(4)),
+      timezone: 'America/Sao_Paulo',
+      hourly: [
+        {
+          time: `${dateIso}T20:00`,
+          precipitationProbabilityPercent: 90,
+          precipitationMm: 20,
+          rainMm: 20,
+          weatherCode: 95,
+          temperatureC: 22.5,
+          humidityPercent: 90,
+          isDay: false,
         },
       ],
     })),
@@ -102,10 +127,66 @@ function createDeterministicProviders() {
     ),
   }
 
+  const roadGeometryProvider: RoadGeometryProvider = {
+    providerName: 'overpass',
+    getNearbyRoads: vi.fn(async (): Promise<RoadSegment[]> => [
+      {
+        osmId: '9901',
+        streetName: 'Avenida Paulista',
+        highway: 'primary',
+        coordinates: [
+          [-46.658, -23.562],
+          [-46.654, -23.56],
+        ],
+      },
+    ]),
+  }
+
+  const floodSusceptibilityProvider: FloodSusceptibilityProvider = {
+    providerName: 'geosampa-wfs',
+    getFloodZones: vi.fn(async (): Promise<FloodSusceptibilityPolygon[]> => [
+      {
+        id: 'mancha_teste.1',
+        layerName: 'geoportal:mancha_inundacao_25',
+        geometry: {
+          type: 'Polygon',
+          coordinates: [
+            [
+              [-46.6585, -23.5625],
+              [-46.6535, -23.5625],
+              [-46.6535, -23.5595],
+              [-46.6585, -23.5595],
+              [-46.6585, -23.5625],
+            ],
+          ],
+        },
+      },
+    ]),
+  }
+
+  const geocodingProvider: GeocodingProvider = {
+    providerName: 'nominatim',
+    searchAddress: vi.fn(async () => [
+      {
+        id: 'way:123456',
+        displayName: 'Avenida Paulista, Bela Vista, São Paulo, SP, Brasil',
+        primaryName: 'Avenida Paulista',
+        neighborhood: 'Bela Vista',
+        city: 'São Paulo',
+        state: 'São Paulo',
+        latitude: -23.5614,
+        longitude: -46.6559,
+      },
+    ]),
+  }
+
   return {
     forecastProvider,
     officialAlertsProvider,
     floodingMonitorProvider,
+    roadGeometryProvider,
+    floodSusceptibilityProvider,
+    geocodingProvider,
   }
 }
 
@@ -121,7 +202,7 @@ describe('HTTP', () => {
     await app.close()
   })
 
-  it('GET /v1/health retorna 200 no padrão ApiResponse', async () => {
+  it('GET /v1/health retorna 200 com capabilities.simulation no padrão ApiResponse', async () => {
     const response = await app.inject({ method: 'GET', url: '/v1/health' })
 
     expect(response.statusCode).toBe(200)
@@ -130,6 +211,9 @@ describe('HTTP', () => {
       message: null,
       data: {
         status: 'ok',
+        capabilities: {
+          simulation: expect.any(Boolean),
+        },
       },
     })
     expect(typeof response.json().data.uptime).toBe('number')
@@ -172,6 +256,9 @@ describe('HTTP', () => {
     expect(paths).toContain('/v1/alerts/feed.xml')
     expect(paths).toContain('/v1/alerts/regions/{regionId}/feed.xml')
     expect(paths).toContain('/v1/alerts/by-coordinates/feed.xml')
+    expect(paths).toContain('/v1/player/assets')
+    expect(paths).toContain('/v1/player/geocode')
+    expect(paths).toContain('/v1/player/scene')
   })
 
   it('CORS responde corretamente ao preflight OPTIONS', async () => {
@@ -215,15 +302,31 @@ describe('Regions, Alerts and Feeds OOH (Integração Offline)', () => {
       'open-meteo',
       'inmet',
       'cge-sp',
+      'overpass',
+      'geosampa-wfs',
+      'nominatim',
     ])
+    expect(
+      initial.json().data.providers.every((p: { status: string }) => p.status === 'unknown'),
+    ).toBe(true)
 
     await app.inject({ method: 'GET', url: '/v1/alerts/regions/zona-oeste-butanta' })
 
-    const afterCall = await app.inject({ method: 'GET', url: '/v1/sources/status' })
-    expect(afterCall.statusCode).toBe(200)
-    expect(
-      afterCall.json().data.providers.every((p: { status: string }) => p.status === 'ok'),
-    ).toBe(true)
+    const afterAlertsCall = await app.inject({ method: 'GET', url: '/v1/sources/status' })
+    expect(afterAlertsCall.statusCode).toBe(200)
+    const statusByProvider = Object.fromEntries(
+      afterAlertsCall
+        .json()
+        .data.providers.map((p: { provider: string; status: string }) => [p.provider, p.status]),
+    )
+    expect(statusByProvider).toEqual({
+      'open-meteo': 'ok',
+      inmet: 'ok',
+      'cge-sp': 'ok',
+      overpass: 'unknown',
+      'geosampa-wfs': 'unknown',
+      nominatim: 'unknown',
+    })
   })
 
   it('GET /v1/regions lista as 12 regiões e aplica filtros por zone e ibgeCode', async () => {
@@ -335,7 +438,7 @@ describe('Regions, Alerts and Feeds OOH (Integração Offline)', () => {
     expect(badDate.statusCode).toBe(400)
   })
 
-  it('rejeita simulate e cgeDate com 400 quando ENABLE_SIMULATION_PARAMS=false', async () => {
+  it('rejeita simulate com 400 quando ENABLE_SIMULATION_PARAMS=false, mas mantém date/cgeDate habilitados', async () => {
     const lockedApp = await buildApp({
       ...createDeterministicProviders(),
       cache: new MemoryCache(),
@@ -344,20 +447,76 @@ describe('Regions, Alerts and Feeds OOH (Integração Offline)', () => {
     await lockedApp.ready()
 
     try {
+      const healthRes = await lockedApp.inject({ method: 'GET', url: '/v1/health' })
+      expect(healthRes.statusCode).toBe(200)
+      expect(healthRes.json().data.capabilities).toEqual({ simulation: false })
+
       const resSim = await lockedApp.inject({
         method: 'GET',
         url: '/v1/alerts/regions/centro-se?simulate=critical',
       })
       expect(resSim.statusCode).toBe(400)
 
-      const resDate = await lockedApp.inject({
+      const resHistorical = await lockedApp.inject({
+        method: 'GET',
+        url: '/v1/alerts/regions/centro-se?date=2025-01-24&time=20:00',
+      })
+      expect(resHistorical.statusCode).toBe(200)
+      expect(resHistorical.json().data.temporal).toMatchObject({
+        mode: 'historical',
+        date: '2025-01-24',
+        time: '20:00',
+        resolvedTime: '20:00',
+      })
+      expect(resHistorical.json().data.sources.officialAlerts.status).toBe('skipped')
+
+      const resCgeDate = await lockedApp.inject({
         method: 'GET',
         url: '/v1/alerts/regions/centro-se?cgeDate=15/01/2026',
       })
-      expect(resDate.statusCode).toBe(400)
+      expect(resCgeDate.statusCode).toBe(200)
+      expect(resCgeDate.json().data.flooding.cgeDate).toBe('15/01/2026')
+
+      const resFutureDate = await lockedApp.inject({
+        method: 'GET',
+        url: '/v1/alerts/regions/centro-se?date=2099-01-01',
+      })
+      expect(resFutureDate.statusCode).toBe(400)
+
+      const resTimeWithoutDate = await lockedApp.inject({
+        method: 'GET',
+        url: '/v1/alerts/regions/centro-se?time=20:00',
+      })
+      expect(resTimeWithoutDate.statusCode).toBe(400)
+
+      const resBothDates = await lockedApp.inject({
+        method: 'GET',
+        url: '/v1/alerts/regions/centro-se?date=2025-01-24&cgeDate=24/01/2025',
+      })
+      expect(resBothDates.statusCode).toBe(400)
     } finally {
       await lockedApp.close()
     }
+  })
+
+  it('rejeita date e time com HTTP 400 em todos os feeds /feed.xml', async () => {
+    const overviewWithDate = await app.inject({
+      method: 'GET',
+      url: '/v1/alerts/feed.xml?date=2025-01-24',
+    })
+    expect(overviewWithDate.statusCode).toBe(400)
+
+    const regionWithTime = await app.inject({
+      method: 'GET',
+      url: '/v1/alerts/regions/centro-se/feed.xml?date=2025-01-24&time=20:00',
+    })
+    expect(regionWithTime.statusCode).toBe(400)
+
+    const coordsWithDate = await app.inject({
+      method: 'GET',
+      url: '/v1/alerts/by-coordinates/feed.xml?lat=-23.55&lon=-46.63&date=2025-01-24',
+    })
+    expect(coordsWithDate.statusCode).toBe(400)
   })
 
   it('entrega feeds XML RSS 2.0 puros em todas as rotas /feed.xml e 404 para região inexistente', async () => {
@@ -395,5 +554,166 @@ describe('Regions, Alerts and Feeds OOH (Integração Offline)', () => {
     })
     expect(notFoundFeed.statusCode).toBe(404)
     expect(notFoundFeed.json()).toMatchObject({ success: false, data: null })
+  })
+})
+
+describe('Player DOOH (/v1/player/* — Integração Offline)', () => {
+  let app: Awaited<ReturnType<typeof buildApp>>
+
+  beforeAll(async () => {
+    app = await buildApp({
+      ...createDeterministicProviders(),
+      cache: new MemoryCache(),
+      enableSimulationParams: true,
+    })
+    await app.ready()
+  })
+
+  afterAll(async () => {
+    await app.close()
+  })
+
+  it('GET /v1/player/assets lista os 7 ativos curados com severidade e bounds da câmera', async () => {
+    const res = await app.inject({ method: 'GET', url: '/v1/player/assets' })
+
+    expect(res.statusCode).toBe(200)
+    const body = res.json()
+    expect(body.success).toBe(true)
+    expect(body.data.total).toBe(7)
+    expect(body.data.assets).toHaveLength(7)
+    expect(body.data.assets[0]).toMatchObject({
+      id: 'av-roberto-marinho',
+      corridorName: 'Av. Jornalista Roberto Marinho',
+      camera: {
+        center: [expect.any(Number), expect.any(Number)],
+        bounds: [
+          [expect.any(Number), expect.any(Number)],
+          [expect.any(Number), expect.any(Number)],
+        ],
+      },
+    })
+  })
+
+  it('GET /v1/player/geocode busca endereços e valida tamanho de q (3..120 chars)', async () => {
+    const okRes = await app.inject({
+      method: 'GET',
+      url: '/v1/player/geocode?q=Avenida%20Paulista',
+    })
+    expect(okRes.statusCode).toBe(200)
+    expect(okRes.json().data).toMatchObject({
+      query: 'Avenida Paulista',
+      total: 1,
+      candidates: [
+        {
+          id: 'way:123456',
+          primaryName: 'Avenida Paulista',
+        },
+      ],
+    })
+
+    const shortRes = await app.inject({ method: 'GET', url: '/v1/player/geocode?q=ab' })
+    expect(shortRes.statusCode).toBe(400)
+
+    const longQuery = 'a'.repeat(121)
+    const longRes = await app.inject({
+      method: 'GET',
+      url: `/v1/player/geocode?q=${longQuery}`,
+    })
+    expect(longRes.statusCode).toBe(400)
+  })
+
+  it('GET /v1/player/scene entrega cena completa para ativo curado, replay histórico e rejeita XOR inválido / ativo inexistente', async () => {
+    const assetScene = await app.inject({
+      method: 'GET',
+      url: '/v1/player/scene?assetId=av-roberto-marinho&date=2025-01-24&time=20:30',
+    })
+    expect(assetScene.statusCode).toBe(200)
+    expect(assetScene.json().data).toMatchObject({
+      assetId: 'av-roberto-marinho',
+      targetKind: 'asset',
+      editorial: {
+        corridorName: 'Av. Jornalista Roberto Marinho',
+        telemetryModeLabel: 'REPLAY • 24/01/2025 20:30',
+        telemetryStatusPill: 'REPLAY HISTÓRICO',
+      },
+      decision: {
+        temporal: {
+          mode: 'historical',
+          date: '2025-01-24',
+          time: '20:30',
+          resolvedTime: '20:30',
+        },
+      },
+      sources: {
+        roadGeometry: { provider: 'osm-curated-snapshot', status: 'ok' },
+        floodSusceptibility: { provider: 'geosampa-wfs', status: 'ok' },
+      },
+    })
+    expect(assetScene.json().data.roads.features.length).toBeGreaterThan(0)
+
+    const coordScene = await app.inject({
+      method: 'GET',
+      url: '/v1/player/scene?lat=-23.5614&lon=-46.6559',
+    })
+    expect(coordScene.statusCode).toBe(200)
+    expect(coordScene.json().data).toMatchObject({
+      assetId: null,
+      targetKind: 'coordinates',
+      sources: {
+        roadGeometry: { provider: 'overpass', status: 'ok' },
+        floodSusceptibility: { provider: 'geosampa-wfs', status: 'ok' },
+      },
+    })
+
+    const notFound = await app.inject({
+      method: 'GET',
+      url: '/v1/player/scene?assetId=nao-existe',
+    })
+    expect(notFound.statusCode).toBe(404)
+
+    const bothParams = await app.inject({
+      method: 'GET',
+      url: '/v1/player/scene?assetId=av-roberto-marinho&lat=-23.56&lon=-46.65',
+    })
+    expect(bothParams.statusCode).toBe(400)
+
+    const missingTarget = await app.inject({
+      method: 'GET',
+      url: '/v1/player/scene',
+    })
+    expect(missingTarget.statusCode).toBe(400)
+  })
+
+  it('GET /v1/player/scene retorna HTTP 200 degradado com roads.features=[] quando Overpass falha totalmente', async () => {
+    const stubs = createDeterministicProviders()
+    vi.mocked(stubs.roadGeometryProvider.getNearbyRoads).mockRejectedValue(
+      new Error('Todos os mirrors Overpass falharam (502)'),
+    )
+
+    const degradedApp = await buildApp({
+      ...stubs,
+      cache: new MemoryCache(),
+      enableSimulationParams: true,
+    })
+    await degradedApp.ready()
+
+    try {
+      const res = await degradedApp.inject({
+        method: 'GET',
+        url: '/v1/player/scene?lat=-23.5614&lon=-46.6559',
+      })
+      expect(res.statusCode).toBe(200)
+      expect(res.json().data.roads).toEqual({
+        type: 'FeatureCollection',
+        features: [],
+      })
+      expect(res.json().data.sources.roadGeometry).toMatchObject({
+        provider: 'overpass',
+        status: 'error',
+        error: 'Todos os mirrors Overpass falharam (502)',
+      })
+    } finally {
+      await degradedApp.close()
+    }
   })
 })

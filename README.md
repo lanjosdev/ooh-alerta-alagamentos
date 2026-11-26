@@ -1,11 +1,13 @@
 # OOH Alerta Alagamentos
 
-Plataforma tecnológica para transformar telas digitais de mídia OOH (como relógios urbanos) em pontos dinâmicos de informação e alerta sobre chuvas intensas e riscos de alagamento.
+Plataforma tecnológica para transformar telas digitais de mídia OOH (como relógios urbanos e painéis `9:16` / `16:9`) em pontos dinâmicos de informação e alerta sobre chuvas intensas e riscos de alagamento.
 
-- **Foco inicial da PoC:** Capital de São Paulo (`IBGE 3550308`) com catálogo inicial de 12 regiões estratégicas e mapeamento das 28 estações físicas do CGE-SP.
-- **Multi-município nativo:** consultas por coordenada (`lat/lon`) funcionam em todo o Estado de São Paulo cruzando previsão horária (**Open-Meteo**) e avisos oficiais (**INMET** via IBGE e *point-in-polygon* GeoJSON), acionando o **CGE-SP** automaticamente quando o ponto está na Capital SP.
-- **Provedores plugáveis:** contratos tipados em `backend/src/providers/` permitindo substituir o Open-Meteo por APIs comerciais (**Tomorrow.io**, **Google Weather API**) via `FORECAST_PROVIDER`.
-- **Formatos de entrega:** API REST (`JSON` no padrão `ApiResponse<T>`) e Feeds `XML / RSS 2.0` com namespace `<ooh:*>` para consumo direto pelos players DOOH.
+- **Foco inicial da PoC:** Capital de São Paulo (`IBGE 3550308`) com catálogo de **7 corredores OOH icônicos curados** (geometrias reais OSM embarcadas), catálogo de **12 regiões estratégicas** e mapeamento das **28 estações físicas do CGE-SP**.
+- **Player Criativo DOOH (WebGL):** mapa vetorial editorial P&B (`MapLibre GL JS` + `OpenFreeMap`) combinado à mancha azul luminosa animada em GPU (`deck.gl` `@deck.gl/mapbox` sobre a geometria real das vias), com personalização white-label PT-BR e Modo Player Limpo dirigido por URL (`/?mode=player` / `/player`).
+- **Replay Histórico Real + Multi-município:** consultas por data e hora passadas (`date=YYYY-MM-DD` e `time=HH:MM`) reconstroem alagamentos ativos do **CGE-SP** e precipitação horária real (**Open-Meteo Historical Forecast**); fora da Capital SP, opera cruzando **Open-Meteo**, **INMET** e **Overpass OSM**.
+- **Formatos de entrega:** API REST (`JSON` no padrão `ApiResponse<T>` + `GeoJSON` `/v1/player/scene`) e Feeds `XML / RSS 2.0` com namespace `<ooh:*>` (protegidos para tempo real).
+
+> **Nota da fase PoC (Custo Zero):** as integrações públicas gratuitas de **Open-Meteo** (`historical-forecast-api` / `archive-api`), **Overpass API** e **Nominatim** são restritas à fase de PoC e protegidas por cache TTL de 24h e fila serial no backend. Dados cartográficos e viários: `© OpenStreetMap contributors (ODbL) • OpenFreeMap`.
 
 ---
 
@@ -16,16 +18,16 @@ ooh-alerta-alagamentos/
 ├── AGENTS.md                  # Diretrizes globais de governança e código
 ├── README.md                  # Visão geral do repositório
 ├── docs/                      # Documentação de produto, viabilidade, pesquisa e escopo DOOH
-├── backend/                   # API Fastify v5 + TypeScript + Zod + Swagger + Vitest
+├── backend/                   # API Fastify v5 + TypeScript + Zod + Turf.js + Swagger + Vitest
 │   ├── AGENTS.md              # Diretrizes arquiteturais do backend
-│   ├── API.md                 # Contrato dos endpoints REST e RSS 2.0
+│   ├── API.md                 # Contrato dos endpoints REST, Player DOOH e RSS 2.0
 │   ├── docs/architecture.md   # Blueprint técnico, fluxos e roadmap de provedores
 │   ├── scripts/smoke-live.ts  # Verificação integrada ao vivo (Open-Meteo, INMET, CGE-SP)
 │   └── src/                   # Código-fonte da aplicação
-└── frontend/                  # SPA React 19 + Vite + Tailwind v4 + TanStack Query + Leaflet
+└── frontend/                  # SPA React 19 + Vite + Tailwind v4 + TanStack Query + MapLibre GL JS + deck.gl
     ├── AGENTS.md              # Diretrizes arquiteturais e gates do frontend
-    ├── README.md              # Guia de execução e testes do frontend
-    └── src/                   # Páginas, componentes, hooks, services e utilitários
+    ├── README.md              # Guia de execução, rewrite SPA (/player) e testes do frontend
+    └── src/                   # Páginas (/ e ?mode=player), componentes, hooks, services e utilitários
 ```
 
 ---
@@ -59,7 +61,7 @@ cp .env.example .env
 npm run dev
 ```
 
-> Consulte [`frontend/README.md`](./frontend/README.md) para detalhes das variáveis `VITE_API_BASE_URL` / `VITE_API_TIMEOUT_MS`, cenários de demonstração (`ENABLE_SIMULATION_PARAMS=true` no backend) e gates de qualidade do frontend.
+> Consulte [`frontend/README.md`](./frontend/README.md) para detalhes das variáveis `VITE_API_BASE_URL` / `VITE_API_TIMEOUT_MS`, rewrite SPA para `/player`, personalização white-label e gates de qualidade do frontend.
 
 ### Variáveis de Ambiente (`backend/.env`)
 
@@ -70,22 +72,31 @@ npm run dev
 | `HOST` | `0.0.0.0` | Endereço de escuta |
 | `CORS_ORIGIN` | `*` | Origens permitidas no CORS (`*` ou lista separada por vírgula) |
 | `RATE_LIMIT_MAX` | `120` | Limite de requisições por minuto |
-| `ENABLE_SIMULATION_PARAMS` | `false` | Habilita `?cgeDate=` e `?simulate=` para demonstrações |
+| `ENABLE_SIMULATION_PARAMS` | `false` | Restringe apenas `?simulate=` artificial; replay histórico (`?date=` / `?time=`) fica sempre habilitado em JSON |
 | `FORECAST_PROVIDER` | `open-meteo` | Provedor de previsão (`open-meteo`, `tomorrow-io`, `google-weather`) |
 | `HTTP_TIMEOUT_MS` | `8000` | Timeout explícito das chamadas externas (ms) |
 | `CACHE_TTL_FORECAST_SECONDS` | `900` | TTL do cache da previsão horária (s) |
 | `CACHE_TTL_INMET_SECONDS` | `600` | TTL do cache dos avisos oficiais INMET (s) |
 | `CACHE_TTL_CGE_SECONDS` | `300` | TTL do cache de alagamentos e estações CGE-SP (s) |
+| `CACHE_TTL_HISTORICAL_SECONDS` | `86400` | TTL do cache para datas históricas passadas (s) |
+| `CACHE_TTL_OVERPASS_SECONDS` | `86400` | TTL do cache de geometrias viárias Overpass (s) |
+| `CACHE_TTL_GEOSAMPA_SECONDS` | `86400` | TTL do cache de manchas GeoSampa WFS (s) |
+| `CACHE_TTL_GEOCODE_SECONDS` | `86400` | TTL do cache de geocodificação Nominatim (s) |
+| `OVERPASS_URLS` | `maps.mail.ru,overpass-api.de,overpass.private.coffee` | Lista de mirrors Overpass API separados por vírgula |
+| `NOMINATIM_USER_AGENT` | `ooh-alerta-alagamentos/0.2 (...)` | Header `User-Agent` enviado ao Nominatim e Overpass |
 
 ### Endpoints Principais (com `npm run dev`)
 
 - Swagger UI: `http://localhost:3333/docs`
-- Healthcheck: `GET http://localhost:3333/v1/health`
+- Healthcheck + capacidades: `GET http://localhost:3333/v1/health`
 - Saúde das fontes externas: `GET http://localhost:3333/v1/sources/status`
-- Catálogo de regiões: `GET http://localhost:3333/v1/regions`
+- Catálogo de regiões (12): `GET http://localhost:3333/v1/regions`
 - Panorama consolidado (JSON): `GET http://localhost:3333/v1/alerts/regions`
 - Alerta por região (JSON): `GET http://localhost:3333/v1/alerts/regions/zona-oeste-butanta`
 - Alerta por coordenada (JSON): `GET "http://localhost:3333/v1/alerts/by-coordinates?lat=-23.5317&lon=-46.7294"`
+- Catálogo de pontos OOH curados (7): `GET http://localhost:3333/v1/player/assets`
+- Busca textual de endereço (Nominatim BR-SP): `GET "http://localhost:3333/v1/player/geocode?q=Avenida+Paulista"`
+- Cena completa do Player DOOH (`GeoJSON` + câmera + editorial): `GET "http://localhost:3333/v1/player/scene?assetId=av-roberto-marinho"`
 - Feed consolidado (RSS 2.0): `GET http://localhost:3333/v1/alerts/feed.xml`
 - Feed por região (RSS 2.0): `GET http://localhost:3333/v1/alerts/regions/zona-oeste-butanta/feed.xml`
 - Feed por coordenada (RSS 2.0): `GET "http://localhost:3333/v1/alerts/by-coordinates/feed.xml?lat=-22.9099&lon=-47.0626"`
@@ -94,13 +105,23 @@ npm run dev
 
 ## Comandos de Qualidade e Smoke Test Ao Vivo
 
+### Backend (`cd backend`)
 ```bash
 cd backend
-npm run typecheck   # Verificação estrita TypeScript (tsc --noEmit)
-npm run test        # Suíte offline e determinística (Vitest)
-npm run build       # Compilação de produção para backend/build/
+npm run typecheck        # Verificação estrita TypeScript (tsc --noEmit)
+npm run test             # Suíte offline e determinística (Vitest)
+npm run build            # Compilação de produção para backend/build/
 npm run smoke:live       # Smoke test ao vivo contra Open-Meteo, INMET e CGE-SP
 npm run validate:routes  # Validação E2E HTTP real de todos os 8 blocos do roteiro (aceita BASE_URL opcional)
+```
+
+### Frontend (`cd frontend`)
+```bash
+cd frontend
+npm run typecheck        # Verificação estrita TypeScript (tsc -b --noEmit)
+npm run lint             # ESLint
+npm run test             # Suíte Vitest + Testing Library
+npm run build            # Build de produção em frontend/dist/
 ```
 
 ---
@@ -122,4 +143,4 @@ npm run validate:routes  # Validação E2E HTTP real de todos os 8 blocos do rot
 ## Fluxo de Trabalho Git
 
 - A branch `main` mantém a base estável e validada pelos gates.
-- Novas funcionalidades são desenvolvidas em feature branches (como `feat/poc-flood-alerts-api`) com commits atômicos no padrão Conventional Commits e revisão via Pull Request.
+- Novas funcionalidades são desenvolvidas em feature branches (como `feat/poc-player-dooh`) com commits atômicos no padrão Conventional Commits e revisão via Pull Request.

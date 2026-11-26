@@ -1,8 +1,28 @@
 export type SeverityLevel = 0 | 1 | 2 | 3
 export type SeverityLabel = 'NORMAL' | 'ATENCAO' | 'ALERTA' | 'CRITICO'
 export type SimulationMode = 'normal' | 'attention' | 'alert' | 'critical'
+export type TemporalMode = 'realtime' | 'historical' | 'simulated'
+
+export interface TemporalContext {
+  mode: TemporalMode
+  date: string | null
+  time: string | null
+  resolvedTime: string | null
+  referenceAt: string
+}
+
+export interface HealthData {
+  status: 'ok'
+  uptime: number
+  timestamp: string
+  capabilities: {
+    simulation: boolean
+  }
+}
 
 export interface ScenarioQueryParams {
+  date?: string
+  time?: string
   cgeDate?: string
   simulate?: SimulationMode
 }
@@ -114,6 +134,7 @@ export interface AlertLocationInfo {
 
 export interface OohAlertDecision {
   evaluatedAt: string
+  temporal: TemporalContext
   location: AlertLocationInfo
   triggerOverride: boolean
   severityLevel: SeverityLevel

@@ -21,6 +21,19 @@ export function formatDateTimeBr(isoString: string | null | undefined): string {
   return format(date, 'dd/MM/yyyy HH:mm', { locale: ptBR })
 }
 
+export function formatIsoDateBr(dateIso: string | null | undefined): string {
+  const date = parseSafeDate(dateIso)
+  if (!date) {
+    return FALLBACK_TEXT
+  }
+
+  return format(date, 'dd/MM/yyyy', { locale: ptBR })
+}
+
+export function getTodayIsoDate(): string {
+  return format(new Date(), 'yyyy-MM-dd')
+}
+
 export function formatHourBr(isoString: string | null | undefined): string {
   const date = parseSafeDate(isoString)
   if (!date) {

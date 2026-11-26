@@ -258,4 +258,89 @@ describe('OpenMeteoForecastProvider', () => {
       'Open-Meteo respondeu HTTP 503',
     )
   })
+
+  it('consulta historical-forecast-api como fonte principal para replay histórico', async () => {
+    const historicalPayload = {
+      latitude: -23.58,
+      longitude: -46.69,
+      timezone: 'America/Sao_Paulo',
+      hourly: {
+        time: ['2025-01-24T19:00', '2025-01-24T20:00'],
+        temperature_2m: [25.4, 23.1],
+        relative_humidity_2m: [80, 92],
+        precipitation_probability: [65, 95],
+        precipitation: [1.2, 24.5],
+        rain: [1.2, 24.5],
+        weather_code: [61, 95],
+        is_day: [0, 0],
+      },
+    }
+
+    let capturedUrl = ''
+    const fetchFn: typeof fetch = vi.fn(async (input) => {
+      capturedUrl = String(input)
+      return new Response(JSON.stringify(historicalPayload), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      })
+    })
+
+    const provider = new OpenMeteoForecastProvider({ fetchFn })
+    const day = await provider.getHistoricalHourly(-23.58, -46.69, '2025-01-24')
+
+    expect(capturedUrl).toContain('historical-forecast-api.open-meteo.com/v1/forecast')
+    expect(capturedUrl).toContain('start_date=2025-01-24')
+    expect(capturedUrl).toContain('end_date=2025-01-24')
+    expect(capturedUrl).toContain('precipitation_probability')
+    expect(day.provider).toBe('open-meteo-historical')
+    expect(day.hourly).toHaveLength(2)
+    expect(day.hourly[1]).toEqual({
+      time: '2025-01-24T20:00',
+      precipitationProbabilityPercent: 95,
+      precipitationMm: 24.5,
+      rainMm: 24.5,
+      weatherCode: 95,
+      temperatureC: 23.1,
+      humidityPercent: 92,
+      isDay: false,
+    })
+  })
+
+  it('faz fallback para archive-api e converte chuva >= 0.3 mm em 100% quando precipitation_probability está ausente', async () => {
+    const archivePayload = {
+      latitude: -23.58,
+      longitude: -46.69,
+      timezone: 'America/Sao_Paulo',
+      hourly: {
+        time: ['2025-01-24T18:00', '2025-01-24T19:00', '2025-01-24T20:00'],
+        temperature_2m: [27.0, 25.0, 23.0],
+        relative_humidity_2m: [60, 78, 94],
+        precipitation: [0.0, 0.2, 0.3],
+        rain: [0.0, 0.2, 0.3],
+        weather_code: [2, 51, 61],
+        is_day: [1, 0, 0],
+      },
+    }
+
+    const calledUrls: string[] = []
+    const fetchFn: typeof fetch = vi.fn(async (input) => {
+      const url = String(input)
+      calledUrls.push(url)
+      if (url.includes('historical-forecast-api')) {
+        return new Response('Bad Gateway', { status: 502 })
+      }
+      return new Response(JSON.stringify(archivePayload), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      })
+    })
+
+    const provider = new OpenMeteoForecastProvider({ fetchFn })
+    const day = await provider.getHistoricalHourly(-23.58, -46.69, '2025-01-24')
+
+    expect(calledUrls).toHaveLength(2)
+    expect(calledUrls[0]).toContain('historical-forecast-api.open-meteo.com')
+    expect(calledUrls[1]).toContain('archive-api.open-meteo.com/v1/archive')
+    expect(day.hourly.map((point) => point.precipitationProbabilityPercent)).toEqual([0, 0, 100])
+  })
 })

@@ -1,0 +1,27 @@
+{
+  "elements": [
+    {
+      "type": "way",
+      "id": 1001,
+      "tags": {
+        "name": "Avenida Jornalista Roberto Marinho",
+        "highway": "primary"
+      },
+      "geometry": [
+        { "lat": -23.621, "lon": -46.69 },
+        { "lat": -23.622, "lon": -46.685 },
+        { "lat": -23.623, "lon": -46.68 }
+      ]
+    },
+    {
+      "type": "way",
+      "id": 1002,
+      "tags": {
+        "highway": "secondary"
+      },
+      "geometry": [
+        { "lat": -23.624, "lon": -46.688 }
+      ]
+    }
+  ]
+}

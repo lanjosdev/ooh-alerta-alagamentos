@@ -5,7 +5,11 @@ import type {
   FloodingPoint,
   StationRainfall,
 } from '../../providers/flooding-monitor-provider.js'
-import type { ForecastProvider, RegionForecast } from '../../providers/forecast-provider.js'
+import type {
+  ForecastProvider,
+  HistoricalForecastDay,
+  RegionForecast,
+} from '../../providers/forecast-provider.js'
 import type {
   OfficialAlertsProvider,
   OfficialWeatherAlert,
@@ -81,9 +85,67 @@ function createStubProviders() {
     humidityPercent: 88,
   }
 
+  const historicalDay: HistoricalForecastDay = {
+    provider: 'open-meteo-historical',
+    dateIso: '2025-01-24',
+    gridLatitude: -23.58,
+    gridLongitude: -46.75,
+    timezone: 'America/Sao_Paulo',
+    hourly: [
+      {
+        time: '2025-01-24T12:00',
+        precipitationProbabilityPercent: 10,
+        precipitationMm: 0,
+        rainMm: 0,
+        weatherCode: 2,
+        temperatureC: 28,
+        humidityPercent: 55,
+        isDay: true,
+      },
+      {
+        time: '2025-01-24T19:00',
+        precipitationProbabilityPercent: 80,
+        precipitationMm: 6.5,
+        rainMm: 6.5,
+        weatherCode: 80,
+        temperatureC: 24,
+        humidityPercent: 84,
+        isDay: false,
+      },
+      {
+        time: '2025-01-24T20:00',
+        precipitationProbabilityPercent: 95,
+        precipitationMm: 22.0,
+        rainMm: 22.0,
+        weatherCode: 95,
+        temperatureC: 22,
+        humidityPercent: 92,
+        isDay: false,
+      },
+      {
+        time: '2025-01-24T21:00',
+        precipitationProbabilityPercent: 70,
+        precipitationMm: 4.0,
+        rainMm: 4.0,
+        weatherCode: 61,
+        temperatureC: 21.5,
+        humidityPercent: 90,
+        isDay: false,
+      },
+    ],
+  }
+
   const forecastProvider: ForecastProvider = {
     providerName: 'open-meteo',
     getHourlyForecast: vi.fn(async () => forecastData),
+    getHistoricalHourly: vi.fn(async (_lat, _lon, dateIso) => ({
+      ...historicalDay,
+      dateIso,
+      hourly: historicalDay.hourly.map((point) => ({
+        ...point,
+        time: `${dateIso}${point.time.slice(10)}`,
+      })),
+    })),
   }
 
   const officialAlertsProvider: OfficialAlertsProvider = {
@@ -203,12 +265,13 @@ describe('GetLocationAlertService', () => {
     expect(decision.sources.officialAlerts.status).toBe('ok')
   })
 
-  it('bloqueia cgeDate/simulate quando ENABLE_SIMULATION_PARAMS=false e permite quando true', async () => {
+  it('bloqueia apenas simulate quando ENABLE_SIMULATION_PARAMS=false, mantendo replay histórico sempre habilitado', async () => {
     const stubs = createStubProviders()
     const disabledService = new GetLocationAlertService({
       regionRepository: new InMemoryRegionRepository(),
       cache: new MemoryCache(),
       enableSimulationParams: false,
+      nowFn: () => new Date('2026-11-25T15:00:00Z'),
       ...stubs,
     })
 
@@ -220,18 +283,20 @@ describe('GetLocationAlertService', () => {
       }),
     ).rejects.toThrow(BadRequestError)
 
-    await expect(
-      disabledService.execute({
-        mode: 'region',
-        regionId: 'centro-se',
-        cgeDate: '15/01/2026',
-      }),
-    ).rejects.toThrow(BadRequestError)
+    const historicalAllowed = await disabledService.execute({
+      mode: 'region',
+      regionId: 'centro-se',
+      cgeDate: '15/01/2026',
+    })
+    expect(historicalAllowed.temporal.mode).toBe('historical')
+    expect(historicalAllowed.temporal.date).toBe('2026-01-15')
+    expect(historicalAllowed.flooding.cgeDate).toBe('15/01/2026')
 
     const enabledService = new GetLocationAlertService({
       regionRepository: new InMemoryRegionRepository(),
       cache: new MemoryCache(),
       enableSimulationParams: true,
+      nowFn: () => new Date('2026-11-25T15:00:00Z'),
       ...stubs,
     })
 
@@ -243,8 +308,147 @@ describe('GetLocationAlertService', () => {
     })
 
     expect(simulated.simulated).toBe(true)
+    expect(simulated.temporal.mode).toBe('simulated')
     expect(simulated.severityLevel).toBe(3)
     expect(simulated.flooding.cgeDate).toBe('15/01/2026')
+  })
+
+  it('reconstrói replay histórico com date/time, isola caches e marca INMET e estação CGE como skipped/null', async () => {
+    const stubs = createStubProviders()
+    vi.mocked(stubs.floodingMonitorProvider.getFloodingPoints).mockResolvedValue([
+      {
+        zone: 'Zona Oeste',
+        neighborhood: 'Pinheiros',
+        street: 'AV MARGINAL PINHEIROS',
+        direction: 'AMBOS',
+        reference: 'PTE ESTAIADA',
+        timeWindow: 'De 19:50 a 21:15',
+        status: 'inativo-intransitavel',
+        active: false,
+        passable: false,
+      },
+    ])
+
+    const cache = new MemoryCache()
+    const service = new GetLocationAlertService({
+      regionRepository: new InMemoryRegionRepository(),
+      cache,
+      enableSimulationParams: false,
+      nowFn: () => new Date('2026-11-25T15:00:00Z'),
+      ...stubs,
+    })
+
+    // Sem time: resolve automaticamente para o minuto de pico do CGE (19:50)
+    const peakDecision = await service.execute({
+      mode: 'region',
+      regionId: 'zona-oeste-pinheiros',
+      date: '2025-01-24',
+    })
+
+    expect(peakDecision.temporal).toEqual({
+      mode: 'historical',
+      date: '2025-01-24',
+      time: null,
+      resolvedTime: '19:50',
+      referenceAt: '2025-01-24T19:50:00-03:00',
+    })
+    expect(peakDecision.flooding.cgeDate).toBe('24/01/2025')
+    expect(peakDecision.flooding.activeInZoneCount).toBe(1)
+    expect(peakDecision.flooding.pointsInZone[0].status).toBe('ativo-intransitavel')
+    expect(peakDecision.flooding.stationRainfall).toBeNull()
+    expect(peakDecision.officialAlerts).toEqual([])
+    expect(peakDecision.sources.officialAlerts.status).toBe('skipped')
+    expect(peakDecision.sources.forecast.provider).toBe('open-meteo-historical')
+    expect(stubs.floodingMonitorProvider.getStationRainfall).not.toHaveBeenCalled()
+    expect(stubs.officialAlertsProvider.getActiveAlerts).not.toHaveBeenCalled()
+
+    // Isolamento: saúde do provedor em tempo real não foi alterada pela consulta histórica
+    expect(cache.getProviderHealth('open-meteo').status).toBe('unknown')
+    expect(cache.getProviderHealth('open-meteo-historical').status).toBe('ok')
+
+    // Fora da janela (18:00): ponto CGE permanece inativo-intransitavel
+    const offWindowDecision = await service.execute({
+      mode: 'region',
+      regionId: 'zona-oeste-pinheiros',
+      date: '2025-01-24',
+      time: '18:00',
+    })
+    expect(offWindowDecision.temporal.resolvedTime).toBe('18:00')
+    expect(offWindowDecision.flooding.activeInZoneCount).toBe(0)
+    expect(offWindowDecision.flooding.pointsInZone[0].status).toBe('inativo-intransitavel')
+  })
+
+  it('quando CGE histórico está vazio no dia, usa pico de precipitação Open-Meteo (ou 12:00 se seco)', async () => {
+    const stubs = createStubProviders()
+    vi.mocked(stubs.floodingMonitorProvider.getFloodingPoints).mockResolvedValue([])
+
+    const service = new GetLocationAlertService({
+      regionRepository: new InMemoryRegionRepository(),
+      cache: new MemoryCache(),
+      nowFn: () => new Date('2026-11-25T15:00:00Z'),
+      ...stubs,
+    })
+
+    const rainyPeak = await service.execute({
+      mode: 'region',
+      regionId: 'centro-se',
+      date: '2025-01-24',
+    })
+    expect(rainyPeak.temporal.resolvedTime).toBe('20:00')
+
+    vi.mocked(stubs.forecastProvider.getHistoricalHourly!).mockResolvedValueOnce({
+      provider: 'open-meteo-historical',
+      dateIso: '2025-01-10',
+      gridLatitude: -23.55,
+      gridLongitude: -46.63,
+      timezone: 'America/Sao_Paulo',
+      hourly: [
+        {
+          time: '2025-01-10T10:00',
+          precipitationProbabilityPercent: 0,
+          precipitationMm: 0,
+          rainMm: 0,
+          weatherCode: 1,
+          temperatureC: 27,
+          humidityPercent: 55,
+          isDay: true,
+        },
+      ],
+    })
+
+    const dryDay = await service.execute({
+      mode: 'region',
+      regionId: 'centro-se',
+      date: '2025-01-10',
+    })
+    expect(dryDay.temporal.resolvedTime).toBe('12:00')
+  })
+
+  it('rejeita date no futuro, time sem date e date+cgeDate juntos com BadRequestError', async () => {
+    const stubs = createStubProviders()
+    const service = new GetLocationAlertService({
+      regionRepository: new InMemoryRegionRepository(),
+      cache: new MemoryCache(),
+      nowFn: () => new Date('2026-11-25T15:00:00Z'),
+      ...stubs,
+    })
+
+    await expect(
+      service.execute({ mode: 'region', regionId: 'centro-se', date: '2026-12-01' }),
+    ).rejects.toThrow(BadRequestError)
+
+    await expect(
+      service.execute({ mode: 'region', regionId: 'centro-se', time: '20:00' }),
+    ).rejects.toThrow(BadRequestError)
+
+    await expect(
+      service.execute({
+        mode: 'region',
+        regionId: 'centro-se',
+        date: '2025-01-24',
+        cgeDate: '24/01/2025',
+      }),
+    ).rejects.toThrow(BadRequestError)
   })
 
   it('degrada graciosamente quando um provedor falha sem derrubar os demais dados', async () => {

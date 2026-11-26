@@ -1,11 +1,15 @@
 import type { FastifyReply, FastifyRequest } from 'fastify'
 import type { z } from 'zod'
-import type { cityOverviewQuerySchema } from '../../routes/schemas/alerts.js'
+import type {
+  cityOverviewQuerySchema,
+  rssCityOverviewQuerySchema,
+} from '../../routes/schemas/alerts.js'
 import type { GetCityOverviewService } from '../../services/alerts/get-city-overview-service.js'
 import { successResponse } from '../../utils/api-response.js'
 import { buildFeedSelfLink, formatAlertsAsRss } from '../../utils/rss-formatter.js'
 
 type CityOverviewQuery = z.infer<typeof cityOverviewQuerySchema>
+type RssCityOverviewQuery = z.infer<typeof rssCityOverviewQuerySchema>
 
 export class GetCityOverviewController {
   constructor(private readonly getCityOverviewService: GetCityOverviewService) {}
@@ -17,6 +21,8 @@ export class GetCityOverviewController {
     const overview = await this.getCityOverviewService.execute({
       zone: request.query.zone,
       ibgeCode: request.query.ibgeCode,
+      date: request.query.date,
+      time: request.query.time,
       cgeDate: request.query.cgeDate,
       simulate: request.query.simulate,
     })
@@ -25,7 +31,7 @@ export class GetCityOverviewController {
   }
 
   async handleRss(
-    request: FastifyRequest<{ Querystring: CityOverviewQuery }>,
+    request: FastifyRequest<{ Querystring: RssCityOverviewQuery }>,
     reply: FastifyReply,
   ) {
     const overview = await this.getCityOverviewService.execute({

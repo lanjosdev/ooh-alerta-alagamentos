@@ -13,6 +13,28 @@ import type { ApiResponse } from '@/types/api'
 function compactScenarioParams(scenario?: ScenarioQueryParams): Record<string, string> {
   const params: Record<string, string> = {}
 
+  if (scenario?.date) {
+    params.date = scenario.date
+  }
+
+  if (scenario?.time) {
+    params.time = scenario.time
+  }
+
+  if (scenario?.cgeDate) {
+    params.cgeDate = scenario.cgeDate
+  }
+
+  if (scenario?.simulate) {
+    params.simulate = scenario.simulate
+  }
+
+  return params
+}
+
+function compactRssScenarioParams(scenario?: ScenarioQueryParams): Record<string, string> {
+  const params: Record<string, string> = {}
+
   if (scenario?.cgeDate) {
     params.cgeDate = scenario.cgeDate
   }
@@ -86,7 +108,7 @@ export const alertsService = Object.freeze({
 
   async getRssFeedXml(target: AlertTarget, scenario?: ScenarioQueryParams): Promise<string> {
     const path = buildTargetPath(target, 'xml')
-    const baseParams = compactScenarioParams(scenario)
+    const baseParams = compactRssScenarioParams(scenario)
     const params =
       target.kind === 'coordinates'
         ? { lat: target.lat, lon: target.lon, ...baseParams }
@@ -123,12 +145,11 @@ export const alertsService = Object.freeze({
       searchParams.set('lon', String(target.lon))
     }
 
-    if (scenario?.cgeDate) {
-      searchParams.set('cgeDate', scenario.cgeDate)
-    }
+    const queryParams =
+      format === 'xml' ? compactRssScenarioParams(scenario) : compactScenarioParams(scenario)
 
-    if (scenario?.simulate) {
-      searchParams.set('simulate', scenario.simulate)
+    for (const [key, value] of Object.entries(queryParams)) {
+      searchParams.set(key, value)
     }
 
     const queryString = searchParams.toString()

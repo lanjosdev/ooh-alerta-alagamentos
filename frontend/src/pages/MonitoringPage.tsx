@@ -1,44 +1,58 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { EmptyState } from '@/components/patterns/EmptyState'
 import { QueryErrorAlert } from '@/components/patterns/QueryErrorAlert'
 import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import {
-  PointDetailsPanel,
-  type PointDetailsTabId,
-} from '@/features/monitoring/components/PointDetailsPanel'
-import { ScenarioToolbar } from '@/features/monitoring/components/ScenarioToolbar'
-import { SpMonitoringMap } from '@/features/monitoring/components/SpMonitoringMap'
-import { useCityOverview } from '@/features/monitoring/hooks/useCityOverview'
-import { useCoordinatesAlert } from '@/features/monitoring/hooks/useCoordinatesAlert'
+  ExplorerMapPanel,
+  type ExplorerLayerMode,
+} from '@/features/monitoring/components/ExplorerMapPanel'
 import {
+  PointInspectorStage,
+  type PointStageTabId,
+} from '@/features/monitoring/components/PointInspectorStage'
+import { TopControlBar } from '@/features/monitoring/components/TopControlBar'
+import { useApiHealth } from '@/features/monitoring/hooks/useApiHealth'
+import { useCityOverview } from '@/features/monitoring/hooks/useCityOverview'
+import { useSourcesStatus } from '@/features/monitoring/hooks/useSourcesStatus'
+import {
+  filterAssets,
   filterRegions,
-  getScenarioPreset,
-  type ScenarioPresetId,
+  temporalSelectionToQuery,
   type SeverityFilter,
+  type TemporalSelection,
   type ZoneFilter,
 } from '@/features/monitoring/utils/scenarios'
-import type { AlertTarget } from '@/types/alerts'
+import { usePlayerAssets } from '@/features/player/hooks/usePlayerAssets'
+import { usePlayerScene } from '@/features/player/hooks/usePlayerScene'
+import { DEFAULT_PLAYER_BRAND } from '@/features/player/utils/playerUrlState'
+import type { AlertTarget, OohAlertDecision } from '@/types/alerts'
+import type { PlayerBrandConfig, PlayerTarget } from '@/types/player'
 
 export function MonitoringPage() {
-  const detailsRef = useRef<HTMLDivElement | null>(null)
-  const pendingScrollToDetailsRef = useRef(false)
-  const [presetId, setPresetId] = useState<ScenarioPresetId>('realtime')
+  const [selection, setSelection] = useState<TemporalSelection>({ mode: 'realtime' })
+  const [activeLayer, setActiveLayer] = useState<ExplorerLayerMode>('assets')
   const [zoneFilter, setZoneFilter] = useState<ZoneFilter>('Todas')
   const [severityFilter, setSeverityFilter] = useState<SeverityFilter>('all')
-  const [selectedTarget, setSelectedTarget] = useState<AlertTarget | null>(null)
-  const [isDetailsOpen, setIsDetailsOpen] = useState(false)
-  const [activeDetailsTab, setActiveDetailsTab] = useState<PointDetailsTabId>('climate')
+  const [selectedTarget, setSelectedTarget] = useState<PlayerTarget | null>(null)
+  const [selectedRegionId, setSelectedRegionId] = useState<string | null>(null)
+  const [activeStageTab, setActiveStageTab] = useState<PointStageTabId>('preview')
+  const [brandConfig, setBrandConfig] = useState<PlayerBrandConfig>(DEFAULT_PLAYER_BRAND)
 
-  const scenario = getScenarioPreset(presetId).query
+  const scenario = useMemo(() => temporalSelectionToQuery(selection), [selection])
+
+  const healthQuery = useApiHealth()
+  const sourcesStatusQuery = useSourcesStatus()
+  const assetsQuery = usePlayerAssets(scenario)
   const overviewQuery = useCityOverview(scenario)
 
-  const coordinatesInput =
-    selectedTarget?.kind === 'coordinates'
-      ? { lat: selectedTarget.lat, lon: selectedTarget.lon }
-      : null
+  const simulationEnabled = healthQuery.data?.capabilities.simulation ?? false
 
-  const coordinatesQuery = useCoordinatesAlert(coordinatesInput, scenario)
+  const allAssets = useMemo(() => assetsQuery.data?.assets ?? [], [assetsQuery.data?.assets])
+  const filteredAssets = useMemo(
+    () => filterAssets(allAssets, zoneFilter, severityFilter),
+    [allAssets, zoneFilter, severityFilter],
+  )
 
   const allRegions = useMemo(() => overviewQuery.data?.regions ?? [], [overviewQuery.data?.regions])
   const filteredRegions = useMemo(
@@ -46,165 +60,236 @@ export function MonitoringPage() {
     [allRegions, zoneFilter, severityFilter],
   )
 
-  const fallbackRegion = filteredRegions[0] ?? allRegions[0] ?? null
-  const resolvedRegion =
-    selectedTarget?.kind === 'region'
-      ? (allRegions.find((region) => region.location.id === selectedTarget.regionId) ??
-        fallbackRegion)
-      : fallbackRegion
+  const fallbackAsset = filteredAssets[0] ?? allAssets[0] ?? null
 
-  const effectiveTarget: AlertTarget | null =
-    selectedTarget?.kind === 'coordinates'
-      ? selectedTarget
-      : resolvedRegion
-        ? { kind: 'region', regionId: resolvedRegion.location.id }
-        : null
-
-  const activeDecision =
-    effectiveTarget?.kind === 'coordinates' ? (coordinatesQuery.data ?? null) : resolvedRegion
-
-  const isDetailsLoading =
-    effectiveTarget?.kind === 'coordinates' ? coordinatesQuery.isPending : false
-  const detailsError =
-    effectiveTarget?.kind === 'coordinates' ? coordinatesQuery.error : null
-
-  useEffect(() => {
-    if (isDetailsOpen && pendingScrollToDetailsRef.current) {
-      pendingScrollToDetailsRef.current = false
-      detailsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  const effectivePlayerTarget: PlayerTarget | null = useMemo(() => {
+    if (selectedTarget !== null) {
+      return selectedTarget
     }
-  }, [isDetailsOpen])
 
-  const handleFocusDetails = () => {
-    if (isDetailsOpen) {
-      detailsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-      return
+    if (fallbackAsset) {
+      return { kind: 'asset', assetId: fallbackAsset.id }
     }
-    pendingScrollToDetailsRef.current = true
-    setIsDetailsOpen(true)
+
+    return null
+  }, [fallbackAsset, selectedTarget])
+
+  const sceneQuery = usePlayerScene(effectivePlayerTarget, scenario)
+
+  const effectiveScene = useMemo(() => {
+    if (!sceneQuery.data) {
+      return null
+    }
+
+    const isGenericCorridorName =
+      sceneQuery.data.editorial.corridorName === sceneQuery.data.decision.location.name
+
+    if (
+      !sceneQuery.isPlaceholderData &&
+      sceneQuery.data.targetKind === 'coordinates' &&
+      isGenericCorridorName &&
+      effectivePlayerTarget?.kind === 'coordinates' &&
+      effectivePlayerTarget.label
+    ) {
+      return {
+        ...sceneQuery.data,
+        editorial: {
+          ...sceneQuery.data.editorial,
+          corridorName: effectivePlayerTarget.label,
+        },
+      }
+    }
+
+    return sceneQuery.data
+  }, [effectivePlayerTarget, sceneQuery.data, sceneQuery.isPlaceholderData])
+
+  const explorerSelectedTarget: PlayerTarget | null = useMemo(() => {
+    if (
+      effectivePlayerTarget?.kind === 'coordinates' &&
+      !effectivePlayerTarget.label &&
+      !sceneQuery.isPlaceholderData &&
+      sceneQuery.data?.targetKind === 'coordinates' &&
+      sceneQuery.data.editorial.corridorName !== sceneQuery.data.decision.location.name
+    ) {
+      return {
+        ...effectivePlayerTarget,
+        label: sceneQuery.data.editorial.corridorName,
+      }
+    }
+
+    return effectivePlayerTarget
+  }, [effectivePlayerTarget, sceneQuery.data, sceneQuery.isPlaceholderData])
+
+  const effectiveAlertTarget: AlertTarget | null = useMemo(() => {
+    if (selectedRegionId && effectivePlayerTarget?.kind === 'coordinates') {
+      return { kind: 'region', regionId: selectedRegionId }
+    }
+
+    if (sceneQuery.data) {
+      return {
+        kind: 'coordinates',
+        lat: sceneQuery.data.decision.location.latitude,
+        lon: sceneQuery.data.decision.location.longitude,
+      }
+    }
+
+    if (effectivePlayerTarget?.kind === 'coordinates') {
+      return {
+        kind: 'coordinates',
+        lat: effectivePlayerTarget.lat,
+        lon: effectivePlayerTarget.lon,
+      }
+    }
+
+    if (fallbackAsset) {
+      return {
+        kind: 'coordinates',
+        lat: fallbackAsset.latitude,
+        lon: fallbackAsset.longitude,
+      }
+    }
+
+    return null
+  }, [effectivePlayerTarget, fallbackAsset, sceneQuery.data, selectedRegionId])
+
+  const handleSelectAsset = (assetId: string) => {
+    setSelectedRegionId(null)
+    setSelectedTarget({ kind: 'asset', assetId })
+  }
+
+  const handleSelectRegion = (region: OohAlertDecision) => {
+    setSelectedRegionId(region.location.id)
+    setSelectedTarget({
+      kind: 'coordinates',
+      lat: region.location.latitude,
+      lon: region.location.longitude,
+      label: region.location.name,
+    })
+  }
+
+  const handleSelectCoordinates = (coords: { lat: number; lon: number; label?: string }) => {
+    setSelectedRegionId(null)
+    setSelectedTarget({
+      kind: 'coordinates',
+      lat: coords.lat,
+      lon: coords.lon,
+      label: coords.label,
+    })
   }
 
   const handleRefresh = () => {
+    void assetsQuery.refetch()
     void overviewQuery.refetch()
-    if (effectiveTarget?.kind === 'coordinates') {
-      void coordinatesQuery.refetch()
+    void sourcesStatusQuery.refetch()
+    if (effectivePlayerTarget) {
+      void sceneQuery.refetch()
     }
   }
 
   const isRefreshing =
+    assetsQuery.isFetching ||
     overviewQuery.isFetching ||
-    (effectiveTarget?.kind === 'coordinates' && coordinatesQuery.isFetching)
+    sceneQuery.isFetching ||
+    sourcesStatusQuery.isFetching
 
   const renderMainContent = () => {
-    if (overviewQuery.isPending) {
+    if (assetsQuery.isPending) {
       return (
-        <div className="grid grid-cols-1 gap-5" aria-label="Carregando mapa e painel">
-          <Card className="w-full">
-            <CardContent className="space-y-4 p-5">
-              <Skeleton className="h-6 w-64" />
-              <Skeleton className="h-[500px] w-full" />
-              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
-                <Skeleton className="h-14 w-full" />
-                <Skeleton className="h-14 w-full" />
-                <Skeleton className="h-14 w-full" />
-                <Skeleton className="h-14 w-full" />
-              </div>
+        <div
+          className="grid grid-cols-1 gap-5 lg:grid-cols-12"
+          aria-label="Carregando mapa explorador e preview DOOH"
+        >
+          <Card className="lg:col-span-7 xl:col-span-8">
+            <CardContent className="space-y-3 p-4">
+              <Skeleton className="h-9 w-full" />
+              <Skeleton className="h-[540px] w-full" />
+            </CardContent>
+          </Card>
+          <Card className="lg:col-span-5 xl:col-span-4">
+            <CardContent className="space-y-3 p-4">
+              <Skeleton className="h-10 w-full" />
+              <Skeleton className="aspect-[9/16] w-full" />
             </CardContent>
           </Card>
         </div>
       )
     }
 
-    if (overviewQuery.isError) {
+    if (assetsQuery.isError) {
       return (
         <QueryErrorAlert
-          error={overviewQuery.error}
-          title="Não foi possível carregar o panorama das regiões monitoradas"
-          onRetry={() => void overviewQuery.refetch()}
-          secondaryActionLabel={presetId !== 'realtime' ? 'Voltar ao Tempo Real' : undefined}
+          error={assetsQuery.error}
+          title="Não foi possível carregar os pontos OOH monitorados"
+          onRetry={() => void assetsQuery.refetch()}
+          secondaryActionLabel={selection.mode !== 'realtime' ? 'Voltar ao Tempo Real' : undefined}
           onSecondaryAction={
-            presetId !== 'realtime' ? () => setPresetId('realtime') : undefined
+            selection.mode !== 'realtime' ? () => setSelection({ mode: 'realtime' }) : undefined
           }
         />
       )
     }
 
-    if (!overviewQuery.data || overviewQuery.data.regions.length === 0) {
+    if (!assetsQuery.data || allAssets.length === 0) {
       return (
         <EmptyState
-          title="Nenhuma região monitorada retornada pela API"
-          description="Verifique se o catálogo inicial de regiões está ativo no backend."
+          title="Nenhum ponto OOH disponível"
+          description="Verifique se o catálogo inicial de ativos OOH está ativo no backend."
         />
       )
     }
 
     return (
-      <div
-        className={
-          isDetailsOpen
-            ? 'grid grid-cols-1 items-start gap-5 lg:grid-cols-12'
-            : 'grid grid-cols-1 items-start gap-5'
-        }
-      >
-        <div className={isDetailsOpen ? 'lg:col-span-7 xl:col-span-8' : 'w-full'}>
-          <SpMonitoringMap
+      <div className="grid grid-cols-1 items-start gap-5 lg:grid-cols-12">
+        <div className="lg:col-span-7 xl:col-span-8">
+          <ExplorerMapPanel
+            activeLayer={activeLayer}
+            onChangeLayer={setActiveLayer}
+            assets={filteredAssets}
+            totalAssetsCount={allAssets.length}
             regions={filteredRegions}
-            selectedTarget={effectiveTarget}
-            customDecision={
-              effectiveTarget?.kind === 'coordinates' ? (coordinatesQuery.data ?? null) : null
-            }
-            isCustomLoading={
-              effectiveTarget?.kind === 'coordinates' && coordinatesQuery.isPending
-            }
-            customError={
-              effectiveTarget?.kind === 'coordinates' ? coordinatesQuery.error : null
-            }
-            isDetailsOpen={isDetailsOpen}
-            activePointName={activeDecision?.location.name ?? null}
-            onSelectRegion={(regionId) => setSelectedTarget({ kind: 'region', regionId })}
-            onSelectCoordinates={(coords) =>
-              setSelectedTarget({ kind: 'coordinates', lat: coords.lat, lon: coords.lon })
-            }
-            onFocusDetails={handleFocusDetails}
-            onToggleDetails={() => setIsDetailsOpen((open) => !open)}
+            totalRegionsCount={allRegions.length || 12}
+            selectedTarget={explorerSelectedTarget}
+            selectedRegionId={selectedRegionId}
+            zoneFilter={zoneFilter}
+            onChangeZoneFilter={setZoneFilter}
+            severityFilter={severityFilter}
+            onChangeSeverityFilter={setSeverityFilter}
+            onSelectAsset={handleSelectAsset}
+            onSelectRegion={handleSelectRegion}
+            onSelectCoordinates={handleSelectCoordinates}
           />
         </div>
 
-        {isDetailsOpen ? (
-          <div ref={detailsRef} className="lg:col-span-5 xl:col-span-4">
-            <PointDetailsPanel
-              target={effectiveTarget}
-              decision={activeDecision}
-              scenario={scenario}
-              isLoading={isDetailsLoading}
-              error={detailsError}
-              onRetry={
-                effectiveTarget?.kind === 'coordinates'
-                  ? () => void coordinatesQuery.refetch()
-                  : () => void overviewQuery.refetch()
-              }
-              onClose={() => setIsDetailsOpen(false)}
-              activeTab={activeDetailsTab}
-              onTabChange={setActiveDetailsTab}
-            />
-          </div>
-        ) : null}
+        <div className="lg:col-span-5 xl:col-span-4">
+          <PointInspectorStage
+            playerTarget={effectivePlayerTarget}
+            alertTarget={effectiveAlertTarget}
+            scenario={scenario}
+            scene={effectiveScene}
+            isSceneLoading={sceneQuery.isPending}
+            isSceneUpdating={sceneQuery.isFetching && !sceneQuery.isPending}
+            sceneError={sceneQuery.error}
+            onRetryScene={() => void sceneQuery.refetch()}
+            brandConfig={brandConfig}
+            onChangeBrandConfig={setBrandConfig}
+            activeTab={activeStageTab}
+            onTabChange={setActiveStageTab}
+          />
+        </div>
       </div>
     )
   }
 
   return (
     <main className="min-h-screen bg-background text-foreground">
-      <div className="mx-auto max-w-[1600px] space-y-5 p-4 sm:p-6">
-        <ScenarioToolbar
-          presetId={presetId}
-          onSelectPreset={setPresetId}
-          zoneFilter={zoneFilter}
-          onChangeZoneFilter={setZoneFilter}
-          severityFilter={severityFilter}
-          onChangeSeverityFilter={setSeverityFilter}
-          summary={overviewQuery.data?.summary ?? null}
-          generatedAt={overviewQuery.data?.generatedAt ?? null}
+      <div className="mx-auto max-w-[1680px] space-y-4 p-3 sm:p-5">
+        <TopControlBar
+          selection={selection}
+          onChangeSelection={setSelection}
+          simulationEnabled={simulationEnabled}
+          sourcesStatus={sourcesStatusQuery.data}
+          isSourcesLoading={sourcesStatusQuery.isPending}
+          isSourcesError={sourcesStatusQuery.isError}
           isRefreshing={isRefreshing}
           onRefresh={handleRefresh}
         />

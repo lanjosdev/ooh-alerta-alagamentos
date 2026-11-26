@@ -1,4 +1,49 @@
-import type { OohAlertDecision, ScenarioQueryParams } from '@/types/alerts'
+import type { OohAlertDecision, ScenarioQueryParams, SimulationMode } from '@/types/alerts'
+import type { PlayerAssetSummary } from '@/types/player'
+
+export type TemporalSelection =
+  | { mode: 'realtime' }
+  | { mode: 'historical'; date: string; time?: string }
+  | { mode: 'simulated'; simulate: SimulationMode }
+
+export interface HistoricalShortcut {
+  id: string
+  label: string
+  description: string
+  date: string
+  time: string
+}
+
+export const HISTORICAL_SHORTCUTS: readonly HistoricalShortcut[] = [
+  {
+    id: 'sp-2025-01-24',
+    label: '24/01/2025 • 20:30',
+    description: 'Marginal Pinheiros, Av. do Estado e Marginal Tietê',
+    date: '2025-01-24',
+    time: '20:30',
+  },
+  {
+    id: 'sp-2026-01-16',
+    label: '16/01/2026 • 18:15',
+    description: 'Av. Alcântara Machado / Radial Leste',
+    date: '2026-01-16',
+    time: '18:15',
+  },
+] as const
+
+export function temporalSelectionToQuery(selection: TemporalSelection): ScenarioQueryParams {
+  if (selection.mode === 'historical') {
+    return selection.time
+      ? { date: selection.date, time: selection.time }
+      : { date: selection.date }
+  }
+
+  if (selection.mode === 'simulated') {
+    return { simulate: selection.simulate }
+  }
+
+  return {}
+}
 
 export type ScenarioPresetId =
   | 'realtime'
@@ -109,6 +154,29 @@ export function filterRegions(
     }
 
     if (severityFilter === 'alerts_only' && region.severityLevel < 1) {
+      return false
+    }
+
+    return true
+  })
+}
+
+export function filterAssets(
+  assets: PlayerAssetSummary[],
+  zoneFilter: ZoneFilter,
+  severityFilter: SeverityFilter,
+): PlayerAssetSummary[] {
+  const normalizedTargetZone = normalizeZoneText(zoneFilter)
+
+  return assets.filter((asset) => {
+    if (zoneFilter !== 'Todas') {
+      const assetZone = asset.zone ? normalizeZoneText(asset.zone) : ''
+      if (assetZone !== normalizedTargetZone) {
+        return false
+      }
+    }
+
+    if (severityFilter === 'alerts_only' && asset.severityLevel < 1) {
       return false
     }
 

@@ -1,0 +1,21 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "mancha_inundacao_25.1",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-46.6902, -23.6212],
+            [-46.6899, -23.6212],
+            [-46.6899, -23.6209],
+            [-46.6902, -23.6209],
+            [-46.6902, -23.6212]
+          ]
+        ]
+      }
+    }
+  ]
+}

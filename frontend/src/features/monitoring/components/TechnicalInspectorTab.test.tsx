@@ -5,6 +5,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { getValidatedEnv } from '@/env'
 import { alertsService } from '@/services/alertsService'
 import { mockRegionButanta, mockRssXml } from '@/test/fixtures/alerts'
+import { mockPlayerSceneCritical } from '@/test/fixtures/player'
 import { TechnicalInspectorTab } from './TechnicalInspectorTab'
 
 vi.mock('@/services/alertsService', async () => {
@@ -32,7 +33,7 @@ function renderWithQuery(ui: React.ReactNode) {
 }
 
 describe('TechnicalInspectorTab', () => {
-  it('renders reasons, source telemetry, JSON payload and switches to XML RSS 2.0 with copy actions', async () => {
+  it('renders reasons, 5-source telemetry when scene is provided, JSON, XML RSS 2.0 and GeoJSON (Cena DOOH)', async () => {
     const user = userEvent.setup()
     const writeTextMock = vi.spyOn(navigator.clipboard, 'writeText').mockResolvedValue(undefined)
     const rssMock = vi.mocked(alertsService.getRssFeedXml).mockResolvedValueOnce(mockRssXml)
@@ -42,6 +43,8 @@ describe('TechnicalInspectorTab', () => {
         decision={mockRegionButanta}
         target={{ kind: 'region', regionId: 'zona-oeste-butanta' }}
         scenario={{ cgeDate: '15/01/2026' }}
+        scene={mockPlayerSceneCritical}
+        playerTarget={{ kind: 'asset', assetId: 'av-roberto-marinho' }}
       />,
     )
 
@@ -51,10 +54,11 @@ describe('TechnicalInspectorTab', () => {
     expect(screen.getByText('(open-meteo)')).toBeInTheDocument()
     expect(screen.getByText('(inmet)')).toBeInTheDocument()
     expect(screen.getByText('(cge-sp)')).toBeInTheDocument()
-    expect(screen.getByText('Cache')).toBeInTheDocument()
+    expect(screen.getByText('(osm-curated-snapshot)')).toBeInTheDocument()
+    expect(screen.getByText('(geosampa-wfs)')).toBeInTheDocument()
+    expect(screen.getAllByText('Cache')).toHaveLength(2)
 
     const expectedUrl = `${getValidatedEnv().VITE_API_BASE_URL}/alerts/regions/zona-oeste-butanta?cgeDate=15%2F01%2F2026`
-
     expect(screen.getByText(expectedUrl)).toBeInTheDocument()
 
     await user.click(screen.getByRole('button', { name: /Copiar URL/i }))
@@ -75,5 +79,14 @@ describe('TechnicalInspectorTab', () => {
 
     await user.click(screen.getByRole('button', { name: /Copiar payload/i }))
     expect(writeTextMock).toHaveBeenCalledWith(mockRssXml)
+
+    await user.click(screen.getByRole('tab', { name: /GeoJSON \(Cena DOOH\)/i }))
+    expect(screen.getByText(/Trechos viários: 2/i)).toBeInTheDocument()
+    expect(screen.getByText(/Manchas GeoSampa: 2/i)).toBeInTheDocument()
+    expect(
+      screen.getByText(
+        `${getValidatedEnv().VITE_API_BASE_URL}/player/scene?assetId=av-roberto-marinho&cgeDate=15%2F01%2F2026`,
+      ),
+    ).toBeInTheDocument()
   })
 })

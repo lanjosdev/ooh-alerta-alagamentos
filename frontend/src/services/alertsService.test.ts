@@ -6,6 +6,13 @@ import { alertsService } from './alertsService'
 
 const sampleDecision: OohAlertDecision = {
   evaluatedAt: '2026-11-23T19:00:00.000Z',
+  temporal: {
+    mode: 'realtime',
+    date: null,
+    time: null,
+    resolvedTime: null,
+    referenceAt: '2026-11-23T16:00:00-03:00',
+  },
   location: {
     id: 'zona-oeste-butanta',
     name: 'Butantã',
@@ -205,10 +212,18 @@ describe('alertsService', () => {
       alertsService.buildAlertEndpointUrl(
         { kind: 'coordinates', lat: -23.5317, lon: -46.7294 },
         'xml',
-        { simulate: 'alert' },
+        { simulate: 'alert', date: '2025-01-24', time: '20:30' },
       ),
     ).toBe(
       `${baseUrl}/alerts/by-coordinates/feed.xml?lat=-23.5317&lon=-46.7294&simulate=alert`,
     )
+
+    expect(
+      alertsService.buildAlertEndpointUrl(
+        { kind: 'region', regionId: 'zona-oeste-butanta' },
+        'json',
+        { date: '2025-01-24', time: '20:30' },
+      ),
+    ).toBe(`${baseUrl}/alerts/regions/zona-oeste-butanta?date=2025-01-24&time=20%3A30`)
   })
 })
