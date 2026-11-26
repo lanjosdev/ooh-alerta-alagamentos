@@ -1,5 +1,5 @@
 import { LocateFixed, MapPin, Search, X } from 'lucide-react'
-import { Map as MapLibreMap, Marker, NavigationControl } from 'maplibre-gl'
+import { Map as MapLibreMap, Marker, NavigationControl, Popup } from 'maplibre-gl'
 import { useEffect, useRef, useState } from 'react'
 import { EmptyState } from '@/components/patterns/EmptyState'
 import { QueryErrorAlert } from '@/components/patterns/QueryErrorAlert'
@@ -47,19 +47,60 @@ interface MarkerElements {
   dot: HTMLSpanElement
 }
 
+interface MarkerTooltipInfo {
+  title: string
+  subtitle: string
+  severityLabel?: string
+  severityLevel?: 0 | 1 | 2 | 3
+}
+
 interface BuildMarkerOptions {
   label: string
+  pillLabel: string
   severityClassName: string
   isSelected: boolean
   isCustom?: boolean
+  onHoverStart?: () => void
+  onHoverEnd?: () => void
   onClick?: () => void
+}
+
+function buildHoverTooltipContent(info: MarkerTooltipInfo): HTMLDivElement {
+  const container = document.createElement('div')
+  container.className = 'ooh-map-tooltip'
+
+  const header = document.createElement('div')
+  header.className = 'ooh-map-tooltip__header'
+
+  const title = document.createElement('span')
+  title.className = 'ooh-map-tooltip__title'
+  title.textContent = info.title
+  header.appendChild(title)
+
+  if (info.severityLabel !== undefined && info.severityLevel !== undefined) {
+    const severity = document.createElement('span')
+    severity.className = `ooh-map-tooltip__severity ooh-map-tooltip__severity--${info.severityLevel}`
+    severity.textContent = info.severityLabel
+    header.appendChild(severity)
+  }
+
+  const meta = document.createElement('span')
+  meta.className = 'ooh-map-tooltip__meta'
+  meta.textContent = info.subtitle
+
+  container.appendChild(header)
+  container.appendChild(meta)
+  return container
 }
 
 function buildMarkerElement({
   label,
+  pillLabel,
   severityClassName,
   isSelected,
   isCustom = false,
+  onHoverStart,
+  onHoverEnd,
   onClick,
 }: BuildMarkerOptions): MarkerElements {
   const root = document.createElement('button')
@@ -70,13 +111,19 @@ function buildMarkerElement({
     isCustom ? 'ooh-map-marker-root--custom' : undefined,
   )
   root.setAttribute('aria-label', label)
-  root.title = label
   if (isCustom) {
     root.tabIndex = -1
+  }
+  if (onHoverStart) {
+    root.addEventListener('mouseenter', onHoverStart)
+  }
+  if (onHoverEnd) {
+    root.addEventListener('mouseleave', onHoverEnd)
   }
   if (onClick) {
     root.addEventListener('click', (event) => {
       event.stopPropagation()
+      onHoverEnd?.()
       onClick()
     })
   }
@@ -89,6 +136,12 @@ function buildMarkerElement({
     isSelected ? 'ooh-map-marker--selected' : undefined,
   )
   root.appendChild(dot)
+
+  const pill = document.createElement('span')
+  pill.setAttribute('aria-hidden', 'true')
+  pill.className = 'ooh-map-marker__pill'
+  pill.textContent = pillLabel
+  root.appendChild(pill)
 
   return { root, dot }
 }
@@ -112,6 +165,7 @@ export function ExplorerMapPanel({
 }: ExplorerMapPanelProps) {
   const mapContainerRef = useRef<HTMLDivElement | null>(null)
   const mapRef = useRef<MapLibreMap | null>(null)
+  const hoverPopupRef = useRef<Popup | null>(null)
   const baseMarkersRef = useRef<
     Map<string, { marker: Marker; root: HTMLButtonElement; dot: HTMLSpanElement }>
   >(new Map())
@@ -147,9 +201,22 @@ export function ExplorerMapPanel({
       attributionControl: false,
     })
 
+    const hoverPopup = new Popup({
+      closeButton: false,
+      closeOnClick: false,
+      offset: 14,
+      className: 'ooh-map-hover-popup',
+    })
+    hoverPopupRef.current = hoverPopup
+
     map.addControl(new NavigationControl({ showCompass: false }), 'top-right')
 
+    map.on('dragstart', () => {
+      hoverPopup.remove()
+    })
+
     map.on('click', (event) => {
+      hoverPopup.remove()
       onSelectCoordinatesRef.current({
         lat: Number(event.lngLat.lat.toFixed(6)),
         lon: Number(event.lngLat.lng.toFixed(6)),
@@ -165,6 +232,8 @@ export function ExplorerMapPanel({
 
     return () => {
       resizeObserver.disconnect()
+      hoverPopup.remove()
+      hoverPopupRef.current = null
       for (const entry of baseMarkers.values()) {
         entry.marker.remove()
       }
@@ -182,18 +251,45 @@ export function ExplorerMapPanel({
       return
     }
 
+    hoverPopupRef.current?.remove()
     for (const entry of baseMarkersRef.current.values()) {
       entry.marker.remove()
     }
     baseMarkersRef.current.clear()
 
+    const showHoverTooltip = (lngLat: [number, number], info: MarkerTooltipInfo) => {
+      const popup = hoverPopupRef.current
+      if (!popup) {
+        return
+      }
+      popup
+        .setLngLat(lngLat)
+        .setDOMContent(buildHoverTooltipContent(info))
+        .addTo(map)
+    }
+
+    const hideHoverTooltip = () => {
+      hoverPopupRef.current?.remove()
+    }
+
     if (activeLayer === 'assets') {
       for (const asset of assets) {
         const meta = getSeverityMeta(asset.severityLevel)
+        const floodSuffix =
+          asset.activeInZoneCount > 0 ? ` • ${asset.activeInZoneCount} alag.` : ''
         const { root, dot } = buildMarkerElement({
           label: `${asset.corridorName} (${meta.label})`,
+          pillLabel: asset.corridorName,
           severityClassName: meta.markerClassName,
           isSelected: false,
+          onHoverStart: () =>
+            showHoverTooltip([asset.longitude, asset.latitude], {
+              title: asset.corridorName,
+              severityLabel: meta.label,
+              severityLevel: asset.severityLevel,
+              subtitle: `${asset.neighborhood} • ${Math.round(asset.riskScore)}/100${floodSuffix}`,
+            }),
+          onHoverEnd: hideHoverTooltip,
           onClick: () => onSelectAssetRef.current(asset.id),
         })
         const marker = new Marker({ element: root, anchor: 'center' })
@@ -204,10 +300,23 @@ export function ExplorerMapPanel({
     } else {
       for (const region of regions) {
         const meta = getSeverityMeta(region.severityLevel)
+        const floodSuffix =
+          region.flooding.activeInZoneCount > 0
+            ? ` • ${region.flooding.activeInZoneCount} alag.`
+            : ''
         const { root, dot } = buildMarkerElement({
           label: `${region.location.name} (${meta.label})`,
+          pillLabel: region.location.name,
           severityClassName: meta.markerClassName,
           isSelected: false,
+          onHoverStart: () =>
+            showHoverTooltip([region.location.longitude, region.location.latitude], {
+              title: region.location.name,
+              severityLabel: meta.label,
+              severityLevel: region.severityLevel,
+              subtitle: `${region.location.zone ?? 'São Paulo'} • ${Math.round(region.riskScore)}/100${floodSuffix}`,
+            }),
+          onHoverEnd: hideHoverTooltip,
           onClick: () => onSelectRegionRef.current(region),
         })
         const marker = new Marker({ element: root, anchor: 'center' })
@@ -245,16 +354,38 @@ export function ExplorerMapPanel({
       !(activeLayer === 'regions' && selectedRegionId !== null)
 
     if (shouldShowCustomMarker && selectedTarget.kind === 'coordinates') {
+      const targetLat = selectedTarget.lat
+      const targetLon = selectedTarget.lon
+      const customLabel =
+        selectedTarget.label ??
+        `Ponto selecionado (${targetLat.toFixed(4)}, ${targetLon.toFixed(4)})`
       const { root } = buildMarkerElement({
-        label:
-          selectedTarget.label ??
-          `Ponto selecionado (${selectedTarget.lat.toFixed(4)}, ${selectedTarget.lon.toFixed(4)})`,
+        label: customLabel,
+        pillLabel: selectedTarget.label ?? 'Clique livre',
         severityClassName: 'ooh-map-marker--custom',
         isSelected: true,
         isCustom: true,
+        onHoverStart: () => {
+          const popup = hoverPopupRef.current
+          if (!popup) {
+            return
+          }
+          popup
+            .setLngLat([targetLon, targetLat])
+            .setDOMContent(
+              buildHoverTooltipContent({
+                title: selectedTarget.label ?? 'Ponto livre',
+                subtitle: `${targetLat.toFixed(4)}, ${targetLon.toFixed(4)}`,
+              }),
+            )
+            .addTo(map)
+        },
+        onHoverEnd: () => {
+          hoverPopupRef.current?.remove()
+        },
       })
       customMarkerRef.current = new Marker({ element: root, anchor: 'center' })
-        .setLngLat([selectedTarget.lon, selectedTarget.lat])
+        .setLngLat([targetLon, targetLat])
         .addTo(map)
     }
   }, [activeLayer, assets, regions, selectedRegionId, selectedTarget])

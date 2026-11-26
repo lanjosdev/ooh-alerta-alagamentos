@@ -183,8 +183,126 @@
 
 .ooh-map-marker-root--custom {
   z-index: 3;
+  cursor: pointer;
+}
+
+.ooh-map-marker__pill {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
   pointer-events: none;
-  cursor: default;
+  max-width: 175px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  background-color: var(--card);
+  color: var(--foreground);
+  border: 1px solid var(--border);
+  font-size: 11px;
+  line-height: 1.3;
+  font-weight: 600;
+  box-shadow: 0 3px 10px oklch(0.195 0.02 257.417 / 0.16);
+}
+
+.ooh-map-marker-root--selected .ooh-map-marker__pill {
+  display: inline-flex;
+  align-items: center;
+}
+
+.ooh-map-marker-root--selected:hover .ooh-map-marker__pill {
+  display: none;
+}
+
+.ooh-map-hover-popup {
+  pointer-events: none;
+  z-index: 30;
+}
+
+.ooh-map-hover-popup .maplibregl-popup-content {
+  pointer-events: none;
+  background-color: var(--card);
+  color: var(--foreground);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 7px 10px;
+  box-shadow: 0 8px 20px oklch(0.195 0.02 257.417 / 0.16);
+}
+
+.ooh-map-hover-popup.maplibregl-popup-anchor-top .maplibregl-popup-tip {
+  border-bottom-color: var(--card);
+}
+
+.ooh-map-hover-popup.maplibregl-popup-anchor-bottom .maplibregl-popup-tip {
+  border-top-color: var(--card);
+}
+
+.ooh-map-hover-popup.maplibregl-popup-anchor-left .maplibregl-popup-tip {
+  border-right-color: var(--card);
+}
+
+.ooh-map-hover-popup.maplibregl-popup-anchor-right .maplibregl-popup-tip {
+  border-left-color: var(--card);
+}
+
+.ooh-map-tooltip {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 140px;
+  max-width: 230px;
+}
+
+.ooh-map-tooltip__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.ooh-map-tooltip__title {
+  font-size: 12px;
+  line-height: 1.25;
+  font-weight: 700;
+  color: var(--foreground);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ooh-map-tooltip__severity {
+  flex-shrink: 0;
+  font-size: 11px;
+  line-height: 1.2;
+  font-weight: 700;
+}
+
+.ooh-map-tooltip__severity--0 {
+  color: var(--severity-normal-fg);
+}
+
+.ooh-map-tooltip__severity--1 {
+  color: var(--severity-attention-fg);
+}
+
+.ooh-map-tooltip__severity--2 {
+  color: var(--severity-alert-fg);
+}
+
+.ooh-map-tooltip__severity--3 {
+  color: var(--severity-critical-fg);
+}
+
+.ooh-map-tooltip__meta {
+  font-size: 11px;
+  line-height: 1.25;
+  color: var(--muted-foreground);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .ooh-map-marker {

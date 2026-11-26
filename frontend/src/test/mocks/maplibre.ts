@@ -27,6 +27,15 @@ export interface MockMarkerInstance {
   getElement: ReturnType<typeof vi.fn>
 }
 
+export interface MockPopupInstance {
+  options?: { closeButton?: boolean; closeOnClick?: boolean; offset?: number; className?: string }
+  setLngLat: ReturnType<typeof vi.fn>
+  setDOMContent: ReturnType<typeof vi.fn>
+  addTo: ReturnType<typeof vi.fn>
+  remove: ReturnType<typeof vi.fn>
+  isOpen: ReturnType<typeof vi.fn>
+}
+
 export interface MockOverlayInstance {
   setProps: ReturnType<typeof vi.fn>
   finalize: ReturnType<typeof vi.fn>
@@ -38,6 +47,7 @@ export const maplibreMockState = {
   maps: [] as MockMapInstance[],
   overlays: [] as MockOverlayInstance[],
   markers: [] as MockMarkerInstance[],
+  popups: [] as MockPopupInstance[],
   clickHandlers: [] as Array<(event: { lngLat: { lng: number; lat: number } }) => void>,
   loadHandlers: [] as Array<() => void>,
   overlayPropsHistory: [] as Array<Record<string, unknown>>,
@@ -45,6 +55,7 @@ export const maplibreMockState = {
     this.maps = []
     this.overlays = []
     this.markers = []
+    this.popups = []
     this.clickHandlers = []
     this.loadHandlers = []
     this.overlayPropsHistory = []
@@ -149,11 +160,65 @@ export function createMapLibreModuleMock() {
     }
   })
 
+  class MockPopup {
+    options?: { closeButton?: boolean; closeOnClick?: boolean; offset?: number; className?: string }
+    private wrapper: HTMLDivElement
+    private contentNode: Node | null = null
+    private opened = false
+
+    constructor(options?: {
+      closeButton?: boolean
+      closeOnClick?: boolean
+      offset?: number
+      className?: string
+    }) {
+      this.options = options
+      this.wrapper = document.createElement('div')
+      if (options?.className) {
+        this.wrapper.className = options.className
+      }
+    }
+
+    setLngLat = vi.fn(() => this)
+    setDOMContent = vi.fn((node: Node) => {
+      this.contentNode = node
+      this.wrapper.innerHTML = ''
+      this.wrapper.appendChild(node)
+      return this
+    })
+    addTo = vi.fn((map: { getContainer?: () => HTMLElement }) => {
+      const container = map.getContainer?.()
+      if (container && !container.contains(this.wrapper)) {
+        if (this.contentNode && !this.wrapper.contains(this.contentNode)) {
+          this.wrapper.appendChild(this.contentNode)
+        }
+        container.appendChild(this.wrapper)
+      }
+      this.opened = true
+      return this
+    })
+    remove = vi.fn(() => {
+      this.opened = false
+      this.wrapper.remove()
+    })
+    isOpen = vi.fn(() => this.opened)
+  }
+
+  const PopupConstructor = vi.fn(function (
+    this: unknown,
+    options?: { closeButton?: boolean; closeOnClick?: boolean; offset?: number; className?: string },
+  ): MockPopupInstance {
+    const popup = new MockPopup(options)
+    maplibreMockState.popups.push(popup)
+    return popup
+  })
+
   return {
     Map: MapConstructor,
     Marker: MarkerConstructor,
     NavigationControl: NavigationControlConstructor,
     LngLatBounds: LngLatBoundsConstructor,
+    Popup: PopupConstructor,
   }
 }
 

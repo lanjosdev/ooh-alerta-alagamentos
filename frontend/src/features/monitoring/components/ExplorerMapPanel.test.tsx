@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { render, screen, waitFor } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { playerService } from '@/services/playerService'
@@ -193,5 +193,51 @@ describe('ExplorerMapPanel', () => {
       (marker) => marker.options?.element === customButton,
     )
     expect(customMarker?.setLngLat).toHaveBeenCalledWith([-46.6559, -23.5614])
+  })
+
+  it('shows selected micro-pill and opens/closes hover popup on OOH and free-click pins without native title', async () => {
+    const user = userEvent.setup()
+    const onSelectAsset = vi.fn()
+    const { container } = renderExplorerPanel({
+      selectedTarget: { kind: 'coordinates', lat: -23.5614, lon: -46.6559, label: 'Avenida Paulista' },
+      onSelectAsset,
+    })
+
+    const assetButton = screen.getByRole('button', { name: /Av\. Jornalista Roberto Marinho/i })
+    expect(assetButton).not.toHaveAttribute('title')
+    const assetPill = assetButton.querySelector('.ooh-map-marker__pill')
+    expect(assetPill?.textContent).toBe('Av. Jornalista Roberto Marinho')
+
+    // Hovering an OOH asset opens the hover popup with neighborhood, score and severity
+    fireEvent.mouseEnter(assetButton)
+    const popupEl = container.querySelector('.ooh-map-hover-popup')
+    expect(popupEl).not.toBeNull()
+    expect(popupEl?.textContent).toContain('Av. Jornalista Roberto Marinho')
+    expect(popupEl?.textContent).toContain('Brooklin • 95/100 • 2 alag.')
+    expect(popupEl?.textContent).toContain('Crítico')
+
+    // Leaving closes the hover popup
+    fireEvent.mouseLeave(assetButton)
+    expect(container.querySelector('.ooh-map-hover-popup')).toBeNull()
+
+    // Hovering then clicking closes hover popup immediately and triggers selection
+    fireEvent.mouseEnter(assetButton)
+    expect(container.querySelector('.ooh-map-hover-popup')).not.toBeNull()
+    await user.click(assetButton)
+    expect(onSelectAsset).toHaveBeenCalledWith('av-roberto-marinho')
+    expect(container.querySelector('.ooh-map-hover-popup')).toBeNull()
+
+    // Custom free-click pin renders micro-pill and shows coordinates tooltip on hover
+    const customButton = container.querySelector('.ooh-map-marker-root--custom') as HTMLElement
+    expect(customButton).not.toBeNull()
+    expect(customButton).not.toHaveAttribute('title')
+    expect(customButton.querySelector('.ooh-map-marker__pill')?.textContent).toBe(
+      'Avenida Paulista',
+    )
+
+    fireEvent.mouseEnter(customButton)
+    const customPopup = container.querySelector('.ooh-map-hover-popup')
+    expect(customPopup?.textContent).toContain('Avenida Paulista')
+    expect(customPopup?.textContent).toContain('-23.5614, -46.6559')
   })
 })
