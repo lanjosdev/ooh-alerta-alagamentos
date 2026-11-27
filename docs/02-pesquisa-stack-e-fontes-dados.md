@@ -52,15 +52,21 @@ Atende ao **Passo 2 do Slide 12** (*"Dado marca o trecho — está alagando aqui
 
 | Fonte / API | No PDF? | Modelo / Custo | O que entrega & Considerações |
 | :--- | :---: | :--- | :--- |
-| **CGE-SP** *(já integrado)* | Sim | **Gratuito** (HTML scraping) | Pontos de alagamento ativos/intransitáveis + 28 estações pluviométricas na Capital SP. Como os endereços vêm em texto livre, exige **normalização / map-matching** para vincular ao segmento exato no OSM. |
+| **CGE-SP** *(já integrado)* | Sim | **Gratuito** (HTML scraping) | Pontos de alagamento ativos/intransitáveis + 28 estações pluviométricas na Capital SP. Como os endereços vêm em texto livre, exige **normalização / map-matching** para vincular ao segmento exato no OSM. **Limitação:** o registro manual das ocorrências costuma atrasar (às vezes só aparece no dia seguinte), o que torna o CGE fraco como gatilho ao vivo e forte como confirmação e replay (ver [05](./05-avaliacao-fontes-tempo-real.md)). |
 | **INMET** *(já integrado)* | Sim | **Gratuito** (API REST oficial) | Avisos meteorológicos oficiais com polígonos GeoJSON em todo o Brasil. Granularidade macro (município/região). |
 | **Open-Meteo** *(já integrado)* | Sim (modelos ECMWF/NOAA) | **Gratuito (PoC / não-comercial)** / **Pago (planos comerciais fixos)** | Previsão horária (~9 km via ECMWF) e suporte a `minutely_15` em modelos de alta resolução. **Atenção:** uso comercial exige assinatura paga ou troca de provedor. |
 | **CEMADEN** | Sim | **Gratuito** *(sem API REST pública documentada)* | Rede nacional com >3.800 pluviômetros e alertas hidrológicos. Exige credencial/acesso institucional ou integração com camadas OGC/ArcGIS (atenção ao fuso UTC e estabilidade). |
-| **Tomorrow.io** *(previsto no backend)* | Extra | **Pago** (teste grátis limitado; comercial sob cotação) | Principal candidato para embasar *"risco em 30 min"*: previsão **minuto a minuto** baseada em radar + satélite + ML. |
+| **Tomorrow.io** *(previsto no backend)* | Extra | **Pago** (teste grátis limitado; comercial sob cotação) | Melhoria opcional de precisão (o horizonte "risco em 30 min" foi descartado em favor de horas — ver [06](./06-criterios-horizonte-e-antialarmismo.md)): previsão **minuto a minuto** baseada em radar + satélite + ML. |
 | **Google Weather API** *(previsto no backend)* | Extra | **Pago pay-as-you-go** (cota grátis ~10k calls/mês; depois ~USD 0,15/1k) | Previsão hiperlocal por coordenada via Google Cloud. |
 | **Google Flood Forecasting API (Flood Hub)** | Extra | **Gratuito** (requer aprovação em *allowlist* Google Cloud) | Cobre totalmente o **Brasil** (em parceria com SGB/CPRM), oferecendo previsões hidrológicas e **polígonos de inundação fluvial** — muito forte para extravasamento de grandes bacias (ex.: rios Pinheiros e Tietê). |
 | **SAISP / SIBH (FCTH / DAEE-SP)** | Extra | **Institucional / Convênio** | Telemetria em tempo real de nível de água em rios e córregos de SP + Radar Meteorológico de Ponte Nova. |
 | **Waze for Cities (Partner Feed)** | Extra | **Gratuito apenas via parceria municipal** (CET/Prefeitura) | Feed JSON real-time de alertas `HAZARD` (alagamento) reportados por motoristas já com `lat/lon` exata e score de confiabilidade. |
+| **TomTom Traffic Incidents API** | Extra | **Pago** (cota gratuita para desenvolvimento) | Incidentes viários georreferenciados por trecho, com categoria própria de alagamento. Candidato a fonte de **confirmação quase em tempo real** (cobertura em SP a validar — ver [05](./05-avaliacao-fontes-tempo-real.md)). |
+| **HERE Traffic API (Incidents)** | Extra | **Pago** (cota gratuita) | Incidentes (fechamento de via, perigo, clima) com geometria do trecho. Alternativa ao TomTom (tipificação de alagamento a validar). |
+| **REDEMET (DECEA) / RainViewer** | Extra | **Gratuito** (REDEMET com chave; RainViewer com limites) | Produtos de radar meteorológico para antecipação gratuita de curtíssimo prazo (cobertura, resolução e termos comerciais a validar). |
+| **GeoSampa — Ocorrências da Defesa Civil (`risco_ocorrencia_alagamento` / `risco_ocorrencia_inundacao`)** | Extra | **Gratuito** (WFS) | Ocorrências georreferenciadas (ponto, data, subprefeitura) vindas do sistema SIGRC. Aparentemente só do ano corrente: exige cópias periódicas para formar histórico (ver [08](./08-escopo-base-historica-alagamentos.md)). |
+| **GeoSampa — Manchas de inundação 5 / 25 / 100** | Extra | **Gratuito** (WFS) | Três versões da mancha (provável período de retorno, a validar), permitindo graduar a suscetibilidade. Hoje só a de 25 é usada. |
+| **CGE-SP — Estado de Atenção / Alerta** | Extra | **Gratuito** (scraping) | Status oficial de alagamento declarado na hora pela CGE para a cidade e as zonas. Reforça a severidade sem depender do registro de ocorrências. |
 | **Geocodificação & Map-Matching** (`Nominatim` / `Photon` / Tabela curada) | Extra | **Gratuito** (Nominatim/OSM ou tabela de-para) / **Pago** (Mapbox/Google) | Converte buscas de endereço por texto e ocorrências textuais do CGE-SP em coordenadas/trechos viários reais. Para produção em SP, manter tabela curada dos ~300 pontos crônicos do CGE vinculados a `way_id` do OSM maximiza precisão e reduz custo. |
 
 ---
@@ -82,7 +88,7 @@ Atende aos **Passos 3 e 4 do Slide 12** (*Buffer + Camadas + Brilho* em moviment
 | Cenário da Exibidora | Dependência / Estratégia | Custo |
 | :--- | :--- | :--- |
 | **1. Player com HTML5 + WebGL + rede aberta** | Execução direta do Player React + MapLibre + deck.gl, com cache resiliente / *stale fallback* para sobreviver a oscilações de rede. | Apenas hospedagem/CDN |
-| **2. Player restrito a MP4 / WebM / Imagem via CMS** | **Renderizador Server-Side (`Playwright` + `FFmpeg`):** worker gera loops MP4 de 10–15 s apenas quando o estado de risco de um ativo muda e publica a URL no feed/CMS da exibidora. | Baixo (renderização orientada a evento, não contínua) |
+| **2. Player restrito a MP4 / WebM / Imagem via CMS** | **Renderizador Server-Side (`Playwright` + `FFmpeg`):** worker gera loops MP4 de 10–15 s apenas quando o estado de risco de um ativo muda e publica a URL no feed/CMS da exibidora. **Registrado como evolução futura, fora do escopo atual** (ver [09](./09-escopo-cadastro-pontos-ooh.md), incluindo a exigência de data de validade da peça). | Baixo (renderização orientada a evento, não contínua) |
 
 ---
 

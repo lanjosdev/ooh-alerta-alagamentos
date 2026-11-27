@@ -13,7 +13,7 @@ Este documento registra os **requisitos mapeados da frente de Player Criativo DO
   - Bloco de marca configurável à direita (`AVISO` + emblema/cor de destaque).
 - **Faixa de contexto do ponto OOH:**
   - Nome da via / localização monitorada à esquerda (ex.: `Av. Jornalista Roberto Marinho`, `Marginal Pinheiros`).
-  - Indicador dinâmico de severidade e janela temporal à direita (ex.: `Risco elevado em 30 min`, `Alagamento ativo na via`, `Sem risco no momento`).
+  - Indicador dinâmico de severidade e janela temporal à direita (ex.: `Risco elevado nas próximas 2h`, `Alagamento ativo na via`, `Sem risco no momento`). O horizonte de risco é em **horas**, não em minutos (ver [06 — Horizonte e Critérios Antialarmismo](./06-criterios-horizonte-e-antialarmismo.md)).
 - **Área principal — Mapa Vetorial + Mancha Generativa (~55–60% da peça):**
   - Mapa minimalista preto/branco (ruas em traço limpo escuro sobre fundo branco, sem ruído visual, mantendo rótulos legíveis das vias principais e rios).
   - Mancha de enchente azul luminosa **em movimento contínuo (*play/motion*)**, seguindo exatamente a geometria real dos trechos afetados (sem arte feita à mão por local).
@@ -47,7 +47,7 @@ Este documento registra os **requisitos mapeados da frente de Player Criativo DO
 
 ## 3. Catálogo Inicial de Pontos OOH Simulados Curados (SP)
 
-Como o inventário real de telas OOH ainda não está disponível nesta fase, a PoC utiliza um repositório de ativos simulados seguindo o mesmo contrato que receberá o inventário real (planilha/PostGIS) na Fase 2:
+Como o inventário real de telas OOH ainda não está disponível nesta fase, a PoC utiliza um repositório de ativos simulados seguindo o mesmo contrato que receberá o inventário real (planilha/PostGIS) na Fase 2 (processo de cadastro e importação em [09 — Cadastro de Pontos OOH](./09-escopo-cadastro-pontos-ooh.md)):
 
 1. **Av. Jornalista Roberto Marinho** (Brooklin / Campo Belo — referência dos Slides 7, 9 e 10)
 2. **Marginal Pinheiros** (Pinheiros / Cidade Jardim — referência do Slide 11)
