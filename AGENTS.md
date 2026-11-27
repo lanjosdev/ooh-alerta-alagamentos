@@ -7,11 +7,11 @@ Este arquivo é a **Fonte Única da Verdade Global** com as diretrizes de govern
 ## 1. Estrutura do Workspace e Escopo de Regras
 
 O repositório é organizado em subaplicações com regras contextuais hierárquicas e documentação transversal:
-- **`docs/`**: documentação transversal de produto, análise de viabilidade, pesquisa tecnológica/fontes e especificações de escopo (índice em [`docs/README.md`](./docs/README.md); escopo vigente do Player Criativo DOOH em [`docs/03-escopo-poc-player-dooh.md`](./docs/03-escopo-poc-player-dooh.md)).
+- **`docs/`**: documentação transversal de produto, análise de viabilidade, pesquisa tecnológica/fontes e especificações de escopo (índice em [`docs/README.md`](./docs/README.md); escopo vigente do Player Criativo DOOH em [`docs/03-escopo-poc-player-dooh.md`](./docs/03-escopo-poc-player-dooh.md); roadmap, backlog consolidado, decisões pendentes e investigações em [`docs/10-roadmap-e-backlog.md`](./docs/10-roadmap-e-backlog.md)).
 - **`backend/`**: API Fastify v5 + TypeScript Strict + Zod para coleta, normalização, cruzamento de risco e distribuição de alertas de alagamento (JSON e XML/RSS 2.0) para mídia DOOH. Possui regras próprias em [`backend/AGENTS.md`](./backend/AGENTS.md).
 - **`frontend/`**: SPA React 19 + Vite + TypeScript Strict + Tailwind CSS v4 + TanStack Query v5 + `MapLibre GL JS` + `deck.gl` (`@deck.gl/mapbox`) para Painel Principal Unificado (`/`), Player Criativo DOOH (`/?mode=player` / `/player`) e inspeção técnica `JSON / XML RSS 2.0 / GeoJSON`. Possui regras próprias em [`frontend/AGENTS.md`](./frontend/AGENTS.md).
 
-> As regras de diretório são cumulativas. Ao trabalhar em `backend/` ou `frontend/`, as regras do respectivo `AGENTS.md` complementam estas diretrizes globais e têm precedência em caso de especificidade da stack. Antes de planejar ou implementar funcionalidades da frente Player Criativo DOOH ou alterações de escopo/fontes de dados, consulte [`docs/03-escopo-poc-player-dooh.md`](./docs/03-escopo-poc-player-dooh.md) e [`docs/README.md`](./docs/README.md).
+> As regras de diretório são cumulativas. Ao trabalhar em `backend/` ou `frontend/`, as regras do respectivo `AGENTS.md` complementam estas diretrizes globais e têm precedência em caso de especificidade da stack. Antes de planejar ou implementar funcionalidades da frente Player Criativo DOOH ou alterações de escopo/fontes de dados, consulte [`docs/10-roadmap-e-backlog.md`](./docs/10-roadmap-e-backlog.md) (ponto de entrada: status, dependências, decisões e investigações de cada item), os documentos de origem que ele referencia (`docs/03` a `docs/09`) e [`docs/README.md`](./docs/README.md). Ao concluir um item, decisão ou investigação, atualize o `docs/10` e o documento de origem.
 
 ---
 
