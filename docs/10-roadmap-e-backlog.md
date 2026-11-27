@@ -10,7 +10,7 @@ Este documento reúne em um só lugar o backlog deduplicado, a ordem sugerida, a
 
 ## 1. Como Usar
 
-1. Antes de planejar uma fase, conferir o **status** de cada item (seção 2) e as **decisões** (seção 5) e **investigações** (seção 6) de que ele depende.
+1. Seguir a **ordem de execução** (seção 2). Antes de planejar uma etapa, conferir o **status** de cada item (seção 3) e as **decisões** (seção 6) e **investigações** (seção 7) de que ele depende.
 2. Itens `pronto para planejar` podem virar plano de implementação imediatamente.
 3. Itens que dependem do cliente **não têm prazo nem estimativa de compromisso**; o roadmap mostra só a ordem e as dependências.
 4. Ao concluir um item, decisão ou investigação, atualizar este documento e o documento de origem.
@@ -36,15 +36,59 @@ Este documento reúne em um só lugar o backlog deduplicado, a ordem sugerida, a
 
 ---
 
-## 2. Backlog por Fase
+## 2. Ordem de Execução — Frente de Inteligência
 
-As fases 1 e 2 não dependem do cliente e podem andar em paralelo. A fase 6 só começa após a aprovação do projeto.
+> **Decidido em 27/11/2026.** Esta é a frente prioritária: um motor mais sólido e menos alarmante no dia presente, separando **risco** de **ocorrência real**, com as **vias vizinhas** na mesma importância da via alvo, uso maior do **GeoSampa**, **base histórica** consultável e **mancha só nos trechos afetados** (não na via, avenida ou marginal inteira).
+>
+> As **fases** (seção 3) agrupam os itens por tema. As **etapas** abaixo definem a **ordem de execução** desta frente, e cada etapa corresponde a um plano de implementação (branch e PR próprios).
+
+### 2.1 Princípio: o trecho de via como unidade
+
+O motor passa a raciocinar por **trecho de via** (algo como 100–300 m), e não pela cena inteira nem pela via inteira. É no trecho que se cruzam a suscetibilidade (GeoSampa), o histórico, a ocorrência real e o risco de chuva. A mancha também é desenhada por trecho, e as vias vizinhas passam a ser apenas "outros trechos com estado próprio". Por isso as etapas vão **da base de dados à saída na peça**.
+
+### 2.2 Etapas
+
+| # | Etapa | Itens | Entrega | Decisões antes de começar |
+| :-: | :--- | :--- | :--- | :--- |
+| **0** | **Medição e coleta urgente** | B-01, B-35; investigações V-02, V-03, V-07, V-08 | Cópias periódicas da camada da Defesa Civil rodando, dúvidas sobre as fontes resolvidas e um conjunto de dias reais para testar | — |
+| **1** | **Antialarmismo no motor atual** | B-02 a B-07 | Menos falso alarme já na próxima versão, sem mudar a arquitetura | DEC-12 |
+| **2** | **Trechos e suscetibilidade** | B-08, B-09, B-12, B-11, B-21, B-22 (recorte, backend) | Cada cena passa a ter a lista de trechos (alvo e vizinhos), cada um com a suscetibilidade graduada do GeoSampa | DEC-10 |
+| **3** | **Base histórica e localização** | B-13, B-14 (piloto nos 7 pontos), B-15, B-17 | Ocorrências do CGE e da Defesa Civil posicionadas nos trechos, pontos crônicos e peso histórico calculado | DEC-18, DEC-19 |
+| **4** | **Motor de evidência por trecho** | B-18, B-19, B-20, B-23 | Cada trecho recebe tipo (risco, provável ou confirmado), grau e origem. A severidade da cena passa a ser o máximo entre os trechos | DEC-11, DEC-15 |
+| **5** | **Saída na peça DOOH** | B-25, B-24, B-27, B-28, B-29, B-22 (desenho, frontend) | Mancha só nos trechos afetados, dois eixos visuais, legenda, rótulos nas vias e texto citando as vizinhas | DEC-13, DEC-14 |
+| ↳ | **Camada histórica no Explorador** | B-16 | Linhas cinzas com filtro de 6 meses a 5 anos | DEC-17 |
+
+### 2.3 Ordem e paralelismo
+
+- **As etapas 0 e 1 começam já e andam em paralelo.** A etapa 1 é a vitória mais rápida contra o alarmismo e não depende de nada novo.
+- **A etapa 2 pode começar junto com a 1.** Ela só toca na geometria e no GeoSampa, não na lógica de alerta.
+- **A etapa 3 começa quando V-03 e V-07 forem respondidas.** O B-14 é o item de maior risco, por isso o piloto nos 7 pontos vem antes de expandir para a cidade toda.
+- **A etapa 4 precisa das etapas 2 e 3.** É o coração da aplicação.
+- **A etapa 5 vem por último**, porque desenha o que a etapa 4 decide. O B-16 pode correr em paralelo assim que o B-15 existir.
+- **Cada etapa é medida contra os cenários de referência (B-35):** falso alarme e alerta perdido não podem piorar em relação à etapa anterior.
+
+### 2.4 Ajustes de agrupamento
+
+- **B-08, B-09 e B-12 viram fundação** (etapa 2), e não apenas "paridade com o clique livre": a via alvo correta e as vizinhas sem filtro por nome são pré-requisito do motor por trecho. A paridade com o clique livre vem como consequência.
+- **B-22 é dividido em dois momentos:** o recorte geométrico do trecho entra na etapa 2 (backend) e o desenho, na etapa 5 (frontend).
+- **A fase 6 (cadastro de pontos) fica fora desta frente.** Ela reaproveita o resultado da etapa 2 quando o projeto for aprovado.
+
+### 2.5 Limite de expectativa sobre o dia presente
+
+Só com fontes gratuitas, o tipo **confirmado** continua dependendo do CGE, que registra com atraso ([docs/05](./05-avaliacao-fontes-tempo-real.md)). Quem cobre essa lacuna no dia presente é o nível **provável** (chuva observada sobre trecho crônico ou suscetível). Ele precisa da base histórica (etapa 3) e do GeoSampa graduado (etapa 2), e é por isso que essas etapas vêm antes do motor.
+
+---
+
+## 3. Backlog por Fase
+
+As fases 1 e 2 não dependem do cliente e podem andar em paralelo. A fase 6 só começa após a aprovação do projeto. A ordem de execução da frente de inteligência está na seção 2.
 
 ### Fase 0 — Ação urgente
 
 | ID | Item | Origem | Camada | Esforço | Status | Depende de |
 | :--- | :--- | :--- | :--- | :---: | :--- | :--- |
 | B-01 | **Salvar cópias periódicas das camadas de ocorrência da Defesa Civil publicadas no GeoSampa** (WFS: `risco_ocorrencia_alagamento`, `risco_ocorrencia_inundacao`), deduplicando por `cd_identificador`. A camada parece guardar só o ano corrente: cada atualização perdida é dado que não volta. | docs/08 §3.2, §6 | backend (script) | baixo | `pronto` | — |
+| B-35 | **Cenários de referência**: conjunto de dias reais (com alagamento registrado, secos com aviso INMET, de chuva sem ocorrência) rodados via replay como teste de regressão, medindo falso alarme e alerta perdido por ponto | seção 2 | backend (testes) | médio | `pronto` | — |
 
 ### Fase 1 — Correções antialarmismo de baixo custo
 
@@ -85,7 +129,7 @@ As fases 1 e 2 não dependem do cliente e podem andar em paralelo. A fase 6 só 
 | B-19 | Vizinhança por distância, sem filtro por zona CGE | R2 / D4 / D5 / A4 / C5 | backend | médio | `item` / `decisão` | B-18, DEC-10 |
 | B-20 | Risco por via (estado próprio por via; severidade da cena = máximo, preservando a origem) | R4 / D7 | backend | médio–alto | `item` / `decisão` | B-19, DEC-11 |
 | B-21 | GeoSampa graduado na decisão (manchas 5/25/100, proporção da via na mancha) | G1 / G2 / G9 | backend | médio | `investigação` | V-02 |
-| B-22 | Recorte do trecho baixo da via (não pintar o segmento OSM inteiro) | R6 / D11 / G3 | backend + frontend | médio | `item` | B-21 |
+| B-22 | Recorte do trecho baixo da via (não pintar o segmento OSM inteiro). Recorte geométrico na etapa 2, desenho na etapa 5 | R6 / D11 / G3 | backend + frontend | médio | `item` | B-21 |
 | B-23 | Nível **"provável"**: chuva observada sobre ponto crônico / trecho suscetível | docs/05 §4, docs/07 §3 | backend | médio | `item` / `decisão` | B-17, B-21, DEC-15 |
 | B-24 | Editorial com vias afetadas, orientação de desvio e estado normal correto | R7 / R8 / R9 / D12 / D13 / D14 | backend | médio | `item` / `decisão` | B-20, DEC-14 |
 | B-25 | Payload de vizinhança em `/v1/player/scene` + `backend/API.md` + aba Técnico | R13 | backend + frontend | médio | `item` | B-20 |
@@ -122,7 +166,7 @@ As fases 1 e 2 não dependem do cliente e podem andar em paralelo. A fase 6 só 
 
 ---
 
-## 3. Mapa de Equivalência (itens repetidos entre documentos)
+## 4. Mapa de Equivalência (itens repetidos entre documentos)
 
 | Problema | Identificadores de origem | Item do backlog |
 | :--- | :--- | :--- |
@@ -135,7 +179,7 @@ As fases 1 e 2 não dependem do cliente e podem andar em paralelo. A fase 6 só 
 
 ---
 
-## 4. Suposições Explícitas
+## 5. Suposições Explícitas
 
 | Suposição | Usada em | Confirmada por |
 | :--- | :--- | :--- |
@@ -146,9 +190,9 @@ As fases 1 e 2 não dependem do cliente e podem andar em paralelo. A fase 6 só 
 
 ---
 
-## 5. Decisões Pendentes
+## 6. Decisões Pendentes
 
-### 5.1 Cliente / negócio
+### 6.1 Cliente / negócio
 
 | ID | Decisão | Bloqueia | Origem |
 | :--- | :--- | :--- | :--- |
@@ -162,7 +206,7 @@ As fases 1 e 2 não dependem do cliente e podem andar em paralelo. A fase 6 só 
 | DEC-08 | Os feeds JSON/RSS também passam a incluir as vias vizinhas? | B-26 | docs/04 |
 | DEC-09 | O que a tela exibe no estado "sem risco" (campanha normal ou nada) | Integração com o CMS, F-01 | docs/09 §6 |
 
-### 5.2 Equipe
+### 6.2 Equipe
 
 | ID | Decisão | Bloqueia | Origem |
 | :--- | :--- | :--- | :--- |
@@ -179,7 +223,7 @@ As fases 1 e 2 não dependem do cliente e podem andar em paralelo. A fase 6 só 
 
 ---
 
-## 6. Investigações de Validação
+## 7. Investigações de Validação
 
 | ID | Investigação | Desbloqueia | Origem |
 | :--- | :--- | :--- | :--- |
@@ -194,11 +238,12 @@ As fases 1 e 2 não dependem do cliente e podem andar em paralelo. A fase 6 só 
 
 ---
 
-## 7. Fluxo de Dependências (resumo)
+## 8. Fluxo de Dependências (resumo)
 
 ```mermaid
 flowchart LR
   B01[B-01 Cópias Defesa Civil via GeoSampa] --> B14
+  B35[B-35 Cenários de referência] -.mede.-> B20
   V03[V-03 Retenção] --> B13
   V07[V-07 Termos] --> B13
   B13[B-13 Coleta CGE] --> B14[B-14 Localização]
